@@ -48,10 +48,30 @@ def ask_patient():
         error_response = json.dumps({"error": f"Case '{case_id}' not found"}, ensure_ascii=False)
         return Response(error_response, mimetype='application/json', status=404)
 
-    # --- ✨ 新增：計算覆蓋率 ✨ ---
+    # --- ✨ 新增：攔截特殊指令 ✨ ---
+    last_user_message = history[-1]["content"].strip() if history and history[-1]["role"] == "user" else ""
+
     checklist = case_data.get("feedback_system", {}).get("checklist", [])
     coverage_percentage = calculate_coverage(history, checklist)
 
+    # 如果是測量生命體徵的指令
+    if last_user_message == "/測量生命徵象":
+        vital_signs = case_data.get("patient_story_data", {}).get("vital_signs", {})
+        
+        # 格式化一個簡單的文字回覆
+        vitals_text = ", ".join([f"{key.replace('_', ' ')}: {value}" for key, value in vital_signs.items()])
+        reply_message = f"[操作完成] 生命體徵測量結果如下：{vitals_text}"
+        
+        success_response = json.dumps({
+            "reply": reply_message,
+            "coverage": coverage_percentage,
+            "vital_signs": vital_signs  # 將結構化數據一併回傳
+        }, ensure_ascii=False)
+        
+        return Response(success_response, mimetype='application/json', status=200)
+
+    # --- ✨ 原有邏輯微調 ✨ ---
+    # (如果不是特殊指令，則照常呼叫 LLM)
     ai_instructions = case_data["ai_instructions"]
     patient_story = case_data["patient_story_data"]
 
