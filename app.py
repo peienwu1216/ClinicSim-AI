@@ -3,27 +3,26 @@ import requests
 import json
 
 # --- 應用程式設定 ---
-API_BASE_URL = "http://127.0.0.1:5001" # 我們 Mock Server 的地址
-CASE_ID = "case_chest_pain"
+API_BASE_URL = "http://127.0.0.1:5001"
+CASE_ID = "case_chest_pain_acs_01" # 使用我們更新後的 case_id
 
 # --- Streamlit 頁面設定 ---
-st.set_page_config(
-    page_title="ClinicSim AI - 臨床技能教練",
-    page_icon="🧑‍⚕️",
-    layout="centered"
-)
+st.set_page_config(page_title="ClinicSim AI - 臨床技能教練", page_icon="🧑‍⚕️", layout="wide")
 
 # --- 側邊欄 Sidebar ---
 with st.sidebar:
     st.title("🧑‍⚕️ ClinicSim AI")
-    st.info(
-        "這是一個為醫學生設計的 AI 臨床技能教練。\n\n"
-        "**我們的優勢：**\n"
-        "- **100% 本地運行**：保障學習過程的絕對隱私。\n"
-        "- **即時專業回饋**：每次練習後都能獲得改進建議。\n"
-        "- **無限次練習**：零成本、零壓力，直到你充滿自信。"
-    )
-    st.session_state.end_session_button = st.button("結束問診並生成報告")
+    st.info("一個為醫學生設計的 AI 臨床技能教練。")
+    
+    # --- ✨ 新增的儀表板 ✨ ---
+    st.subheader("問診覆蓋率 (Checklist Coverage)")
+    if "coverage" not in st.session_state:
+        st.session_state.coverage = 0
+    st.progress(st.session_state.coverage, text=f"{st.session_state.coverage}%")
+    st.caption("此儀表板會根據你的提問即時更新。")
+    
+    st.markdown("---")
+    st.session_state.end_session_button = st.button("進入總結與計畫", disabled=st.session_state.get("session_ended", False))
 
 
 # --- 初始化 Session State ---
@@ -34,6 +33,8 @@ if "report" not in st.session_state:
     st.session_state.report = None
 if "session_ended" not in st.session_state:
     st.session_state.session_ended = False
+if "coverage" not in st.session_state:
+    st.session_state.coverage = 0
 
 # --- 主介面 ---
 st.title("模擬診間：急性胸痛")
@@ -59,11 +60,14 @@ if prompt := st.chat_input("請開始問診...", disabled=st.session_state.sessi
                 response = requests.post(f"{API_BASE_URL}/ask_patient", json=payload)
                 response.raise_for_status() # 如果請求失敗，會拋出異常
                 
-                ai_reply = response.json().get("reply")
+                response_data = response.json()
+                ai_reply = response_data.get("reply")
+                # --- ✨ 改造點 ✨ ---
+                st.session_state.coverage = response_data.get("coverage", st.session_state.coverage)
                 
                 # 3. 將 AI 回應加入歷史紀錄並顯示
                 st.session_state.messages.append({"role": "assistant", "content": ai_reply})
-                st.markdown(ai_reply)
+                st.rerun()
 
             except requests.exceptions.RequestException as e:
                 st.error(f"無法連接到後端服務，請確認 mock_server.py 正在運行。\n\n錯誤訊息：{e}")
@@ -87,7 +91,7 @@ if st.session_state.end_session_button and not st.session_state.session_ended:
             st.session_state.session_ended = False # 讓使用者可以重試
 
 # ... in app.py, inside "with st.sidebar:" ...
-with st.expander("💡 OSCE 問答技巧小抄"):
+with st.expander("💡 OSCE 技巧小抄"):
     st.markdown("""
     **開場建議：**
     > 「您好，我是 OOO 醫學生。在您同意下，為您快速了解胸痛細節，目標是盡快找到原因並幫您舒服一些。」

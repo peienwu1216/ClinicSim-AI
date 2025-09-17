@@ -16,11 +16,25 @@ def load_case_data(case_id: str) -> dict:
     except FileNotFoundError:
         return None
 
+# --- ✨ 新增的 Helper Function ✨ ---
+def calculate_coverage(history: list, checklist: list) -> int:
+    """計算問診覆蓋率"""
+    if not history or not checklist:
+        return 0
+    student_dialogue = " ".join([msg.get("content", "") for msg in history if msg.get("role") == "user"])    
+    covered_count = 0
+    for item in checklist:
+        keywords = item.get("keywords", []) if isinstance(item, dict) else []
+        if any((kw in student_dialogue) for kw in keywords):
+            covered_count += 1
+    percentage = int((covered_count / len(checklist)) * 100) if len(checklist) > 0 else 0
+    return percentage
+
 # --- API Endpoints ---
 
 @app.route('/ask_patient', methods=['POST'])
 def ask_patient():
-    """處理與 AI 病人的對話"""
+    """處理與 AI 病人的對話，並回傳即時覆蓋率"""
     data = request.get_json()
     if not data or "history" not in data or "case_id" not in data:
         error_response = json.dumps({"error": "Invalid request body"}, ensure_ascii=False)
@@ -34,29 +48,39 @@ def ask_patient():
         error_response = json.dumps({"error": f"Case '{case_id}' not found"}, ensure_ascii=False)
         return Response(error_response, mimetype='application/json', status=404)
 
-    # --- 更新的部分：讀取新的 JSON 結構 ---
+    # --- ✨ 新增：計算覆蓋率 ✨ ---
+    checklist = case_data.get("feedback_system", {}).get("checklist", [])
+    coverage_percentage = calculate_coverage(history, checklist)
+
     ai_instructions = case_data["ai_instructions"]
     patient_story = case_data["patient_story_data"]
 
-    # 組合一個更精確的 System Prompt
     system_prompt = f"""
-    You are a patient actor. Your persona and behavioral instructions are defined below.
-    
-    # AI PERSONA AND INSTRUCTIONS
+    你是一位模擬病人（標準化病人）。從現在起，你的所有輸出必須使用『繁體中文』，嚴禁使用任何英文單字、片語或縮寫（包含括號或標點中的英文）。必要之專有名詞請以繁體中文全形描述。
+
+    【角色設定與回應規則】
+    1. 僅回答學生（user）直接詢問的內容，不主動透露未被詢問的資訊。
+    2. 回覆格式需為「[動作/情緒] 對話內容」，動作與情緒以中括號標示，且必須用繁體中文描述。
+    3. 嚴格依據下方個案資料作答；除非學生詢問，否則不要主動提供。
+
+    【個案行為規範（AI INSTRUCTIONS）】
     {json.dumps(ai_instructions, ensure_ascii=False)}
 
-    # CASE DATA FOR YOUR REFERENCE (Only use this information when asked by the student)
+    【個案資料（僅於被問及時使用）】
     {json.dumps(patient_story, ensure_ascii=False)}
 
-    The conversation history with the student is below. Based on all the information above, provide the next response as the patient.
+    請根據以上資訊，作為病人，以繁體中文回覆下一句話。
     """
-    
+
     messages = [{"role": "system", "content": system_prompt}] + history
 
     try:
         response = ollama.chat(model='llama3:8b', messages=messages)
         ai_reply = response['message']['content']
-        success_response = json.dumps({"reply": ai_reply}, ensure_ascii=False)
+        success_response = json.dumps({
+            "reply": ai_reply,
+            "coverage": coverage_percentage
+        }, ensure_ascii=False)
         return Response(success_response, mimetype='application/json', status=200)
     except Exception as e:
         error_response = json.dumps({"error": str(e)}, ensure_ascii=False)
@@ -88,44 +112,43 @@ def get_feedback_report():
 
     # ... 在 get_feedback_report 函式中 ...
     analyst_prompt = f"""
-    You are a professional OSCE evaluator from Taiwan, conducting a detailed and objective evaluation of a student's performance. Your entire output MUST be in Traditional Chinese (繁體中文).
+    你是一位台灣的 OSCE 專業評估者，請以嚴謹且客觀的方式評估學生的表現。你的整份輸出必須使用『繁體中文』，嚴禁輸出任何英文單字、片語或縮寫（包含括號或標點中的英文）。若來源對話出現英文或縮寫，請以繁體中文完整轉述。
 
-    ### CONTEXT
-    - The **'user'** in the conversation log is the **'student'** being evaluated.
-    - The **'assistant'** in the conversation log is the **'simulated patient'**.
+    ### 背景說明
+    - 對話紀錄中的 'user' 代表受評的『學生』。
+    - 對話紀錄中的 'assistant' 代表『模擬病人』。
 
-    ### CONVERSATION LOG
+    ### 對話紀錄
     ---
     {conversation_text}
     ---
 
-    ### EVALUATION CHECKLIST
+    ### 評估清單（Checklist）
     ---
     {checklist_text}
     ---
 
-    ### CRITICAL INSTRUCTIONS
+    ### 核心評估規範
 
-    1.  **ANALYZE THE STUDENT'S ACTIONS**: Your entire evaluation must focus on the **student's ('user') performance**. Analyze the questions the student asked. **DO NOT** describe what the patient ('assistant') said, except as a result of the student's questioning.
+    1.  僅分析學生（user）的問診與行為。除非作為學生提問後的結果，否則不要描述病人的自述。
 
-    2.  **EVIDENCE-BASED JUSTIFICATION**: For each checklist point, you MUST provide a rating (✅, ⚠️, or ❌) AND a justification. The justification **MUST quote or accurately describe the student's specific question or action**. If the student did not ask, the justification is "學生未詢問此項目".
+    2.  逐項清單給出等級（✅、⚠️、❌）與依據。依據需引用或準確描述學生的具體提問或行為；若未詢問，請填寫「學生未詢問此項目」。
 
-    3.  **STRICT RATING SYSTEM**:
-        - ✅: The student's question directly and clearly addresses the checklist point.
-        - ⚠️: The student's question is related but incomplete, imprecise, or they did not follow up on a key finding.
-        - ❌: The student did not ask about this point at all.
+    3.  嚴格評分標準：
+        - ✅：學生的提問直接且清楚地覆蓋該清單項目。
+        - ⚠️：學生有相關提問但不完整／不精確，或未追問關鍵細節。
+        - ❌：學生完全未涉及該項目。
 
-    4.  **ROLE ADHERENCE**: Your role is to EVALUATE the student. DO NOT write any summary or plan as if you were the student.
+    4.  評估者角色：僅進行評估，請勿以學生口吻撰寫計畫。
 
-    5.  **EXAMPLE OF CORRECT JUSTIFICATION**:
-        - **CORRECT**: `- ✅ 疼痛位置 (Site): 學生透過提問『請問你哪裡痛？』成功問診。`
-        - **INCORRECT**: `- ✅ 疼痛位置 (Site): 學生回答『我的胸口很痛』。`
+    5.  正確示例：
+        - 正確：- ✅ 疼痛位置 (Site)：學生透過提問「請問你哪裡痛？」成功問診。
+        - 錯誤：- ✅ 疼痛位置 (Site)：學生回答「我的胸口很痛」。
 
-    ### OUTPUT FORMAT
-    Generate the report in Markdown format with the following structure:
-    1.  Start with `### 診後分析報告`.
-    2.  List each checklist item using the format: `- [RATING] [Checklist Point]: [Justification based on student's action]`.
-    3.  End with a `### 總結與建議` section providing objective feedback on the student's performance.
+    ### 輸出格式（Markdown）
+    1.  以「### 診後分析報告」作為開頭。
+    2.  依序列出各清單項目，格式為：`- [等級] [項目名稱]：基於學生行為之具體依據`。
+    3.  以「### 總結與建議」作結，提供客觀可行的改進建議。
     """
 
     try:
