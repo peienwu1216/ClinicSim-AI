@@ -9,6 +9,7 @@ def call_ai(messages: str)-> str:
         base_url="http://localhost:8000/api/v1",
         api_key="lemonade"  # required but unused
     )
+    #維尼到此一遊
 
     # Create a chat completion
     completion = client.chat.completions.create(
