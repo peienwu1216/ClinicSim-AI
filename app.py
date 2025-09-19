@@ -3,7 +3,7 @@ import requests
 import json
 
 # --- 應用程式設定 ---
-API_BASE_URL = "http://127.0.0.1:5001"
+API_BASE_URL = "http://127.0.0.1:5000"
 CASE_ID = "case_chest_pain_acs_01" # 使用我們更新後的 case_id
 
 # --- Streamlit 頁面設定 ---

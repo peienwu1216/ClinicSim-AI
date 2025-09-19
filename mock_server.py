@@ -1,10 +1,24 @@
 import json
-import ollama
+import os
+import requests
+#import ollama
 from flask import Flask, request, Response
+from call_AI import call_ai
 
 # 初始化 Flask 應用程式
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False # 確保中文字符正常顯示
+
+# --- LLM Config ---
+# 透過環境變數切換：
+#   LLM_PROVIDER: 'ollama' (預設) 或 'openai_compat'（如 Lemonade 提供 OpenAI 相容 API）
+#   LLM_BASE_URL: 當使用 openai_compat 時的基底網址，例如 http://localhost:11434 或 http://localhost:8000
+#   LLM_API_KEY:  若需要授權時的金鑰（可選）
+#   LLM_MODEL:    模型名稱，例如 'llama3:8b' 或 'qwen2.5:7b'
+LLM_PROVIDER = "openai_compat"
+LLM_BASE_URL = 'http://localhost:8000'
+LLM_API_KEY = 'lemonade'
+LLM_MODEL = 'Qwen3-1.7B-GGUF'
 
 # --- Helper Functions ---
 def load_case_data(case_id: str) -> dict:
@@ -32,8 +46,13 @@ def calculate_coverage(history: list, checklist: list) -> int:
 
 # --- API Endpoints ---
 
+@app.route('/', methods=['POST', 'GET'])
+def home():
+    return "<br>ClinicSim-AI Mock Server is running.</br>"
+
 @app.route('/ask_patient', methods=['POST'])
 def ask_patient():
+    print("ask_patient")
     """處理與 AI 病人的對話，並回傳即時覆蓋率"""
     data = request.get_json()
     if not data or "history" not in data or "case_id" not in data:
@@ -92,11 +111,11 @@ def ask_patient():
     請根據以上資訊，作為病人，以繁體中文回覆下一句話。
     """
 
-    messages = [{"role": "system", "content": system_prompt}] + history
+    messages = str(system_prompt) + str(history)
 
     try:
-        response = ollama.chat(model='llama3:8b', messages=messages)
-        ai_reply = response['message']['content']
+        print(messages)
+        ai_reply = call_ai(messages)
         success_response = json.dumps({
             "reply": ai_reply,
             "coverage": coverage_percentage
@@ -172,8 +191,7 @@ def get_feedback_report():
     """
 
     try:
-        response = ollama.chat(model='llama3:8b', messages=[{"role": "user", "content": analyst_prompt}])
-        report = response['message']['content']
+        report = call_ai(analyst_prompt)
         success_response = json.dumps({"report_text": report}, ensure_ascii=False)
         return Response(success_response, mimetype='application/json', status=200)
     except Exception as e:
@@ -182,4 +200,4 @@ def get_feedback_report():
 
 # --- 啟動伺服器 ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

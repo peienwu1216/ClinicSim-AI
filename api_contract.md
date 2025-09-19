@@ -16,7 +16,7 @@ This document defines the API endpoints for the ClinicSim AI backend service. Th
       {"role": "assistant", "content": "醫生，我胸口很痛..."}
     ],
     "case_id": "chest_pain_01"
-  }
+  } 
   ```
 - **Response Body (JSON):**
   ```json
