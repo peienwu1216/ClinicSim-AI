@@ -10,7 +10,7 @@ CASE_ID = "case_chest_pain_acs_01" # 使用我們更新後的 case_id
 st.set_page_config(page_title="ClinicSim AI - 臨床技能教練", page_icon="🧑‍⚕️", layout="wide")
 
 # --- 初始化 Session State ---
-# 'session_state' 是 Streamlit 用來在每次互動間保存變數的方法
+# 'session_state' 是 Streamlit 用來在每次互動間保存變數的方法 .
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "report" not in st.session_state:
