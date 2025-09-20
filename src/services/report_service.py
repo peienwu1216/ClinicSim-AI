@@ -1,0 +1,273 @@
+"""
+報告生成服務
+"""
+
+import re
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+
+from ..models.conversation import Conversation, MessageRole
+from ..models.case import Case
+from ..models.report import Report, ReportType, Citation
+from ..services.ai_service import get_ai_service
+from ..services.rag_service import RAGService
+from ..services.case_service import CaseService
+from ..config.settings import get_settings
+
+
+class ReportService:
+    """報告生成服務"""
+    
+    def __init__(self, settings=None, case_service=None, ai_service=None, rag_service=None):
+        self.settings = settings or get_settings()
+        self.case_service = case_service or CaseService(self.settings)
+        self.ai_service = ai_service or get_ai_service(self.settings)
+        self.rag_service = rag_service or RAGService(self.settings)
+    
+    def generate_feedback_report(self, conversation: Conversation) -> Report:
+        """生成即時回饋報告"""
+        case = self.case_service.get_case(conversation.case_id)
+        if not case:
+            raise ValueError(f"Case not found: {conversation.case_id}")
+        
+        # 生成基本分析報告
+        report_content = self._generate_basic_analysis(conversation, case)
+        
+        # 如果有 RAG 服務，添加相關指引
+        if self.rag_service.is_available():
+            rag_context = self.rag_service.search("急性胸痛診斷和治療指引")
+            if rag_context and "RAG 系統未初始化" not in rag_context:
+                report_content += f"\n\n### 相關臨床指引\n{rag_context}"
+        
+        report = Report(
+            report_type=ReportType.FEEDBACK,
+            content=report_content,
+            case_id=conversation.case_id,
+            coverage=conversation.coverage,
+            metadata={
+                "generated_at": datetime.now().isoformat(),
+                "conversation_length": len(conversation.messages)
+            }
+        )
+        
+        conversation.mark_report_generated()
+        return report
+    
+    def generate_detailed_report(self, conversation: Conversation) -> Report:
+        """生成詳細分析報告（使用 LLM + RAG）"""
+        case = self.case_service.get_case(conversation.case_id)
+        if not case:
+            raise ValueError(f"Case not found: {conversation.case_id}")
+        
+        # 生成 RAG 查詢和引註
+        rag_queries = self.rag_service.generate_rag_queries(
+            conversation.get_conversation_text(),
+            case_type="chest_pain"
+        )
+        
+        citations = []
+        if self.rag_service.is_available():
+            citations = self.rag_service.search_with_citations(rag_queries)
+        
+        # 生成詳細報告內容
+        report_content = self._generate_detailed_analysis_with_llm(
+            conversation, case, citations
+        )
+        
+        report = Report(
+            report_type=ReportType.DETAILED,
+            content=report_content,
+            case_id=conversation.case_id,
+            citations=citations,
+            rag_queries=rag_queries,
+            coverage=conversation.coverage,
+            metadata={
+                "generated_at": datetime.now().isoformat(),
+                "conversation_length": len(conversation.messages),
+                "rag_available": self.rag_service.is_available(),
+                "citations_count": len(citations)
+            }
+        )
+        
+        conversation.mark_detailed_report_generated()
+        return report
+    
+    def _generate_basic_analysis(self, conversation: Conversation, case: Case) -> str:
+        """生成基本分析報告（不使用 LLM）"""
+        checklist = case.get_feedback_checklist()
+        critical_actions = case.get_critical_actions()
+        user_messages = conversation.get_user_messages()
+        
+        # 分析覆蓋率
+        conversation_text = conversation.get_conversation_text().lower()
+        
+        report_items = []
+        covered_count = 0
+        partial_count = 0
+        
+        for item in checklist:
+            keywords = item.get('keywords', [])
+            matched_keywords = [kw for kw in keywords if kw.lower() in conversation_text]
+            
+            if len(matched_keywords) >= 2:
+                report_items.append(f"- ✅ {item['point']}：學生透過提問「{matched_keywords[0]}」等成功問診")
+                covered_count += 1
+            elif len(matched_keywords) == 1:
+                report_items.append(f"- ⚠️ {item['point']}：學生有相關提問「{matched_keywords[0]}」，但可更深入")
+                partial_count += 1
+            else:
+                report_items.append(f"- ❌ {item['point']}：學生未詢問此項目")
+        
+        # 分析關鍵行動
+        critical_analysis = []
+        for action in critical_actions:
+            if any(keyword in conversation_text for keyword in ["心電圖", "ECG", "12導程", "立刻", "馬上", "10分"]):
+                critical_analysis.append(f"- ✅ 關鍵決策：學生提及了「{action}」")
+            else:
+                critical_analysis.append(f"- ❌ 關鍵決策：學生未提及「{action}」")
+        
+        coverage_percentage = conversation.coverage
+        
+        return f"""### 診後分析報告
+
+**問診覆蓋率：{coverage_percentage}% ({covered_count}/{len(checklist)})**
+**完整項目：{covered_count} | 部分項目：{partial_count} | 未覆蓋：{len(checklist) - covered_count - partial_count}**
+
+**詳細評估：**
+{chr(10).join(report_items)}
+
+**關鍵行動評估：**
+{chr(10).join(critical_analysis)}
+
+### 總結與建議
+
+**優點：**
+- 問診覆蓋率達 {coverage_percentage}%
+- 學生展現了基本的問診技巧
+- 能夠與病人建立良好的溝通
+
+**改進建議：**
+1. **系統性問診**：建議按照 OPQRST 結構進行問診
+2. **深入探索**：對於已觸及的主題，可以進一步深入詢問
+3. **關鍵決策**：加強臨床決策能力，及時提出關鍵檢查
+4. **完整性**：注意問診的全面性，避免遺漏重要項目
+
+**具體建議：**
+- 多練習標準化問診流程
+- 加強對關鍵症狀的識別能力
+- 提升臨床決策的時效性
+
+*註：此為即時分析報告，詳細報告請點擊「生成完整報告」按鈕。*"""
+    
+    def _generate_detailed_analysis_with_llm(self, conversation: Conversation, case: Case, citations: List[Citation]) -> str:
+        """使用 LLM 生成詳細分析報告"""
+        # 構建 RAG 上下文
+        rag_context = "\n\n".join([
+            f"### 關於 {citation.query} [引註 {citation.id}]\n{citation.content}"
+            for citation in citations
+        ]) if citations else "未找到相關臨床指引"
+        
+        # 構建詳細提示詞
+        detailed_prompt = f"""
+        你是一位資深的 OSCE 臨床教師和心臟科專家。請根據以下資訊生成一份詳細的診後分析報告。
+
+        ### 學生問診表現
+        {conversation.get_conversation_text()}
+
+        ### 評估標準
+        **檢查清單：**
+        {chr(10).join([f"- {item['point']} (類別: {item['category']})" for item in case.get_feedback_checklist()])}
+
+        **關鍵行動：**
+        {chr(10).join([f"- {action}" for action in case.get_critical_actions()])}
+
+        ### 相關臨床指引 (RAG 系統提供)
+        {rag_context}
+
+        ### 你的任務
+        請生成一份專業、詳細的分析報告，包含以下部分：
+
+        ## 1. 問診表現評估
+        - 系統性分析學生的問診技巧
+        - 指出優點和不足之處
+        - 引用具體的對話內容作為依據
+
+        ## 2. 臨床決策分析
+        - 評估學生的臨床思維過程
+        - 分析是否識別出關鍵症狀和危險因子
+        - 評估決策的時效性和準確性
+
+        ## 3. 知識應用評估
+        - 評估學生對急性胸痛診斷流程的理解
+        - 分析是否遵循標準化問診程序
+        - 評估對關鍵檢查的認知
+
+        ## 4. 改進建議
+        - 基於 RAG 提供的臨床指引，給出具體建議
+        - 提供實用的學習資源和練習方向
+        - 建議下一步的學習重點
+
+        ## 5. 評分總結
+        - 給出各項目的具體評分 (1-10分)
+        - 提供總體評價和等級
+        - 建議是否需要額外練習
+
+        ### 重要要求：
+        1. 必須使用繁體中文撰寫整份報告
+        2. 在引用臨床指引時，必須使用 [引註 X] 的格式標記，例如 [引註 1]、[引註 2] 等
+        3. 每個建議都應該引用相應的臨床指引，格式為：根據 [引註 X] 的指引...
+        4. 語氣專業但友善，適合醫學生學習使用
+        5. 確保所有醫學術語使用正確的繁體中文
+        """
+        
+        # 構建訊息
+        from ..models.conversation import Message
+        messages = [Message(role=MessageRole.SYSTEM, content=detailed_prompt)]
+        
+        try:
+            # 使用 AI 服務生成報告
+            report_content = self.ai_service.chat(messages)
+            
+            # 如果 AI 沒有生成引註標記，手動添加
+            if not re.search(r'\[引註 \d+\]', report_content) and citations:
+                report_content += self._append_citation_suggestions(citations)
+            
+            return report_content
+            
+        except Exception as e:
+            # 備用方案：使用基本分析 + RAG 內容
+            basic_analysis = self._generate_basic_analysis(conversation, case)
+            return f"""
+# 詳細診後分析報告
+
+{basic_analysis}
+
+---
+
+## RAG 提供的臨床指引
+
+{rag_context}
+
+---
+
+*註：此為備用詳細報告，包含 RAG 搜尋的臨床指引內容。AI 服務暫時無法使用。*
+            """
+    
+    def _append_citation_suggestions(self, citations: List[Citation]) -> str:
+        """在報告末尾添加基於引註的建議"""
+        suggestions = "\n\n## 基於臨床指引的建議\n\n"
+        
+        for citation in citations:
+            suggestions += f"**根據 [引註 {citation.id}] 的指引：**\n"
+            
+            content = citation.content
+            if 'ECG' in content or '心電圖' in content:
+                suggestions += "- ECG 心電圖檢查應在 10 分鐘內完成，這是急性胸痛評估的第一優先檢查\n"
+            if 'STEMI' in content:
+                suggestions += "- 疑似 STEMI 時應立即啟動心導管團隊，時間就是心肌\n"
+            if 'OPQRST' in content:
+                suggestions += "- 問診應遵循 OPQRST 結構：發作時間、誘發因子、疼痛性質、放射位置、嚴重程度、持續時間\n"
+            
+            suggestions += "\n"
+        
+        return suggestions

@@ -1,0 +1,143 @@
+"""
+對話管理服務
+"""
+
+import re
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+
+from ..models.conversation import Conversation, Message, MessageRole, ConversationState
+from ..models.case import Case
+from ..models.vital_signs import VitalSigns
+from ..services.ai_service import get_ai_service
+from ..services.case_service import CaseService
+from ..config.settings import get_settings
+
+
+class ConversationService:
+    """對話管理服務"""
+    
+    def __init__(self, settings=None, case_service=None, ai_service=None):
+        self.settings = settings or get_settings()
+        self.case_service = case_service or CaseService(self.settings)
+        self.ai_service = ai_service or get_ai_service(self.settings)
+        self._conversations: Dict[str, Conversation] = {}
+    
+    def create_conversation(self, case_id: str) -> tuple[Conversation, str]:
+        """創建新對話"""
+        conversation = Conversation(case_id=case_id)
+        conversation_id = f"{case_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self._conversations[conversation_id] = conversation
+        return conversation, conversation_id
+    
+    def get_conversation(self, conversation_id: str) -> Optional[Conversation]:
+        """取得對話"""
+        return self._conversations.get(conversation_id)
+    
+    def add_message(self, conversation_id: str, role: MessageRole, content: str) -> Optional[Conversation]:
+        """新增訊息到對話"""
+        conversation = self._conversations.get(conversation_id)
+        if not conversation:
+            return None
+        
+        conversation.add_message(role, content)
+        return conversation
+    
+    def generate_ai_response(self, conversation_id: str) -> Optional[str]:
+        """生成 AI 回應"""
+        conversation = self._conversations.get(conversation_id)
+        if not conversation:
+            return None
+        
+        # 載入案例
+        case = self.case_service.get_case(conversation.case_id)
+        if not case:
+            return "錯誤：找不到指定的案例檔案。"
+        
+        # 構建訊息列表
+        messages = [Message(role=MessageRole.SYSTEM, content=case.get_system_prompt())]
+        messages.extend(conversation.messages)
+        
+        # 生成回應
+        try:
+            response = self.ai_service.chat(messages)
+            
+            # 更新覆蓋率和生命體徵
+            self._update_conversation_metrics(conversation, case)
+            
+            return response
+        except Exception as e:
+            return f"AI 服務錯誤：{str(e)}"
+    
+    def _update_conversation_metrics(self, conversation: Conversation, case: Case) -> None:
+        """更新對話指標（覆蓋率、生命體徵等）"""
+        # 計算覆蓋率
+        coverage = self._calculate_coverage(conversation, case)
+        conversation.coverage = coverage
+        
+        # 檢查是否需要更新生命體徵
+        if self._should_update_vital_signs(conversation):
+            conversation.vital_signs = self._generate_vital_signs(case)
+    
+    def _calculate_coverage(self, conversation: Conversation, case: Case) -> int:
+        """計算問診覆蓋率"""
+        checklist = case.get_feedback_checklist()
+        if not checklist:
+            return 0
+        
+        # 將對話轉換為文字
+        conversation_text = conversation.get_conversation_text().lower()
+        
+        covered_items = 0
+        for item in checklist:
+            keywords = item.get('keywords', [])
+            if any(keyword.lower() in conversation_text for keyword in keywords):
+                covered_items += 1
+        
+        coverage_percentage = int((covered_items / len(checklist)) * 100) if checklist else 0
+        return min(coverage_percentage, 100)
+    
+    def _should_update_vital_signs(self, conversation: Conversation) -> bool:
+        """檢查是否需要更新生命體徵"""
+        last_message = conversation.messages[-1] if conversation.messages else None
+        if not last_message:
+            return False
+        
+        # 檢查是否包含生命體徵相關指令
+        vital_signs_keywords = ["測量", "生命徵象", "vital", "心率", "血壓", "呼吸", "血氧"]
+        return any(keyword in last_message.content for keyword in vital_signs_keywords)
+    
+    def _generate_vital_signs(self, case: Case) -> Dict[str, Any]:
+        """生成生命體徵數據"""
+        # 從案例數據中提取生命體徵，如果沒有則使用預設值
+        patient_data = case.data.patient_story_data
+        
+        # 嘗試從案例中獲取生命體徵
+        if "vital_signs" in patient_data:
+            return patient_data["vital_signs"]
+        
+        # 預設生命體徵（基於急性胸痛案例）
+        return {
+            "HR_bpm": 95,
+            "SpO2_room_air": 96,
+            "BP_mmHg": "140/85",
+            "RR_bpm": 22
+        }
+    
+    def end_conversation(self, conversation_id: str) -> Optional[Conversation]:
+        """結束對話"""
+        conversation = self._conversations.get(conversation_id)
+        if conversation:
+            conversation.end_conversation()
+        return conversation
+    
+    def get_conversation_history(self, conversation_id: str) -> List[Dict[str, Any]]:
+        """取得對話歷史（用於前端顯示）"""
+        conversation = self._conversations.get(conversation_id)
+        if not conversation:
+            return []
+        
+        return [
+            {"role": msg.role.value, "content": msg.content}
+            for msg in conversation.messages
+        ]
