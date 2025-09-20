@@ -21,10 +21,18 @@ class Settings(BaseSettings):
     host: str = Field(default="0.0.0.0", env="HOST")
     port: int = Field(default=5001, env="PORT")
     
+    # 前端客戶端設定（用於前端連接後端）
+    backend_host: str = Field(default="127.0.0.1", env="BACKEND_HOST")
+    backend_port: int = Field(default=5001, env="BACKEND_PORT")
+    
     # AI 模型設定
     ai_provider: str = Field(default="ollama", env="AI_PROVIDER")  # ollama, lemonade, openai
     ollama_host: str = Field(default="http://127.0.0.1:11434", env="OLLAMA_HOST")
     ollama_model: str = Field(default="llama3:8b", env="OLLAMA_MODEL")
+    
+    # Lemonade Server 設定
+    lemonade_base_url: str = Field(default="http://localhost:8080/api/v1", env="LEMONADE_BASE_URL")
+    lemonade_model: str = Field(default="Llama-3.2-1B-Instruct-Hybrid", env="LEMONADE_MODEL")
     
     # 路徑設定
     project_root: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent)
@@ -42,10 +50,12 @@ class Settings(BaseSettings):
     # 案例設定
     default_case_id: str = Field(default="case_chest_pain_acs_01", env="DEFAULT_CASE_ID")
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "extra": "ignore"  # 忽略額外的環境變數
+    }
         
     def get_case_path(self, case_id: str) -> Path:
         """取得案例檔案路徑"""

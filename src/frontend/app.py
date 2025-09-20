@@ -25,7 +25,7 @@ class StreamlitApp:
     
     def __init__(self):
         self.settings = get_settings()
-        self.api_base_url = f"http://{self.settings.host}:{self.settings.port}"
+        self.api_base_url = f"http://{self.settings.backend_host}:{self.settings.backend_port}"
         self.case_id = self.settings.default_case_id
         
         # 初始化組件

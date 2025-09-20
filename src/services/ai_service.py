@@ -6,6 +6,13 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 from enum import Enum
 
+# Lemonade Server 相關套件
+try:
+    from openai import OpenAI
+except ImportError:
+    # 提醒使用者安裝
+    raise ImportError("openai package not found. Please install it by running: pip install openai")
+
 from ..models.conversation import Message, MessageRole
 
 
@@ -79,31 +86,58 @@ class OllamaAIService(AIService):
 
 
 class LemonadeAIService(AIService):
-    """Lemonade AI 服務實現"""
+    """Lemonade AI 服務實現 (使用 OpenAI 相容 API)"""
     
-    def __init__(self):
-        self._available = self._check_availability()
-    
-    def _check_availability(self) -> bool:
-        """檢查 Lemonade 是否可用"""
+    def __init__(self, base_url: str, model: str, api_key: str = "lemonade"):
+        self.model = model
         try:
-            from lemonade import expose
-            return True
-        except ImportError:
-            return False
-    
+            self.client = OpenAI(base_url=base_url, api_key=api_key)
+            print(f"✅ 初始化 Lemonade 客戶端成功: {base_url}")
+        except Exception as e:
+            print(f"❌ 無法初始化 Lemonade (OpenAI) 客戶端: {e}")
+            self.client = None
+
     def chat(self, messages: List[Message], **kwargs) -> str:
-        """發送聊天請求到 Lemonade"""
-        if not self.is_available():
-            raise RuntimeError("Lemonade service not available")
+        """發送聊天請求到 Lemonade Server"""
+        if not self.client:
+            raise RuntimeError("Lemonade client not initialized or failed to initialize.")
+
+        # 將 Message 物件轉換為 OpenAI 需要的字典格式
+        lemonade_messages = [
+            {"role": msg.role.value, "content": msg.content} 
+            for msg in messages
+        ]
         
-        # 這裡需要根據實際的 Lemonade API 進行實現
-        # 目前返回模擬回應
-        return "[From Lemonade] 這是一個來自 Lemonade 的回應..."
-    
+        try:
+            print(f"🚀 正在呼叫 Lemonade Server: {self.client.base_url}")
+            print(f"📝 使用模型: {self.model}")
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=lemonade_messages,
+                **kwargs
+            )
+            result = response.choices[0].message.content
+            print(f"✅ Lemonade Server 回應成功")
+            return result
+        except Exception as e:
+            error_msg = f"❌ 呼叫 Lemonade chat API 失敗: {e}"
+            print(error_msg)
+            return f"無法連接到 Lemonade 服務，請檢查服務是否正在運行於 {self.client.base_url}。錯誤詳情: {e}"
+
     def is_available(self) -> bool:
         """檢查 Lemonade 服務是否可用"""
-        return self._available
+        if not self.client:
+            print("⚠️ Lemonade 客戶端未初始化")
+            return False
+        try:
+            # 透過列出模型來驗證連線
+            models = self.client.models.list()
+            print(f"✅ Lemonade Server 連接成功，位於 {self.client.base_url}")
+            print(f"📋 可用模型: {[model.id for model in models.data]}")
+            return True
+        except Exception as e:
+            print(f"⚠️ 無法連接到 Lemonade Server: {e}")
+            return False
 
 
 class MockAIService(AIService):
@@ -133,7 +167,10 @@ class AIServiceFactory:
                 model=kwargs.get("model", "llama3:8b")
             )
         elif provider == AIProvider.LEMONADE:
-            return LemonadeAIService()
+            return LemonadeAIService(
+                base_url=kwargs.get("base_url"),
+                model=kwargs.get("model")
+            )
         elif provider == AIProvider.MOCK:
             return MockAIService()
         else:
@@ -150,7 +187,10 @@ class AIServiceFactory:
                 model=config.ollama_model
             )
         elif provider == AIProvider.LEMONADE:
-            return LemonadeAIService()
+            return LemonadeAIService(
+                base_url=config.lemonade_base_url,
+                model=config.lemonade_model
+            )
         elif provider == AIProvider.MOCK:
             return MockAIService()
         else:
