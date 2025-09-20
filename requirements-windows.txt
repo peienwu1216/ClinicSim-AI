@@ -1,14 +1,14 @@
-# Windows 環境特殊依賴
-# 解決 Windows 特有的兼容性問題
+# Windows-specific dependencies
+# Resolves Windows-specific compatibility issues
 
-# 基礎依賴
+# Base dependencies
 -r requirements-dev.txt
 
-# Windows 特殊依賴
+# Windows-specific dependencies
 pywin32; sys_platform == "win32"
 winshell; sys_platform == "win32"
 
-# Windows 上的 FAISS 替代方案 (如果 faiss-cpu 有問題)
-# faiss-cpu 在 Windows 上可能有兼容性問題
-# 可以考慮使用其他向量數據庫
+# FAISS alternative for Windows (if faiss-cpu has issues)
+# faiss-cpu may have compatibility issues on Windows
+# Consider using alternative vector database
 chromadb

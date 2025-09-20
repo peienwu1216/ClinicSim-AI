@@ -1,27 +1,27 @@
-# 生產環境依賴 (Lemonade Server)
-# 不包含本地開發工具，專注於生產運行
+# Production environment dependencies (Lemonade Server)
+# Excludes local development tools, focused on production runtime
 
-# 基礎依賴
+# Base dependencies
 -r requirements-base.txt
 
-# AI/LLM 相關 (Lemonade 環境)
-# 注意：Lemonade 可能有自己的 AI 服務，可能需要調整
+# AI/LLM related (Lemonade environment)
+# Note: Lemonade may have its own AI services, adjustments may be needed
 sentence-transformers
 
-# RAG 系統 (生產優化版本)
+# RAG system (production optimized version)
 faiss-cpu==1.12.0
 langchain==0.3.27
 langchain-community==0.3.29
 langchain-core==0.3.76
 langchain-text-splitters==0.3.11
 
-# 生產環境優化
+# Production environment optimization
 gunicorn
 waitress
 
-# 監控和日誌
+# Monitoring and logging
 loguru
 prometheus-client
 
-# 安全相關
+# Security related
 cryptography
