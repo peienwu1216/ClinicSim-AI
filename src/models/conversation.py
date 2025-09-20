@@ -38,6 +38,9 @@ class Conversation(BaseModel):
     coverage: int = 0
     vital_signs: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
+    # 新增：追蹤已覆蓋的檢查項目
+    covered_items: List[str] = Field(default_factory=list)  # 已完全覆蓋的項目ID
+    partially_covered_items: List[str] = Field(default_factory=list)  # 部分覆蓋的項目ID
     
     def add_message(self, role: MessageRole, content: str, **kwargs) -> None:
         """新增訊息"""

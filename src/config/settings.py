@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     # 案例設定
     default_case_id: str = Field(default="case_chest_pain_acs_01", env="DEFAULT_CASE_ID")
     
+    # Notion API 設定
+    notion_api_key: Optional[str] = Field(default=None, env="NOTION_API_KEY")
+    notion_database_id: Optional[str] = Field(default=None, env="NOTION_DATABASE_ID")
+    
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",

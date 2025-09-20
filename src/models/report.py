@@ -19,6 +19,7 @@ class Citation(BaseModel):
     query: str
     source: str
     content: str
+    page_number: Optional[int] = None  # 新增頁碼欄位
     metadata: Optional[Dict[str, Any]] = None
 
 

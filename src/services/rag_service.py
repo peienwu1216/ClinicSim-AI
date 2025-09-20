@@ -322,28 +322,85 @@ class RAGService:
         citations = []
         
         for i, query in enumerate(queries, 1):
-            context = self.search(query, k)
+            if not self.vector_store:
+                continue
+                
+            k = k or self.settings.rag_search_k
+            print(f"[RAG] 正在搜尋關於 '{query}' 的資料...")
             
-            if context and "RAG 系統未初始化" not in context and "找不到相關資料" not in context:
+            try:
+                # 使用相似度搜尋，並獲取分數
+                results_with_scores = self.vector_store.similarity_search_with_score(query, k=k*2)
+                
+                if not results_with_scores:
+                    continue
+                
+                # 過濾低相關性的結果
+                filtered_results = []
+                for doc, score in results_with_scores:
+                    if score < 1.2 and self._is_content_relevant(doc.page_content, query):
+                        filtered_results.append((doc, score))
+                    if len(filtered_results) >= k:
+                        break
+                
+                if not filtered_results:
+                    # 如果過濾後沒有結果，使用前k個結果
+                    for doc, score in results_with_scores[:k]:
+                        if self._is_content_relevant(doc.page_content, query):
+                            filtered_results.append((doc, score))
+                            if len(filtered_results) >= k:
+                                break
+                
+                if not filtered_results:
+                    continue
+                
+                # 取最相關的結果作為引註
+                best_doc, best_score = filtered_results[0]
+                
+                # 提取來源資訊
+                source_file = best_doc.metadata.get('source', '未知來源')
+                page_number = best_doc.metadata.get('page', 0) + 1  # page 是從 0 開始的
+                
+                # 美化檔名顯示
+                filename = source_file.split('/')[-1]
+                clean_name = filename.replace('.pdf', '').replace('.txt', '').replace('.jpg', '').replace('_', ' ')
+                
+                # 格式化內容
+                formatted_content = self._format_document_content_with_query(
+                    source_file, best_doc.page_content, query
+                )
+                
                 citation = Citation(
                     id=i,
                     query=query,
-                    source=f"臨床指引 {i}",
-                    content=context,
-                    metadata={"search_k": k or self.settings.rag_search_k}
+                    source=clean_name,
+                    content=formatted_content,
+                    page_number=page_number,
+                    metadata={
+                        "search_k": k,
+                        "score": float(best_score),  # 轉換為 Python float
+                        "original_source": source_file
+                    }
                 )
                 citations.append(citation)
+                
+            except Exception as e:
+                print(f"[RAG] 搜尋失敗: {e}")
+                continue
         
         return citations
     
     def generate_rag_queries(self, conversation_text: str, case_type: str = "chest_pain") -> List[str]:
         """根據對話內容和案例類型生成 RAG 查詢"""
+        # 基礎查詢
         base_queries = {
             "chest_pain": [
                 "急性胸痛診斷流程和檢查順序",
                 "ECG 心電圖在胸痛評估中的重要性",
                 "STEMI 和不穩定型心絞痛的診斷標準",
-                "胸痛問診的 OPQRST 技巧和重點"
+                "胸痛問診的 OPQRST 技巧和重點",
+                "OSCE 問診技巧和病史詢問指南",
+                "急性胸痛的鑑別診斷和檢查項目"
             ],
             "default": [
                 "臨床診斷流程和檢查順序",
@@ -353,7 +410,25 @@ class RAGService:
             ]
         }
         
-        return base_queries.get(case_type, base_queries["default"])
+        queries = base_queries.get(case_type, base_queries["default"])
+        
+        # 根據對話內容動態調整查詢優先順序
+        conversation_lower = conversation_text.lower()
+        
+        # 如果對話中提到特定內容，優先相關查詢
+        if any(keyword in conversation_lower for keyword in ["問診", "病史", "osce"]):
+            queries.insert(0, "OSCE 問診技巧和病史詢問指南")
+        
+        if any(keyword in conversation_lower for keyword in ["ecg", "心電圖", "12導程"]):
+            queries.insert(0, "ECG 心電圖在胸痛評估中的重要性")
+            
+        if any(keyword in conversation_lower for keyword in ["鑑別", "診斷", "檢查"]):
+            queries.insert(0, "急性胸痛的鑑別診斷和檢查項目")
+            
+        if any(keyword in conversation_lower for keyword in ["opqrst", "疼痛", "性質"]):
+            queries.insert(0, "胸痛問診的 OPQRST 技巧和重點")
+        
+        return queries[:4]  # 返回前4個最相關的查詢
     
     def is_available(self) -> bool:
         """檢查 RAG 服務是否可用"""
