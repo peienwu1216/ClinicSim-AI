@@ -58,7 +58,7 @@ class Settings(BaseSettings):
         
         document_paths = []
         for file_path in self.documents_dir.rglob("*"):
-            if file_path.is_file() and file_path.suffix.lower() in ['.pdf', '.txt', '.md']:
+            if file_path.is_file() and file_path.suffix.lower() in ['.pdf', '.txt', '.md', '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif']:
                 document_paths.append(file_path)
         return document_paths
 
