@@ -147,6 +147,7 @@ ClinicSim-AI/
 
 - [安裝指南](docs/installation.md)
 - [快速開始](docs/quick-start.md)
+- [🐳 Docker 設置指南](docs/docker-setup.md)
 - [🍋 Lemonade Server 配置指南](docs/lemonade-setup.md)
 - [🚀 CI/CD 指南](docs/ci-cd-guide.md)
 - [開發者指南](docs/developer-guide.md)

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # ClinicSim-AI 主應用
+  clinic-sim-ai:
+    build: .
+    ports:
+      - "8501:8501"  # Streamlit 前端
+      - "5001:5001"  # Flask 後端
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5001
+      - DEBUG=false
+      # 可以選擇使用本地AI服務或雲端API
+      - OLLAMA_HOST=http://localhost:11434  # 本地Ollama
+      # - OPENAI_API_KEY=your_openai_key     # 或使用OpenAI
+    volumes:
+      - ./cases:/app/cases
+      - ./documents:/app/documents
+    restart: unless-stopped
+
+  # Ollama AI 服務 (可選)
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    profiles:
+      - ai
+
+volumes:
+  ollama_data:
+    driver: local
