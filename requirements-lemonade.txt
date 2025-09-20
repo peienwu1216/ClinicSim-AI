@@ -10,6 +10,21 @@ faiss-cpu==1.12.0
 langchain==0.3.27
 langchain-community==0.3.29
 langchain-core==0.3.76
+langchain-huggingface==0.1.1
+
+# Embedding and ML dependencies
+sentence-transformers==5.1.0
+einops==0.8.0
+accelerate==1.1.1
+safetensors==0.4.4
+transformers==4.56.2
+torch>=1.11.0
+scikit-learn>=1.0.0
+scipy>=1.7.0
+huggingface-hub>=0.20.0
+
+# Lemonade AI 服務依賴
+openai>=1.0.0
 
 # Document processing (lightweight version)
 pypdf==6.0.0
@@ -22,4 +37,3 @@ gunicorn
 
 # If Lemonade has its own AI services, remove the following dependencies:
 # ollama  # Remove, use Lemonade's AI services
-# sentence-transformers  # May need to remove, depending on situation
