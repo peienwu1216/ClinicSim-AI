@@ -218,7 +218,7 @@ jobs:
         run: |
           echo "## 🚀 Release 總結" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**版本**: ${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**版本**: ${{ github.event.inputs.version || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| 步驟 | 狀態 |" >> $GITHUB_STEP_SUMMARY
           echo "|------|------|" >> $GITHUB_STEP_SUMMARY
