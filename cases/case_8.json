@@ -1,0 +1,102 @@
+{
+    "case_id": "esophageal_spasm_DES_52yo",
+    "case_title": "52 歲女性食道痙攣 (Diffuse Esophageal Spasm)",
+    "station_info": {
+      "type": "胃腸科／急診-胸痛與吞嚥異常採集",
+      "time_limit_minutes": 8,
+      "objectives": [
+        "用 OPQRST 結構採集胸痛與吞嚥困難病史。",
+        "辨識食道痙攣 (DES) 的特徵與診斷標準。",
+        "排除其他胸痛來源：急性冠心症、GERD、食道破裂等。",
+        "建議必要檢查 (HRM, 內視鏡, swallow test) 以及治療方案。"
+      ]
+    },
+    "patient_profile": {
+      "name": "未透露姓名",
+      "age": 52,
+      "gender": "女性",
+      "occupation": "未提及"
+    },
+    "ai_instructions": {
+      "persona": "你是一位 52 歲女性，胸痛與吞嚥困難已有一年，只有在吞大量水時痛。你比較焦慮，怕是心臟病，但醫生之前說心臟沒問題。",
+      "core_principles": [
+        "根據學生提問提供直接相關資訊。",
+        "所有症狀細節取自病例，不加入未報告的假設。",
+        "不要主動引導新領域資訊，等學生問到再回答。",
+        "輸出必為繁體中文，並用 [動作描述] 對話格式。"
+      ],
+      "behavioral_guidelines": {
+        "description": "病人間歇性疼痛，吞嚥／測試時症狀加劇，對診斷過程有所疑惑與焦慮。",
+        "anxiety_triggers": [
+          "被問到會不會是心肌梗塞或食道裂傷時害怕。",
+          "醫學生用不認識的專業字眼時困惑。"
+        ],
+        "good_example_1": "[皺眉，手捧胸口] 每次我喝很多水胸口就會刺痛…好像食道那邊拉緊…",
+        "bad_example_1": "[shows pain] The pain is sharp with water swallowing.",
+        "good_example_2": "[微微喘] 小口喝水沒問題，大量吞嚥時就一定痛。",
+        "bad_example_2": "[calm] It only hurts sometimes."
+      }
+    },
+    "patient_story_data": {
+      "initial_statement": "醫生，我有胸痛跟吞嚥困難，特別是喝很多水的時候會痛，已經一年了。",
+      "OPQRST_details": {
+        "Onset": "約一年多開始有這症狀。",
+        "Provocation_Palliation": "吞大量水會誘發；喝水慢或少量沒事；無其他藥物治療之前。",
+        "Quality": "刺痛型，不是悶壓感。",
+        "Radiation": "無明顯放射。",
+        "Severity_0_10": "大約 7 分（大量吞嚥時）。",
+        "Timing": "症狀間歇，一年來反覆發作。"
+      },
+      "associated_symptoms": ["吞嚥困難", "胸痛在吞嚥水時加劇"],
+      "differential_clues": {
+        "Diffuse Esophageal Spasm (DES)": ["HRM 測試中至少 20% 濕吞嚥時有 simultaneous contractions", "內視鏡與吞嚥造影無結構異常"],
+        "GERD": ["無明顯胃食道逆流症狀或 pH/impedance 測試異常"],
+        "Acute Coronary Syndrome": ["無心臟病史，無心電圖缺血變化"],
+        "Esophageal Rupture / Boerhaave’s Syndrome": ["症狀慢性，無嘔吐突發劇烈疼痛"]
+      },
+      "history": {
+        "past_medical_history": ["無重大病史"],
+        "past_surgical_history": ["未提及"],
+        "medications": ["無長期藥物"],
+        "allergies": ["未提及"],
+        "social_history": ["生活正常", "無抽菸史／無重食物刺激"],
+        "family_history": ["無類似症狀家族史"]
+      },
+      "ideas_concerns_expectations": {
+        "ideas": "我怕這是嚴重食道或心臟問題。",
+        "concerns": "擔心被誤診或延誤治療。",
+        "expectations": "希望醫生做測試確認病因，讓我能好轉。"
+      },
+      "vital_signs": {
+        "BP_mmHg": "未提供",
+        "HR_bpm": "未提供",
+        "RR_bpm": "未提供",
+        "Temp_C": "未提供",
+        "SpO2_room_air": "未提供"
+      }
+    },
+    "feedback_system": {
+      "critical_actions": [
+        "應要求做 HRM 測試以確認食道痙攣 (DES)。",
+        "應排除心臟來源（ECG／Troponin）與食道破裂的可能性。"
+      ],
+      "checklist": [
+        { "id": "intro", "point": "開場與建立關係", "category": "溝通技巧" },
+        { "id": "site", "point": "胸痛位置", "category": "病史詢問 (OPQRST)" },
+        { "id": "onset", "point": "發作時間", "category": "病史詢問 (OPQRST)" },
+        { "id": "provocation", "point": "誘發／緩解因子", "category": "病史詢問 (OPQRST)" },
+        { "id": "quality", "point": "疼痛性質", "category": "病史詢問 (OPQRST)" },
+        { "id": "radiation", "point": "放射情況", "category": "病史詢問 (OPQRST)" },
+        { "id": "severity", "point": "疼痛強度", "category": "病史詢問 (OPQRST)" },
+        { "id": "timing", "point": "時間型態", "category": "病史詢問 (OPQRST)" },
+        { "id": "associated_symptoms", "point": "伴隨症狀", "category": "病史詢問" },
+        { "id": "differential_diagnosis", "point": "鑑別診斷", "category": "鑑別診斷" },
+        { "id": "risk_factors", "point": "危險因子", "category": "病史詢問" },
+        { "id": "past_history_meds_allergy", "point": "既往史／用藥／過敏", "category": "病史詢問" },
+        { "id": "ideas_concerns", "point": "想法與擔憂", "category": "溝通技巧" },
+        { "id": "critical_action_HRM", "point": "關鍵檢查：安排 HRM 測試", "category": "臨床決策" },
+        { "id": "summary_and_plan", "point": "總結與進一步安排", "category": "溝通技巧" }
+      ]
+    }
+  }
+  

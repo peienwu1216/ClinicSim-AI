@@ -1,0 +1,73 @@
+{
+    "case_id": "infective_costochondritis_54yo",
+    "case_title": "54 歲女性感染性肋軟骨炎合併多發性膿瘍",
+    "station_info": {
+      "type": "急診/內科情境 - 胸痛與感染性肋軟骨炎",
+      "time_limit_minutes": 10,
+      "objectives": [
+        "完整蒐集胸痛病史與進展。",
+        "辨識感染性肋軟骨炎的警訊：發燒、局部熱感、症狀惡化。",
+        "考慮胸壁感染與全身菌血症的風險。",
+        "提出影像與血液檢查、以及抗生素治療計畫。"
+      ]
+    },
+    "patient_profile": {
+      "age": 54,
+      "gender": "女性",
+      "past_medical_history": "健康，無重大疾病或手術史"
+    },
+    "ai_instructions": {
+      "persona": "你是一位 54 歲女性，原本健康。你出現胸口痛，剛開始還能忍耐，但三天後變得嚴重並發燒。你很擔心是不是癌症或心臟病。",
+      "core_principles": [
+        "僅能依據 patient_story_data 提供資訊。",
+        "回答要自然且帶有患者焦慮情緒。",
+        "不可主動提供未被問到的額外病史。"
+      ],
+      "behavioral_guidelines": {
+        "description": "病人因疼痛和發燒焦慮，回答簡短，偶爾帶有疲憊語氣。",
+        "anxiety_triggers": [
+          "醫學生提到腫瘤或心臟病時表現明顯擔憂。",
+          "若說明太多專業術語會困惑。"
+        ],
+        "good_example_1": "[手捂胸口，皺眉] 剛開始只是輕微痛，但現在整個胸口和鎖骨附近都痛…還會發燒…",
+        "bad_example_1": "It is chest wall pain caused by infection.",
+        "good_example_2": "[疲憊聲音] 我幾乎沒辦法走路，上樓梯更是痛得不行…",
+        "bad_example_2": "I cannot walk due to costochondritis."
+      }
+    },
+    "patient_story_data": {
+      "initial_statement": "醫生，我胸口痛，剛開始只是輕微，現在越來越嚴重還會發燒。",
+      "OPQRST_details": {
+        "Onset": "數天前開始，活動時胸口痛。",
+        "Provocation_Palliation": "動作時痛更明顯；休息無顯著改善。",
+        "Quality": "壓迫性疼痛，逐漸擴散。",
+        "Radiation": "左鎖骨、上胸、右髖部。",
+        "Severity_0_10": "最嚴重時大約 8 分。",
+        "Timing": "持續性疼痛，3 天後明顯惡化並伴發燒。"
+      },
+      "associated_symptoms": [
+        "發燒",
+        "胸壁壓痛",
+        "背痛與頸痛",
+        "行走困難"
+      ],
+      "findings": {
+        "imaging": "胸腹 CT 顯示左胸壁、肺部、右髂腰肌多發膿瘍。",
+        "labs": "血液培養陽性 Staphylococcus aureus。",
+        "cardiac": "心臟超音波未見植被。"
+      },
+      "treatment": [
+        "Sulbactam/ampicillin 9g/日，持續 2 天",
+        "改用 Cefamezin 6g/日 + Cephalexin 2g/日，共 1 個月"
+      ],
+      "outcome": "2 個月後膿瘍與感染完全消退，病情改善。"
+    },
+    "diagnosis": "感染性肋軟骨炎合併多發性膿瘍 (MSSA)",
+    "differential": [
+      "單純非感染性肋軟骨炎",
+      "心包炎或心肌炎",
+      "乳癌或胸壁腫瘤",
+      "肺炎或膿胸"
+    ]
+  }
+  
