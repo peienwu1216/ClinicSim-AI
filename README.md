@@ -24,8 +24,9 @@ ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透�
 ### 環境需求
 
 - Python 3.8+
-- Ollama (本地 AI 模型)
-- 或 OpenAI API Key
+- **🍋 Lemonade Server** (推薦 - 高效能 AI 推理服務)
+- Ollama (本地 AI 模型 - 備選方案)
+- 或 OpenAI API Key (雲端方案)
 
 ### 安裝步驟
 
@@ -37,6 +38,10 @@ cd ClinicSim-AI
 
 2. **安裝依賴**
 ```bash
+# 使用 Lemonade 依賴 (推薦)
+pip install -r requirements-lemonade.txt
+
+# 或使用標準依賴
 pip install -r requirements.txt
 ```
 
@@ -45,13 +50,18 @@ pip install -r requirements.txt
 # 複製環境變數範本
 cp .env.example .env
 
-# 編輯 .env 文件
-# OLLAMA_HOST=http://127.0.0.1:11434
+# 編輯 .env 文件 - Lemonade Server 配置
+# LEMONADE_HOST=http://127.0.0.1:11434
+# LEMONADE_MODEL=llama3:8b
+# OLLAMA_HOST=http://127.0.0.1:11434  # 備選方案
 # OLLAMA_MODEL=llama3:8b
 ```
 
 4. **啟動服務**
 ```bash
+# 啟動 Lemonade Server (推薦)
+# 請參考 Lemonade Server 官方文檔進行安裝和配置
+
 # 啟動後端服務
 python main.py
 
@@ -113,15 +123,24 @@ ClinicSim-AI/
 
 - **前端**：Streamlit + HTML/CSS/JavaScript
 - **後端**：Flask + FastAPI
-- **AI 模型**：Ollama (本地) / OpenAI API
+- **🍋 AI 推理**：**Lemonade Server** (推薦) / Ollama (本地) / OpenAI API
 - **RAG 技術**：FAISS + LangChain
 - **數據庫**：JSON 文件存儲
 - **部署**：Docker + Cloud Platforms
+
+### 🍋 Lemonade Server 優勢
+
+- ⚡ **高效能推理**：專為生產環境優化的 AI 推理服務
+- 🚀 **快速響應**：低延遲的模型推理速度
+- 🔧 **易於部署**：簡化的安裝和配置流程
+- 📈 **可擴展性**：支援負載平衡和集群部署
+- 💰 **成本效益**：相比雲端 API 更經濟實惠
 
 ## 📚 文檔
 
 - [安裝指南](docs/installation.md)
 - [快速開始](docs/quick-start.md)
+- [🍋 Lemonade Server 配置指南](docs/lemonade-setup.md)
 - [開發者指南](docs/developer-guide.md)
 - [API 文檔](docs/api-documentation.md)
 - [架構說明](docs/architecture.md)
@@ -149,9 +168,8 @@ ClinicSim-AI/
 
 ## 📞 聯絡我們
 
-- 專案維護者：[您的姓名]
-- 電子郵件：[your.email@example.com]
-- 專案網站：[https://clinic-sim-ai.example.com]
+- 專案維護者：吳沛恩
+- 電子郵件：peienwu.ee13@nycu.edu.tw
 
 ---
 
