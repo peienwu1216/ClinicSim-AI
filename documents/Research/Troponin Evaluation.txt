@@ -1,0 +1,625 @@
+High Sensitivity Troponin T Concentrations in Acute Chest Pain
+Patients Evaluated with Cardiac Computed Tomography
+James L. Januzzi Jr, MD1, Fabian Bamberg, MD MPH2, Hang Lee, PhD3, Quynh A. Truong,
+MD MPH1,2, John H. Nichols, BA2, Mahir Karakas, MD4, Asim A. Mohammed, MD1,
+Christopher L. Schlett, BS2, John T. Nagurney, MD5, Udo Hoffmann, MD MPH2,†, and
+Wolfgang Koenig, MD PhD4,†
+1Division of Cardiology, Massachusetts General Hospital, Boston, MA
+2Cardiac MR PET CT Program, Department of Radiology, Massachusetts General Hospital,
+Boston, MA
+3Biostatistics Center, Massachusetts General Hospital, Boston, MA
+4Department of Internal Medicine II and Cardiology, University of Ulm Medical Center, Ulm,
+Germany
+5Emergency Medicine, Massachusetts General Hospital, Boston, MA
+Abstract
+Background— For evaluation of patients with chest pain and suspected acute coronary syndrome
+(ACS), consensus guidelines recommend use of a cardiac troponin cut-point that corresponds to
+the 99th percentile of a healthy population. Most conventional troponin methods lack sufficient
+precision at this very low level.
+Methods and results— In a cross-sectional study, 377 patients (mean age 53.7 years, 64.2%
+male) with chest pain and low-to-intermediate likelihood for ACS were enrolled in the emergency
+department. Blood was tested using a pre-commercial high sensitivity troponin T assay (hsTnT)
+and compared to a conventional cardiac troponin T method (cTnT). Patients underwent a 64-slice
+coronary computed tomography (CT) coronary angiogram at the time of phlebotomy, on average 4
+hours from initial presentation. Among patients with acute chest pain, 37 (9.8%) had an ACS.
+Using the 99th percentile cut-point for a healthy population (13 pg/mL), hsTnT had 62%
+sensitivity, 89% specificity, 38% positive predictive value, and 96% negative predictive value for
+ACS. Compared to cTnT, hsTnT detected 27% more ACS cases ( P =.001), and an hsTnT above
+the 99th percentile strongly predicted ACS (odds ratio 9.0, 95% confidence interval 3.9–20.9; P <.
+001). Independent of ACS diagnosis, CT angiography demonstrated concentrations of hsTnT were
+determined by numerous factors including the presence and severity of coronary artery disease as
+well as left ventricular mass, left ventricular ejection fraction, and regional left ventricular
+dysfunction.
+Correspondence:  Udo Hoffmann, MD MPH, Cardiac MR PET CT Program, Massachusetts General Hospital, 165 Charles River
+Plaza, Suite 400, Boston, MA, 02114, uhoffmann@partners.org.†Contributed equally
+Publisher's Disclaimer: This is a PDF file of an unedited manuscript that has been accepted for publication. As a service to our
+customers we are providing this early version of the manuscript. The manuscript will undergo copyediting, typesetting, and review of
+the resulting proof before it is published in its final citable form. Please note that during the production process errors may be
+discovered which could affect the content, and all legal disclaimers that apply to the journal pertain.
+Subject codes:  [3] acute coronary syndromes, [4] acute myocardial infarction, [30] CT and MR, [33] other diagnostic testing
+Disclosures:  Dr. Januzzi reports having received significant (>$10,000) research grant support from Roche Diagnostics.
+NIH Public Access
+Author Manuscript
+Circulation . Author manuscript; available in PMC 2011 March 16.
+Published in final edited form as:
+Circulation . 2010 March 16; 121(10): 1227±1234. doi:10.1161/CIRCULATIONAHA.109.893826.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+Conclusions— Among low-to-intermediate risk patients with chest pain, hsTnT provides good
+sensitivity and specificity for ACS. Elevation of hsTnT identifies patients with myocardial injury
+and significant structural heart disease, irrespective of the diagnosis of ACS.
+Keywords
+myocardial infarction; troponin; diagnosis; imaging
+Since the advent of testing for cardiac troponins for the diagnosis of myocardial infarction
+(MI), the use of these assays continues to evolve. Over the past two decades, troponins have
+been adopted as the preferred biomarker for the diagnosis of acute MI, a position reaffirmed
+in recent consensus guidelines1, 2. As part of this consensus for the preferred use of
+troponins for the diagnostic evaluation of the patient with suspected or proven acute
+coronary syndrome (ACS), the use of a troponin cut-point for acute MI that equals the 99th
+percentile of a healthy population has been endorsed, as long as the assay used delivers
+acceptable precision at this very low threshold, as risk for adverse outcome (including death)
+has been repeatedly demonstrated in the context of values above this level 3–10. However,
+most commercial assays for troponin were inadequate to deliver such performance, due
+either to a limit of detection above that of reference populations, or to unacceptable
+imprecision (by consensus, more than 10% variation from test to test) at very low
+concentrations11.
+Recently, however, newer assays for troponin have been developed, which, through multiple
+methodologic modifications, are now able to detect changes in concentration of the marker
+at or below the 99th percentile for a normal population. While these “high sensitivity”
+troponin assays may now achieve consensus guideline recommended precision of <10%
+imprecision at this low reference limit1, 2, a degree of uncertainty regarding their clinical
+application exists however, particularly with respect to the specificity of these tests for the
+clinical syndrome of acute MI, as they are able to detect even minor degrees of myocardial
+injury, even in the absence of ACS. Indeed, despite consensus for their adoption for clinical
+use, only preliminary data exist supporting the use of “high sensitivity” troponin assays in
+populations of patients with chest pain and suspected ACS3, 4, 12, 13. Furthermore, the
+anatomical causes of elevation of “high sensitivity” troponin or the clinical ramification of
+an elevated level of such markers in a patient without an ACS remains undefined.
+With these issues in mind, among a group of patients presenting with chest discomfort and
+suspected ACS, we examined the diagnostic performance of a new pre-clinical “high
+sensitivity” test for troponin T (hsTnT) using the 99th percentile cut-point for this assay, and
+correlated hsTnT results both with clinical syndrome, as well as cardiac structure and
+function as demonstrated by 64-slice computed tomography (CT) angiography at the time of
+blood measurement.
+Methods
+All study methods were approved by the local Institutional Review Board.
+Patient population
+A description of the patient population in this study was recently reported14. In brief,
+between May of 2005 and May of 2007, a convenience sample of 377 low to intermediate
+risk subjects presenting to the Massachusetts General Hospital emergency department
+between the weekday hours of 7 AM and 7 PM with a chief complaint of chest discomfort
+and clinical suspicion for ACS were enrolled; detailed inclusion/exclusion criteria are
+provided in Supplemental Table 1. Following enrollment, patients were followed for 6Januzzi et al. Page 2
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+months for clinical course, and endpoints were ascertained. A final diagnosis of ACS
+(including either acute MI or unstable angina) was retrospectively made, and based on the
+judgment of two physicians with access to the history and nature of the presenting
+symptoms, past medical history, results of physical examination, and all medical records
+available from index hospitalization (including the results of standard troponin testing)
+through 180 days from presentation. Events subsequent to 180 days from enrollment did not
+influence the final diagnosis. Disagreement in final diagnosis occurred in 4% of cases, and
+was resolved by consensus, using a third reviewer15. For the purposes of this analysis,
+patients were categorized as having unstable angina using a cTnT value of <.03 ng/mL
+measured at any time during hospitalization, as per consensus guidelines2.
+Cardiac biomarker testing
+A sample of blood for biomarker testing (hsTnT and cTnT) was taken at the time of CT
+angiography, at a median of 4.2 hours from initial presentation. Blood was immediately
+processed and frozen at −80° C, until it was assayed with a pre-commercial hsTnT method
+(Roche Diagnostics, Penzberg, Germany) on an Elecsys® 2010 platform. Given enhanced
+sensitivity, this assay is reported with units of pg/mL (rather than ng/mL for conventional
+troponin T, cTnT) and is reported to have a coefficient of variation of 8% at 10 pg/mL16; the
+99th percentile for a normal reference population is reported to be 13 pg/mL17, which was
+the cut-point used for this analysis. For the present analysis, hsTnT had an inter-run
+coefficient of variation of 3.6% and 2.9% at concentrations of 42 and 2820 pg/mL.
+In addition to hsTnT, conventional cTnT (Stat T, Roche Diagnostics, Penzberg, Germany)
+was measured using a 4th generation immunoassay on an Elecsys® 2010 platform. This
+assay is reported in ng/mL, has a 99th percentile of 0.01 ng/mL and recommended diagnostic
+threshold for acute MI of 0.03 ng/mL. For the present analysis, cTnT had an inter-run
+coefficient of variation of 6.6% and 3.8% at concentrations of 0.07 and 2.2 ng/mL. Lastly,
+amino-terminal pro-B type natriuretic peptide (NT-proBNP; Roche Diagnostics, Penzberg,
+Germany), and Cystatin C (cys-C; Siemens Diagnostics, Eschborn, Germany) were also
+measured. All blood was tested on the first freeze thaw cycle.
+CT Angiography
+Cardiac CT imaging and interpretation was performed using a 64-slice scanner (Sensation
+64, Siemens Medical Solutions, Forcheim, Germany) as previously described14.
+Interpretation of the CT angiogram included assessment for presence and extent of coronary
+artery disease (CAD) according to the American Heart Association 17-segment coronary
+artery model; the number of segments affected by atherosclerotic plaque was noted, and
+plaque was further coded as calcified or non-calcified. The presence of significant coronary
+stenosis was defined as a luminal obstruction of >50% of the diameter of the reference
+coronary segment. In addition cardiac structure and function was assessed, including
+measures of chamber volume in end-systole and end-diastole, left ventricular ejection
+fraction, left ventricular mass, and regional left ventricular dysfunction.
+Statistical Methods
+Baseline demographics of patients with and without ACS were compared using the χ2 test
+for dichotomous variables, and the student’s T-test or the Wilcoxon Rank Sum test for
+continuous variables, as appropriate. For comparisons of concentrations of hsTnT between
+multiple diagnostic groups (no ACS, unstable angina, and acute MI), the Kruskal-Wallis test
+was used.Januzzi et al. Page 3
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+The diagnostic performance of the hsTnT assay was assessed using receiver operator
+characteristic (ROC) curves, with area under the curve (AUC) estimated as a function of the
+gold standard diagnosis of ACS (including both unstable angina and acute MI); curves for
+hsTnT versus cTnT were compared for significant differences; net reclassification
+improvement (NRI) and integrated discrimation improvement (IDI) were performed as
+described by Pencina et al 18. The optimal cut-point for hsTnT was identified in the ROC
+curve using the value providing maximal sensitivity and specificity. Further, sensitivity and
+specificity, as well as positive and negative predictive value (PPV and NPV; all with 95 %
+confidence intervals, CI) for unstable angina, acute MI, or all ACS using an hsTnT of 13 pg/
+mL (the 99th percentile cut-point) was evaluated, and compared to a cTnT of 0.01 ng/mL
+(the 99th percentile, and limit of detection for this method) and 0.03 ng/mL (the lowest cTnT
+cut-point delivering <10% imprecision). The sensitivity and specificity for ACS from an
+hsTnT ≥13 pg/mL was compared to that of a cTnT ≥0.03 ng/mL using the McNemar test.
+To better understand the association between hsTnT and ACS diagnosis, logistic regression
+analyses was performed examining the final gold standard diagnosis as a function of hsTnT
+tertiles; two models were used in this analysis, the first adjusted for age and sex, the second
+fully-adjusted for age, sex, hypertension, hyperlipidemia, diabetes mellitus, and prior CAD.
+In both models, the first tertile served as referent, with odds ratios (OR) and 95% CIs
+generated for the second and third tertile. Furthermore, using a hsTnT cut-off of 13 pg/mL,
+OR and 95% CI for a final diagnosis of ACS was generated in a similar fashion with models
+including age and sex as well as the fully-adjusted model described above.
+In an effort to better understand the meaning of hsTnT concentrations (especially with
+respect to the presence and extent of CAD as well as ventricular structure and function),
+continuous variables and log-transformed concentrations of hsTnT were correlated using
+Spearman analysis; following, independent predictors of hsTnT concentrations were
+identified using multivariable linear regression including candidate variables with a P ≤.10
+in univariable analysis. Only those variables with a P value <.05 were retained in the final
+model. In addition, associations between hsTnT above and below the 99th percentile in those
+without ACS were examined. Finally, linear regression analysis was then repeated,
+constrained to only those patients without ACS and an hsTnT above 13 pg/mL.
+All statistical analyses were performed using SAS software (Version 9.2, Cary, NC, USA).
+All P values are two-sided, with a value <.05 considered significant.
+Results
+Baseline Characteristics
+The mean (± standard deviation; SD) age of the study population overall was 53.7 ± 12.0
+years; 242 (64.1%) were male. Of the overall study population, 37 (9.8%) were judged to
+have ACS, of whom 25 had unstable angina using standard criteria. Baseline characteristics
+of study subjects as a function of ACS, including CT angiogram results are detailed in table
+1.
+Troponin Results
+The median hsTnT value for the group as a whole was 5.4 pg/mL (interquartile range [IQR]
+= 2.7–9.0]. Overall, 62 (16.4%) had an hsTnT ≥13 pg/mL. Median concentrations of hsTnT
+were significantly higher among those patients judged to have an ACS, compared to those
+without (28.0 [interquartile range, IQR = 8.6–68.7] versus 7.0 [IQR = 2.5–8.1] pg/mL; P >.
+001). When categorized as acute MI, unstable angina, and non-cardiac chest pain, median
+concentration of hsTnT were highest in those with acute MI (112.0 [IQR = 60.7–211.5] pg/Januzzi et al. Page 4
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+mL), intermediate in those with unstable angina (12.3 [IQR = 4.9–31.9] pg/mL), and lowest
+in those without ACS (7.0 [IQR = 2.7–9.0] pg/mL; P <.001 for trend across groups).
+ROC testing demonstrated an AUC for the diagnosis of ACS of 0.79 for hsTnT, compared to
+0.74 for cTnT ( P =.28). The NRI from adding hsTnT to cTnT was 0.74 (95% CI=0.49–0.99;
+P <.001), while the IDI was 0.24 (95% CI = 0.14–0.33; P<.001). The probability of correctly
+identifying ACS when adding hsTnT to cTnT improved from 18.7% to 40.7% (probability
+change for events = 22.0%). The probability of nonevents from adding hsTnT to cTnT
+changed from 8.6% to 6.6% (probability change for nonevents is −2.0%); the relative IDI
+overall was 2.37, which translates to a 237% improvement by adding hsTnT to cTnT.
+Compared to the cTnT cut-point of 0.03 ng/mL, an hsTnT ≥13 pg/mL had statistically
+superior sensitivity (Table 2; P =.002), detecting nearly 50% more cases of ACS (23 of 37
+cases, versus 12 of 37 cases); this relates to the identification of patients judged to have
+unstable angina (by definition, with a conventional cTnT <0.03 ng/mL) using hsTnT. On the
+other hand, although an hsTnT had excellent specificity for ACS (89%), it was significantly
+less specific than cTnT (Table 2; P <.001). The PPV and NPV of an hsTnT of 13 pg/mL
+were 38% and 96% respectively. The ROC-optimal cut-point for hsTnT was 8.62 pg/mL,
+which delivered 76% sensitivity, 78% specificity and 27% PPV for ACS.
+Considering hsTnT tertiles, a graded association with ACS was found; compared to the first
+tertile (referent), in age and sex adjusted models, the second (OR 2.6; 95% CI 1.4–4.6; P =.
+002 ) and third tertiles (OR 5.1, 95% CI=2.2–11.9; P <.001) had higher likelihood for ACS.
+A similar pattern was observed in fully adjusted models (Tertile 2: OR 2.4, 95% CI = 1.3–
+4.3; P =.005; Tertile 3: OR 4.7, 95% CI = 2.0–11.2; P <.001).
+Considering hsTnT as a function of the 99th percentile cut-point of 13 pg/mL and using a
+final diagnosis of ACS as the dependent variable, a similar independent association with
+ACS was noted in both models (age and sex adjusted: OR=9.3, 95% CI=4.2–20.5, P <.001;
+fully adjusted: OR 9.0, 95% CI = 3.9–20.9, P <.001).
+Correlations and Predictors of hsTnT in Patients with Chest Pain
+All Subjects— Table 3 details predictors of log-transformed hsTnT in all subjects. In
+multivariable analyses, independent predictors of hsTnT included age, presence/extent of
+CAD, cardiac structure, cardiac function, and NT-proBNP values.
+Subjects With Elevated hsTnT but Without ACS— Considering only those patients
+with an hsTnT above 13 pg/mL (N=61), 38 (62%) did not have an ACS. Compared to those
+patients without ACS and with negative hsTnT, patients with an elevated value were more
+likely to have more complex medical histories (including prior CAD), as well as more
+cardiac abnormalities, with more prevalent and extensive CAD as well as larger cardiac
+chamber sizes and greater left ventricular mass (Table 4).
+In patients without ACS, stepwise selection of significant variables identified age ( β
+coefficient = 0.0399; P <.001), left ventricular mass ( β coefficient = 0.0117; P <.001), and
+NT-proBNP ( β coefficient = 0.00110; P = .03) as predictors of hsTnT values.
+Discussion
+The decision to adopt the 99th percentile of troponin from a normal population for the
+evaluation of patients with suspected ACS was based primarily on the enhanced risk
+stratification associated with such lower cut-points3–10. Furthermore, use of the 99th
+percentile for troponin appears to be associated with more robust prediction of benefit fromJanuzzi et al. Page 5
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+early-invasive strategies for ACS management, when compared to higher cut-points8, 10.
+Complicating the situation was the fact that until recently, troponin methods were unable to
+deliver the requisite analytical performance at the 99th percentile11, an extremely low cut-
+point in a range that is in the range of analytical “noise” for most conventional assays.
+Furthermore, these assays are well-recognized to be able to detect myocardial injury in the
+absence of a clinical ACS, such as in heart failure16. Indeed, the diagnostic ramification of a
+troponin result above the 99th percentile—reflective of significant myocardial injury—in
+those without a clinically manifest ACS requires further definition.
+We have shown, in a population of low-to-intermediate risk patients with chest discomfort,
+that hsTnT was able more sensitively detect ACS than a corresponding conventional cTnT
+method, and the hsTnT assay delivered excellent specificity as well. Furthermore, as each
+patient underwent concomitant cardiac CT (including angiography of the coronary arteries),
+we were able to show that myocardial injury (reflected by concentrations of hsTnT)—
+independent of the presence or absence of ACS—was associated with the presence and
+severity of a wide range of cardiac abnormalities, including more prevalent CAD and greater
+left ventricular mass. Importantly, such associations were present in those without ACS,
+which illustrates the importance of considering hsTnT values not only as a marker of ACS
+presence, but also as a marker of underlying structural heart disease.
+Recent data have been published demonstrating the augmented sensitivity of hsTn methods
+for acute MI (and ACS overall)3, 4, 12, 13. In each of these analyses, a hsTn method
+consistently demonstrated augmented sensitivity compared to conventional assays for these
+analytes, much as we found in our analysis, in which nearly 50% more cases of ACS were
+diagnosed at the time of sampling. These results are consistent with data suggesting use of
+the 99th troponin percentile provides earlier recognition of myocardial injury19–23, with a
+significant percentage of patients reclassified from unstable angina to acute MI. Although
+superior to cTnT for diagnosis, it is necessary to note that hsTnT was not universally
+elevated in those judged to have ACS, suggesting that even with enhanced sensitivity, many
+patients with unstable angina or transient myocardial ischemia may still have troponin
+results below the 99th percentile for a normal population17.
+As a counter observation to increased sensitivity, we did see a 10% reduction in specificity
+for ACS compared to conventional cTnT, reminiscent of other reports3, 4, 12, 13. This is not
+surprising, as the “gold standard” for acute MI diagnosis used all studies was a conventional
+cTn method, which partially explains the superior specificity of conventional assays; on the
+other hand, the specificity for ACS of 89% observed with hsTnT is excellent, and is
+expected to be accompanied by enhanced risk stratification, as suggested by other studies
+examining the advantages conferred by use of the 99th percentile for cTn interpretation 3–10.
+More to this point, looking beyond the specificity or PPV of hsTnT for “acute MI” (and in
+comparisons to other studies of its kind), a strength of our study is the mechanistic
+association between hsTnT and prevalent cardiovascular disease as detected by universal CT
+angiography in our study subjects. This finding was present not only in subjects with an
+ACS, but also in those without. Our data suggest that an elevated “high sensitivity” troponin
+result reflects myocardial injury—irrespective of an ACS—and thus reflects a true signal for
+structural heart disease, even in the absence of an acute cardiac event. This mechanistically
+explains their proven ability to prognosticate adverse outcomes across the wide spectrum of
+patients evaluated with these assays, from “apparently well” subjects24, to those with
+chronic CAD6, ACS9, 10, and heart failure16.
+It remains yet unclear whether myocardial ischemia in the absence of necrosis can be
+detected using hsTnT or hsTnI. Although a small amount of cTn is found in the cytosol ofJanuzzi et al. Page 6
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+myocytes, and could theoretically be released without frank myocyte death, such a
+phenomenon remains yet unproven. In this setting, however, it is quite probable that hsTn
+methods will be superior to conventional troponin methods for detection of such a process.
+Indeed, in a model of exercise stress testing, hsTnI elevation was detected in parallel with
+the presence and severity of ischemia25. Whether this is proof of concept that ischemia—
+without necrosis—may lead to elevated hsTn is speculative, without histologic evidence to
+corroborate.
+Our results indicate that clinicians should recognize that elevation of either hsTnT or hsTnI
+likely identifies a patient with significant heart disease, at higher risk for adverse outcome,
+irrespective of the presence or absence of ACS. Given the ability of these assays to detect
+myocardial injury above and beyond any other methods currently available, more than ever,
+we emphasize the crucial need to consider each patient as a function not only of their
+troponin value but also with respect to their clinical presentation, in order to avoid over-
+diagnosis of “acute MI” with these highly-sensitive assays. Indeed, hsTn methods should be
+considered very accurate tests for myocardial injury, rather than a test for “acute MI”, and
+only in the correct context should a positive result for these assays be interpreted as
+consistent with ACS. The growing use of hsTn methods will require a rethinking of the
+current guidelines for ACS management, as well as how exactly to manage the patient with
+an unexpectedly elevated hsTn value. Ultimately, the correct interpretation of hsTn methods
+should be based on Bayesian considerations, integrating pre-test likelihood with post-test
+result, and the recognition that higher hsTn values are more likely to reflect higher risk
+myocardial injury states, such as acute MI.
+Our study has limitations worthy of comment. First, the cohort studied was small, yet the
+demographics and overall rate of ACS is comparable to “real world” analyses of patients
+presenting to the emergency department with chest discomfort26. In addition, given the low-
+to-intermediate risk nature of our population, a low 6-month event rate subsequent to
+presentation was observed, which limits our ability to examine the prognostic value of
+hsTnT versus cTnT. With respect to comparative performance of hsTnT relative to cTnT,
+similar data have recently been published by Reichlin and colleagues describing a cohort of
+786 subjects with a much higher rate of ACS (33% overall)13; despite the overall higher risk
+of the study subjects in this latter analysis, the performance of hsTnT for ACS diagnosis in
+our study was quite similar. Moreover, although smaller than the Reichlin study (or a similar
+analysis of hsTnI by Keller and colleagues12), our study is set apart by the morphological
+correlation of hsTnT results with cardiac structure and function using cardiac CT. This
+aspect of our study adds a depth of understanding to the results of hsTnT above and beyond
+clinical analyses of ACS etiology. Indeed, mechanistic understanding of the predictors of
+hsTn release is crucially important. Another issue is the timing of the blood draw: the blood
+samples assayed for hsTnT and cTnT were drawn contemporaneously with the CT scan, yet
+they were obtained some 4 hours after presentation. Whether an earlier sample for hsTnT
+would have been less sensitive for diagnosis is possible, particularly if within the first hour
+of ischemia. Additionally, we only have one measurement of hsTnT; serial measures would
+have provided more data regarding the performance of hsTnT versus cTnT, and would have
+allowed for a better assessment of the ramifications of an elevated hsTnT in the absence of
+ACS. Indeed, serial measurement of hsTnT or I has been advocated3, 5, 20, to detect a
+change in troponin concentration (rising or falling), which would more likely represent an
+ischemic syndrome. Lastly, our subjects were low-to-intermediate risk, thus our results may
+not necessarily apply to such medically complex or unstable patients. Nonetheless, our data
+are applicable to a large population of patients26 where troponin assays are particularly
+important, given their lack of significant electrocardiographic changes or clinical instability.Januzzi et al. Page 7
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+Clinical Summary
+Given the fact that in the context of an acute coronary syndrome (ACS) very low level
+cardiac troponin (cTn) release is associated with an increase in the risk for adverse
+outcomes, current consensus guidelines define acute myocardial infarction using cTn
+values in excess of the 99th percentile of a healthy population, assuming the assay used is
+sufficiently precise at this very low threshold value. Most conventional cTn assays are
+not able to deliver this performance. However, newly developed “high sensitivity”
+troponin (hsTn) assays are now able to detect very low levels of cTn, with acceptable
+precision at very low concentrations, meeting specifications from consensus guidelines.
+Among 377 low-to-intermediate risk patients with chest pain and suspected ACS, we
+compared results of an hsTnT method to that of a conventional cTnT assay. We found the
+hsTnT method increased sensitivity for ACS compared to cTnT; furthermore, as every
+patient had a cardiac computerized tomography angiogram, we demonstrated that hsTnT
+concentrations strongly correlated with abnormalities in cardiac structure and function,
+independent of a diagnosis of ACS.
+Supplementary Material
+Refer to Web version on PubMed Central for supplementary material.
+Acknowledgments
+The authors would like to thank Kevin F. Kennedy, MS for providing assistance with calculation of NRI and IDI, as
+well as Mrs. Gerlinde Trischler for excellent technical assistance. Reagents for troponin assays were provided by
+Roche Diagnostics.
+Funding sources:  Sponsored by the National Institutes of Health (RO1 HL080053). Dr. Januzzi is partially
+supported by the Balson Scholar Fund. Dr. Truong is supported by National Institutes of Health grants
+T32HL076136 and L30HL093896. Dr. Mohammed is supported by the Dennis and Marilyn Barry Cardiology
+Fellowship, and Mr. Schlett is supported in part by grants from the German Federal Ministry of Education and
+Research, as well as the Foundation of German Business.
+References
+1. Alpert JS, Thygesen K, Antman E, Bassand JP. Myocardial infarction redefined--a consensus
+document of The Joint European Society of Cardiology/American College of Cardiology
+Committee for the redefinition of myocardial infarction. J Am Coll Cardiol 2000;36:959–969.
+[PubMed: 10987628]
+2. Thygesen K, Alpert JS, White HD, Jaffe AS, Apple FS, Galvani M, Katus HA, Newby LK,
+Ravkilde J, Chaitman B, Clemmensen PM, Dellborg M, Hod H, Porela P, Underwood R, Bax JJ,
+Beller GA, Bonow R, Van der Wall EE, Bassand JP, Wijns W, Ferguson TB, Steg PG, Uretsky BF,
+Williams DO, Armstrong PW, Antman EM, Fox KA, Hamm CW, Ohman EM, Simoons ML,
+Poole-Wilson PA, Gurfinkel EP, Lopez-Sendon JL, Pais P, Mendis S, Zhu JR, Wallentin LC,
+Fernandez-Aviles F, Fox KM, Parkhomenko AN, Priori SG, Tendera M, Voipio-Pulkki LM,
+Vahanian A, Camm AJ, De Caterina R, Dean V, Dickstein K, Filippatos G, Funck-Brentano C,
+Hellemans I, Kristensen SD, McGregor K, Sechtem U, Silber S, Widimsky P, Zamorano JL, Morais
+J, Brener S, Harrington R, Morrow D, Lim M, Martinez-Rios MA, Steinhubl S, Levine GN, Gibler
+WB, Goff D, Tubaro M, Dudek D, Al-Attar N. Universal definition of myocardial infarction.
+Circulation 2007;116:2634–2653. [PubMed: 17951284]
+3. Apple FS, Pearce LA, Smith SW, Kaczmarek JM, Murakami MM. Role of monitoring changes in
+sensitive cardiac troponin I assay results for early diagnosis of myocardial infarction and prediction
+of risk of adverse events. Clin Chem 2009;55:930–937. [PubMed: 19299542]Januzzi et al. Page 8
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+4. Apple FS, Smith SW, Pearce LA, Ler R, Murakami MM. Use of the Centaur TnI-Ultra assay for
+detection of myocardial infarction and adverse events in patients presenting with symptoms
+suggestive of acute coronary syndrome. Clin Chem 2008;54:723–728. [PubMed: 18238833]
+5. Eggers KM, Jaffe AS, Lind L, Venge P, Lindahl B. Value of cardiac troponin I cutoff
+concentrations below the 99th percentile for clinical decision-making. Clin Chem 2009;55:85–92.
+[PubMed: 18988758]
+6. Eggers KM, Lagerqvist B, Venge P, Wallentin L, Lindahl B. Persistent cardiac troponin I elevation
+in stabilized patients after an episode of acute coronary syndrome predicts long-term mortality.
+Circulation 2007;116(17):1907–1914. [PubMed: 17909103]
+7. James SK, Lindahl B, Armstrong P, Califf R, Simoons ML, Venge P, Wallentin L. A rapid troponin
+I assay is not optimal for determination of troponin status and prediction of subsequent cardiac
+events at suspicion of unstable coronary syndromes. Int J Cardiol 2004;93:113–120. [PubMed:
+14975536]
+8. Morrow DA, Cannon CP, Rifai N, Frey MJ, Vicari R, Lakkis N, Robertson DH, Hille DA, DeLucca
+PT, DiBattiste PM, Demopoulos LA, Weintraub WS, Braunwald E. Ability of minor elevations of
+troponins I and T to predict benefit from an early invasive strategy in patients with unstable angina
+and non-ST elevation myocardial infarction: results from a randomized trial. JAMA
+2001;286:2405–2412. [PubMed: 11712935]
+9. Venge P, James S, Jansson L, Lindahl B. Clinical performance of two highly sensitive cardiac
+troponin I assays. Clin Chem 2009;55:109–116. [PubMed: 18988756]
+10. Venge P, Lagerqvist B, Diderholm E, Lindahl B, Wallentin L. Clinical performance of three
+cardiac troponin assays in patients with unstable coronary artery disease (a FRISC II substudy).
+Am J Cardiol 2002;89:1035–1041. [PubMed: 11988191]
+11. Panteghini M, Pagani F, Yeo KT, Apple FS, Christenson RH, Dati F, Mair J, Ravkilde J, Wu AH.
+Evaluation of imprecision for cardiac troponin assays at low-range concentrations. Clin Chem
+2004;50:327–332. [PubMed: 14656904]
+12. Keller T, Zeller T, Peetz D, Tzikas S, Roth A, Czyz E, Bickel C, Baldus S, Warnholtz A, Frohlich
+M, Sinning CR, Eleftheriadis MS, Wild PS, Schnabel RB, Lubos E, Jachmann N, Genth-Zotz S,
+Post F, Nicaud V, Tiret L, Lackner KJ, Munzel TF, Blankenberg S. Sensitive troponin I assay in
+early diagnosis of acute myocardial infarction. N Engl J Med 2009;361:868–877. [PubMed:
+19710485]
+13. Reichlin T, Hochholzer W, Bassetti S, Steuer S, Stelzig C, Hartwiger S, Biedert S, Schaub N,
+Buerge C, Potocki M, Noveanu M, Breidthardt T, Twerenbold R, Winkler K, Bingisser R, Mueller
+C. Early diagnosis of myocardial infarction with sensitive cardiac troponin assays. N Engl J Med
+2009;361:858–867. [PubMed: 19710484]
+14. Hoffmann U, Bamberg F, Chae CU, Nichols JH, Rogers IS, Seneviratne SK, Truong QA, Cury
+RC, Abbara S, Shapiro MD, Moloo J, Butler J, Ferencik M, Lee H, Jang IK, Parry BA, Brown DF,
+Udelson JE, Achenbach S, Brady TJ, Nagurney JT. Coronary computed tomography angiography
+for early triage of patients with acute chest pain: the ROMICAT (Rule Out Myocardial Infarction
+using Computer Assisted Tomography) trial. J Am Coll Cardiol 2009;53:1642–1650. [PubMed:
+19406338]
+15. Nagurney JT, Brown DF, Chae C, Chang Y, Chung WG, Cranmer H, Dan L, Fisher J, Grossman S,
+Tedrow U, Lewandrowski K, Jang IK. Disagreement between formal and medical record criteria
+for the diagnosis of acute coronary syndrome. Acad Emerg Med 2005;12:446–452. [PubMed:
+15860697]
+16. Latini R, Masson S, Anand IS, Missov E, Carlson M, Vago T, Angelici L, Barlera S, Parrinello G,
+Maggioni AP, Tognoni G, Cohn JN. Prognostic value of very low plasma concentrations of
+troponin T in patients with stable chronic heart failure. Circulation 2007;116:1242–1249.
+[PubMed: 17698733]
+17. Kurz K, Giannitsis E, Zehelein J, Katus HA. Highly sensitive cardiac troponin T values remain
+constant after brief exercise- or pharmacologic-induced reversible myocardial ischemia. Clin
+Chem 2008;54:1234–1238. [PubMed: 18593962]
+18. Pencina MJ, D'Agostino RB Sr, D'Agostino RB Jr, Vasan RS. Evaluating the added predictive
+ability of a new marker: from area under the ROC curve to reclassification and beyond. Stat Med
+2008;27:157–172. discussion 207-112. [PubMed: 17569110]Januzzi et al. Page 9
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+19. Kavsak PA, MacRae AR, Newman AM, Lustig V, Palomaki GE, Ko DT, Tu JV, Jaffe AS. Effects
+of contemporary troponin assay sensitivity on the utility of the early markers myoglobin and
+CKMB isoforms in evaluating patients with possible acute myocardial infarction. Clin Chim Acta
+2007;380:213–216. [PubMed: 17306781]
+20. Kavsak PA, MacRae AR, Yerna MJ, Jaffe AS. Analytic and clinical utility of a next-generation,
+highly sensitive cardiac troponin I assay for early detection of myocardial injury. Clin Chem
+2009;55:573–577. [PubMed: 19168557]
+21. Kavsak PA, Newman AM, Ko DT, Palomaki GE, Lustig V, MacRae AR, Jaffe AS. Is a pattern of
+increasing biomarker concentrations important for long-term risk stratification in acute coronary
+syndrome patients presenting early after the onset of symptoms? Clin Chem 2008;54:747–751.
+[PubMed: 18375487]
+22. Macrae AR, Kavsak PA, Lustig V, Bhargava R, Vandersluis R, Palomaki GE, Yerna MJ, Jaffe AS.
+Assessing the requirement for the 6-hour interval between specimens in the American Heart
+Association Classification of Myocardial Infarction in Epidemiology and Clinical Research
+Studies. Clin Chem 2006;52:812–818. [PubMed: 16556688]
+23. Melanson SE, Morrow DA, Jarolim P. Earlier detection of myocardial injury in a preliminary
+evaluation using a new troponin I assay with improved sensitivity. Am J Clin Pathol
+2007;128:282–286. [PubMed: 17638663]
+24. Sundstrom J, Ingelsson E, Berglund L, Zethelius B, Lind L, Venge P, Arnlov J. Cardiac troponin-I
+and risk of heart failure: a community-based cohort study. Eur Heart J 2009;30:773–781.
+[PubMed: 19264749]
+25. Sabatine MS, Morrow DA, de Lemos JA, Jarolim P, Braunwald E. Detection of acute changes in
+circulating troponin in the setting of transient stress test-induced myocardial ischaemia using an
+ultrasensitive assay: results from TIMI 35. Eur Heart J 2009;30:162–169. [PubMed: 18997177]
+26. Pope JH, Aufderheide TP, Ruthazer R, Woolard RH, Feldman JA, Beshansky JR, Griffith JL,
+Selker HP. Missed diagnoses of acute cardiac ischemia in the emergency department. N Engl J
+Med 2000;342:1163–1170. [PubMed: 10770981]Januzzi et al. Page 10
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author Manuscript
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 11Table 1
+Characteristics of study population categorized as a function of ACS.
+Characteristic ACS No ACSP*
+All (N=37) MI (N=8) UAP (N=29) All (N=340)
+Age 61 (±12) 55 (±10) 63 (±12) 53 (±12) <.001
+Male sex 30 (81%) 8 (100%) 22 (78%) 212 (62%) .02
+Past medical history
+ Diabetes mellitus 9 (24%) 0 (0%) 9 (31%) 37 (11%) .02
+ Hypertension 25 (67%) 4 (50%) 21 (72%) 134 (39%) .001
+ Hyperlipidemia 24 (65%) 3 (38%) 21 (72%) 132 (39%) .002
+ Family history of CAD 10 (27%) 3 (38%) 7 (24%) 83 (24%) .73
+ Personal history of CAD 12 (32%) 1 (13%) 11 (38%) 35 (10%) <.001
+ Prior myocardial infarction 9 (24%) 1 (13%) 8 (28%) 26 (8%) <.001
+ Tobacco use 14 (38%) 4 (50%) 10 (34%) 172 (51%) .14
+Medications at presentation
+ Aspirin 21 (57%) 2 (25%) 19 (66%) 116 (34%) .006
+ Statin 21 (57%) 2 (25%) 18 (62%) 101 (30%) <.001
+ Nitroglycerine 4 (11%) 0 (0%) 4 (14%) 19 (6%) .21
+ β blocker 18 (49%) 2 (25%) 16 (55%) 81 (24%) .001
+Vital signs
+ Systolic blood pressure, mmHg 136 (±22) 138 (±18) 135 (±23) 139.6 (±23) .48
+ Diastolic blood pressure, mmHg 73 (±13) 83 (±6) 71 (±14) 80.4 (±13) .002
+ Heart rate, beats/minute 63 (±8) 61 (±11) 63 (±7) 66 (±9) .04
+ Body-mass index, Kg/m2 29 (±5) 28 (±6) 29 (±4) 29 (±6) .80
+Coronary CT angiography
+ Segments with calcified plaque 6.6 (±3.5) 5.8 (±4.0) 6.8 (±3.5) 1.7 (±3.0) <.001
+ Segments with non-calcified plaque 3.8 (±3.0) 4.0 (±2.7) 3.7 (±3.3) 0.9 (±1.8) <.001
+ Segments with mixed plaque 2.8 (±2.7) 3.4 (±2.4) 2.7 (±2.8) 0.6 (±1.5) <.001
+ Segments with any plaque 7.5 (±3.5) 6.4 (±4.0) 7.8 (±3.4) 2 (±3.0) <.001
+ Segments with significant stenosis 1.4 (±1.4) 1.3 (±1.7) 1.4 (±1.5) 0.1 (±0.4) <.001
+ Vessels with any plaque 3.0 (±1.0) 2.8 (±1.1) 3.1 (±1.0) 1.0 (±1.3) <.001
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 12Characteristic ACS No ACSP*
+All (N=37) MI (N=8) UAP (N=29) All (N=340)
+ Vessels with significant stenosis 0.9 (±0.9) 1.0 (±0.9) 0.9 (±1.0) 0.06 (±0.3) <.001
+Cardiac chamber size and function
+ Left atrial diastolic volume, mL 109 (±31) 99 (±31) 111 (±31) 96 (±26) .006
+ Left atrial systolic volume, mL 69 (±30) 63 (±27) 71 (±31) 57 (±20) <.001
+ LV end diastolic volume, mL 126 (±37) 133 (±40) 124 (±37) 118 (±32) .17
+ LV end systolic volume, mL 48 (±31) 51 (±26) 47 (±32) 39 (±20) .02
+ LV mass 161 (±40) 161 (±25) 161 (±43) 151 (±42) .16
+ LV ejection fraction, % 64 (±13) 63 (±9) 64 (±14) 68 (±9) .04
+ Regional LV dysfunction 27 (73%) 8 (100%) 19 (66%) 32 (10%) <.001
+Biomarkers besides TnT
+ NT-proBNP, pg/mL, median (IQR) 115 (53–426) 81 (60–143) 145 (53–482) 47 (24–111) .19
+ Cystatin-C, mg/L, median (IQR) 0.90 (0.81–0.97) 0.83 (0.73–0.87) 0.93 (0.84–0.99) 0.82 (0.73–0.93) .35
+Continuous variables are expressed as mean ± standard deviation unless otherwise specified.
+*p-value for the difference comparing patients with and without ACS. ACS denotes: acute coronary syndrome; MI denotes: myocardial infarction; UAP debnotes: unstable angina pectoris; CAD denotes:
+coronary artery disease; LV denotes: left ventricular; NT-proBNP denotes: amino-terminal pro-B type natriuretic peptide; IQR denotes: interquartile range.
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 13
+Table 2
+Results of troponin testing for diagnosis of ACS.
+Analyte, cut-point Sensitivity (95% CI) Specificity (95% CI) PPV (95% CI) NPV (95% CI)
+Diagnostic accuracy for acute coronary syndrome in all patients (AUC hsTNT : 0.79)
+hsTnT, 13 pg/mL62% (47–78)* 89% (85–92) 38% (26–50) 96% (93–98)
+cTnT, 0.01 ng/mL 49% (33–65)97% (96–99)† 67% (49–84) 95% (92–97)
+cTnT, 0.03 ng/mL 35% (20–50)99% (96–99)† 72% (52–93) 93% (90–95)
+Diagnostic accuracy for myocardial infarction in all patients (AUC hsTNT : 0.86)
+hsTnT, 13 pg/mL 88% (47–100) 85% (81–89) 11% (5–22) 100% (98–100)
+cTnT, 0.01 ng/mL 88% (47–100)94% (92–97)† 26% (11–46) 100% (98–100)
+cTnT, 0.03 ng/mL 88% (47–100)97% (95–98)† 39% (17–46) 100% (98–100)
+Diagnostic accuracy for unstable angina pectoris in patients without myocardial infarction (AUC hsTNT : 0.72)
+hsTnT, 13 pg/mL55% (37–74)* 89% (85–92) 30% (18–44) 96% (93–98)
+cTnT, 0.01 ng/mL 38% (21–58)97% (95–99)† 55% (32–77) 95% (92–97)
+cTnT, 0.03 ng/mL 21% (8–40)99% (97–100)† 55% (23–83) 94% (90–96)
+*P<.001 versus cTnT;
+†P<.001 versus hsTnT
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 14
+Table 3
+Univariable and multivariable predictors of log-transformed hsTnT concentrations.
+Univariable Multivariable
+Characteristic Spearman
+correlationP β P
+Age 0.29 <.001 0.019 .005
+Physical examination
+ Body-mass index, Kg/m2 0.05 .30 - -
+ Systolic blood pressure, mm Hg 0.09 .07 - -
+ Diastolic blood pressure, mm Hg − 0.075 .14 - -
+ Heart rate, beats/minute −0.09 .08 - -
+Coronary CT angiography
+ Segments with calcified plaque 0.31 <.001 - -
+ Segments with non-calcified plaque 0.25 <.001 - -
+ Segments with mixed plaque 0.25 <.001 - -
+ Segments with any plaque 0.32 <.001 - -
+ Segments with significant stenosis 0.20 .005 − 0.324 .03
+ Vessels with significant stenosis 0.22 <.001 0.634 .004
+ Vessels with plaque 0.30 <.001 - -
+Cardiac chamber size and function
+ Left atrial diastolic volume 0.20 .001 - -
+ Left atrial systolic volume 0.20 .001 - -
+ Left ventricular end diastolic volume 0.13 .01 − 0.012 .06
+ Left ventricular end systolic volume 0.16 .003 0.028 .06
+ Left ventricular mass 0.30 <.001 0.008 <.001
+ Left ventricular ejection fraction −0.06 .24 0.042 .04
+ Regional left ventricular dysfunction - - 0.669 <.001
+Biomarkers besides Troponin T
+ NT-proBNP 0.26 <.001 0.001 .009
+ Cystatin-C 0.13 .009 - -
+NT-proBNP denotes: amino-terminal pro-B type natriuretic peptide.
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 15
+Table 4
+Comparison of patients without ACS as a function of hsTnT result.
+No ACS
+Characteristic hsTnT ≥13 pg/mL
+(N=38)hsTnT <13 pg/mL
+(N=302)P
+Age 61.5 (±14.0) 52 (±11.0) <.001
+Male sex 26 (68%) 186 (62%) .40
+Past medical history
+ Diabetes mellitus 10 (26%) 27 (9%) .001
+ Hypertension 21 (55%) 113 (37%) .03
+ Hyperlipidemia 21 (55%) 111 (37%) .03
+ Family history of coronary artery disease 10 (26%) 73 (24%) .80
+ Personal history of coronary artery disease 10 (26%) 25 (8%) <.001
+ Prior myocardial infarction 7 (18%) 19 (6%) .008
+ Tobacco use 15 (39%) 157 (52%) .10
+Medications at presentation
+ Aspirin 17 (45%) 99 (33%) .10
+ Statin 17 (45%) 84 (28%) .03
+ Nitroglycerine 5 (13%) 14 (5%) .03
+ β blocker 16 (42%) 65 (21%) .005
+Vital signs
+ Systolic blood pressure, mm Hg 137 (±23.0) 139 (±23.0) .60
+ Diastolic blood pressure, mm Hg 77 (±18.0) 81 (±13.0) .20
+ Heart rate, beats/minute 65 (±7.0) 67 (±10.0) .30
+ Body-mass index, Kg/m2 29 (±6.0) 29 (±6.0) .40
+Coronary CT angiography
+ Segments with calcified plaque 4.4 (±4.0) 1.5 (±3.0) <.001
+ Segments with non-calcified plaque 1.8 (±3.0) 0.8 (±2.0) .05
+ Segments with mixed plaque 1.4 (±2.5) 0.5 (±1.4) .04
+ Segments with plaque 4.8 (±5.0) 1.7 (±3.0) .001
+ Segments with significant stenosis 0.4 (±1.0) 0.06 (±0.3) .04
+ Vessels with significant stenosis 0.2 (±0.5) 0.05 (±0.3) .09
+ Vessels with plaque 2 (±1.8) 0.9 (±1.3) .001
+Cardiac chamber size and function
+ Left atrial diastolic volume, mL 107 (±33.0) 95 (±24.0) .02
+ Left atrial systolic volume, mL 69 (±31.0) 55 (17.0) .01
+ Left ventricular end diastolic volume, mL 122 (±45.0) 117 (±30.0) .50
+ Left ventricular end systolic volume, mL 48 (±41.0) 38 (±16.0) .20
+ Left ventricular mass 173 (±60.0) 147 (±39.0) .01
+Circulation . Author manuscript; available in PMC 2011 March 16.
+NIH-PA Author Manuscript NIH-PA Author Manuscript NIH-PA Author ManuscriptJanuzzi et al. Page 16
+No ACS
+Characteristic hsTnT ≥13 pg/mL
+(N=38)hsTnT <13 pg/mL
+(N=302)P
+ Left ventricular ejection fraction, % 65 (±14.0) 68 (±9.0) .30
+ Regional left ventricular dysfunction 8 (22%) 24 (8%) .008
+Biomarkers besides Troponin T
+NT-proBNP, pg/mL, median (interquartile range) 248 (92–492) 42 (23–86) <.001
+Cystatin-C, mg/L, median (interquartile range) 0.93 (0.75–1.07) 0.82 (0.73–0.92) .05
+Continuous variables are expressed as mean ± standard deviation unless otherwise specified. hsTnT denotes: high sensitivity troponin T; NT-
+proBNP denotes: amino-terminal pro-B type natriuretic peptide.
+Circulation . Author manuscript; available in PMC 2011 March 16.

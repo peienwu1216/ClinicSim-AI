@@ -1,0 +1,594 @@
+ECG data analysis to determine
+ST-segment elevation myocardial
+infarction and infarction territory
+type: an integrative approach ofartiﬁcial intelligence and clinical
+guidelines
+Jongkwang Kim1†, Byungeun Shon2†, Sangwook Kim3†,
+Jungrae Cho2, Jung-Ju Seo2, Se Yong Jang4,5* and
+Sungmoon Jeong1,2*
+1Department of Medical Informatics, School of Medicine, Kyungpook National University, Daegu,
+Republic of Korea,2Research Center for AI in Medicine, Kyungpook National University Hospital, Daegu,
+Republic of Korea,3Bio-Medical Research Institute, Kyungpook National University Hospital, Daegu,
+Republic of Korea,4Department of Internal Medicine, School of Medicine, Kyungpook National
+University, Daegu, Republic of Korea,5Division of Cardiology, Department of Internal Medicine,
+Kyungpook National University Chilgok Hospital, Daegu, Republic of Korea
+Introduction: Acute coronary syndrome (ACS) is one of the leading causes of
+death from cardiovascular diseases worldwide, with ST-segment elevationmyocardial infarction (STEMI) representing a severe form of ACS that exhibits
+high prevalence and mortality rates. This study proposes a new method for
+accurately diagnosing STEMI and categorizing the infarction area in detail, basedon 12-lead electrocardiogram (ECG) data using a deep learning-based arti ﬁcial
+intelligence (AI) algorithm.
+Methods: Utilizing an ECG database consisting of 888 myocardial infarction (MI)
+patients, this study enhanced the generalization ability of the AI model throughﬁve-fold cross-validation. The developed ST-segment elevation (STE) detector
+accurately identi ﬁed STE across all 12 leads, which is a crucial indicator for the
+clinical ECG diagnosis of STEMI. This detector was employed in the AI model todifferentiate between STEMI and non-ST-segment elevation myocardialinfarction (NSTEMI).
+Results: In the process of distinguishing between STEMI and NSTEMI, the average
+area under the receiver operating characteristic curve (AUROC) was 0.939, andthe area under the precision-recall curve (AUPRC) was 0.977, demonstratingsigni ﬁcant results. Furthermore, this detector exhibited the ability to accurately
+differentiate between various infarction territories in the ECG, including anterior
+myocardial infarction (AMI), inferior myocardial infarction (IMI), lateral myocardialinfarction (LMI), and suspected left main disease.
+Discussion: These results suggest that integrating clinical domains into AI
+technology for ECG diagnosis can play a crucial role in the rapid treatment
+and improved prognosis of STEMI patients. This study provides an innovativeOPEN ACCESS
+EDITED BY
+Rajesh Kumar Tripathy,
+Birla Institute of Technology and Science, India
+REVIEWED BY
+Yuan Lu,The Af ﬁliated Hospital of Xuzhou Medical
+University, ChinaAto Kapfo,
+Indian Institute of Technology Guwahati, India
+Viorel Mihalef,Siemens Healthcare, United States
+*CORRESPONDENCE
+Sungmoon Jeong,
+jeongsm00@gmail.com
+Se Yong Jang,
+seyongjang@knu.ac.kr
+†These authors have contributed equally to this
+work and share ﬁrst authorship
+RECEIVED 16 July 2024
+ACCEPTED 19 September 2024
+PUBLISHED 07 October 2024
+CITATION
+Kim J, Shon B, Kim S, Cho J, Seo J-J, Jang SY
+and Jeong S (2024) ECG data analysis to
+determine ST-segment elevation myocardialinfarction and infarction territory type: anintegrative approach of arti ﬁcial intelligence and
+clinical guidelines.Front. Physiol. 15:1462847.
+doi: 10.3389/fphys.2024.1462847
+COPYRIGHT
+© 2024 Kim, Shon, Kim, Cho, Seo, Jang and
+Jeong. This is an open-access article distributed
+under the terms of the Creative Commons
+Attribution License (CC BY) . The use,
+distribution or reproduction in other forums ispermitted, provided the original author(s) andthe copyright owner(s) are credited and that theoriginal publication in this journal is cited, in
+accordance with accepted academic practice.
+No use, distribution or reproduction ispermitted which does not comply with theseterms.
+Frontiers in Physiology frontiersin.org 01TYPE Original Research
+PUBLISHED 07 October 2024
+DOI10.3389/fphys.2024.1462847
+approach for the diagnosis of cardiovascular diseases and contributes to enhancing
+the practical applicability of AI-based diagnostic tools in clinical settings.
+KEYWORDS
+ST-segment elevation detection, deep learning-based arti ﬁcial intelligence, ST-segment
+elevation myocardial infarction, 12-lead electrocardiogram, infarction territory
+1 Introduction
+Acute coronary syndrome (ACS) is a very common cause of
+morbidity and mortality in the United States, with an estimated1.5 million hospitalizations and costs of more than USD 150 billionannually, according to the American Heart Association ( Kolansky,
+2009 ). ACS includes unstable angina, non-ST-segment elevation
+myocardial infarction (NSTEMI), and ST-segment elevation
+myocardial infarction (STEMI). The pathogenesis of acutemyocardial infarction involves rupture or erosion of anatherosclerotic plaque ( Arbustini et al., 1999 ), and NSTEMI
+occurs in the setting of partial occlusion of the culprit coronaryartery ( Bhat et al., 2016 ). In contrast, STEMI is caused by complete
+occlusion of the culprit coronary artery. Thus, STEMI is moresymptomatic, has a more rapid disease progression, and a higher
+mortality rate than NSTEMI ( Rodríguez-Padial et al., 2021 ;Meyers
+et al., 2021 ). As such, STEMI is one of the major cardiovascular
+diseases with high prevalence and mortality ( Benjamin et al., 2018 ),
+and timely diagnosis of STEMI is critical to reducing the risk ofsudden death through prompt treatment ( Murray et al., 2015 ).
+Coronary angiography (CAG) is the gold standard diagnosticmethod for STEMI ( Wu et al., 2022 ). Percutaneous coronary
+intervention (PCI), performed through this procedure, is an
+effective treatment that limits the infarction size after a
+myocardial infarction and reduces the risk of complications andheart failure ( Mehta et al., 2010 ;Bulluck et al., 2016 ). Additionally,
+biomarkers, cardiac imaging technologies, and electrocardiographicmethods, used as auxiliary diagnostic tools, play a crucial role indiagnosing myocardial infarction ( Thygesen et al., 2012 ). Among
+emergency treatment options, non-invasive ECG is the most cost-effective and irreplaceable method, allowing for continuous and
+remote monitoring ( Siontis et al., 2021 ). Continuous ECG
+monitoring provides useful prognostic information anddetermines reperfusion or re-occlusion status ( Thygesen et al.,
+2018 ). Therefore, it is an essential diagnostic step for suspected
+patients in the ambulance or hospital. Furthermore, a 12-lead ECGcan be used to understand the pathogenesis of MI better and toaccurately determine the location of the occluded coronary arteryand myocardial infarction. Speci ﬁc ECG leads can re ﬂect various
+locations of the heart ’s electrical activity and can distinguish
+different types of MI according to the area of myocardial necrosis(Meek and Morris, 2002 ). For example, ST-segment elevations
+(STEs) in leads V1, V2, V3, and V4 suggest anterior wallmyocardial infarction (AMI), while STEs in leads II, III, and aVFsuggest inferior wall myocardial infarction (IMI). Considering thesefactors, the 12-lead ECGs serve as the standard diagnostic tool fordiagnosing ACS. In the clinical setting, in addition to the distinction
+between STEMI and NSTEMI, ECGs of STEMI patients require
+rapid and accurate interpretation. However, interpreting a STEMIfrom ECG images is challenging for ambulance paramedics,emergency physicians, and sometimes cardiologists ( Debrabant
+et al., 2021 ). In previous ECG arti ﬁcial intelligence (AI) studies,
+signiﬁcant efforts were made to enhance the accuracy of STEMI and
+other abnormality diagnoses by leveraging deep learning for 12-leadECG analysis ( Liu et al., 2021 ;Ribeiro et al., 2020 ). These model
+designs are supported by evidence that AI techniques based on deeplearning not only compete with but often surpass human
+performance in many areas, such as medical diagnostics, image
+and speech recognition, natural language processing, strategic gameplaying, algorithm discovery, and structure prediction ofbiomolecular interactions ( Silver et al., 2016 ;Brown et al., 2020 ;
+Mankowitz et al., 2023 ;Kaufmann et al., 2023 ;Abramson et al.,
+2024 ). Consequently, those studies attempting to diagnose heart
+diseases have demonstrated that these techniques yield meaningfulresults in practical 12-lead ECG settings. However, these existing
+studies have only conducted experiments on 1-dimensional digital
+ECG sequence data directly obtained from devices and not ECGimages derived from printed papers, although printed versions areoften considered the universal format for ECGs. In contrast, theliterature on conventional image processing techniques for ECGsfrom printed papers includes numerous efforts to digitize theseimages into sequences, apply geometric transformations, andrecognize speci ﬁc patterns ( Lence et al., 2023 ;Badilini et al.,
+2005 ;Waits and Soliman, 2017 ). However, most of these
+approaches struggle with noise sources such as printing errors,
+poor skin-electrode contact, and other interferences, resulting ininsufﬁcient accuracy and performance that is not competitive with
+human professionals, such as emergency medicine residents orcardiologists. Given the complexity of these noises and the real-world contexts, the data-driven, end-to-end learning capabilities ofdeep learning-based AI are essential. The conventional deep learning
+approach to perform STEMI classi ﬁcation is illustrated in Figure 1A .
+To our knowledge, no study has yet demonstrated the clinicalsigniﬁcance of interpreting and classifying STEMI through deep
+learning in 12-lead ECG images. This study presents a clinically-grounded and interpretable AI model for STEMI ECG analysis. ThisAI model aims to distinguish between STEMI and NSTEMI andaccurately predict infarction territory on STEMI ECGs, serving as anauxiliary tool for clinicians to facilitate rapid diagnosis and
+treatment. Figure 1B illustrates the structure of the proposed
+model. Initially, it uses a deep learning-based algorithm to detectST-segment elevations in each lead of the 12-lead ECG imagethrough supervised learning ( Rashidi et al., 2019 ), providing
+clinical evidence for further analysis. It then distinguishesbetween STEMI and NSTEMI and, if classi ﬁed as STEMI,
+identi ﬁes the infarction territory based on the detected STEs. The
+detailed process is provided in the Materials and Methods section.
+The Experiments and Results section evaluates the effectiveness of
+our approach and compares its performance to conventional deeplearning approaches, illustrated in Figure 1A .
+Frontiers in Physiology frontiersin.org 02Kim et al. 10.3389/fphys.2024.1462847
+2 Materials and methods
+2.1 Data collection
+2.1.1 Dataset
+A standard supine 12-lead ECG of 25 mm/s and 10 mm/mV was
+used. We selected the ﬁrst ECG for patients with MI when theyvisited the emergency department for the MI ECG. The Philips ECG
+system (Philips Medical System, PageWriter TC30, TC70) was usedfor the baseline ECG data. The dataset consists of ECG images, ofwhich the ECG region consists of a grid-shaped background and asignal portion, as shown in Figure 2A . The signal part of the ECG
+area comprises thin lines. We collected ECG images of 888 MIpatients, including 677 ST-segment elevation myocardial infarction
+FIGURE 1
+AI system process for ECG analysis from a 12-lead ECG image. (A)Conventional end-to-end learning approach. (B)Proposed model utilizing
+clinical evidence.
+FIGURE 2
+(A)Example of a digitized 12-lead ECG image. (B)Hand-drawn STE (red) and lesser STE (blue) box annotations on a 12-lead ECG image.
+Frontiers in Physiology frontiersin.org 03Kim et al. 10.3389/fphys.2024.1462847
+(STEMI) patients and 211 non-ST-segment elevation myocardial
+infarction (NSTEMI) patients, recorded in the emergencydepartment of Kyungpook National University Hospital fromJanuary 2011 to December 2019. Table 1 provides the
+distribution of samples for STEMI and NSTEMI datasets. Itshould be noted that the total number of samples for infarction
+territory (872) exceeds the number of STEMI samples (677). This
+discrepancy is because a single STEMI patient can have multiplecoronary occlusions. The KNUH Institutional Review Boardapproved the use of this dataset (2020-12-022-011).
+2.1.2 Data annotation
+This study performed model learning using a supervised
+learning approach. For the 12-lead ECG images, the STEMI and
+NSTEMI diagnostic labeling was classi ﬁed based on medical records
+and the clinical judgment of physicians. In addition to ST-segmentelevation, we annotated areas of mild ST elevation (i.e., lesser STE)to consider these abnormalities as potential indicators to distinguishSTEMI and NSTEMI cases in ECGs. To generate ground truthlabels, human encoders manually annotated the STE (a box wherethe ST segment rises more than 1 mm, including the QRS complex)and lesser STE (a box where the ST segment rises 1 mm or lesser,
+including the QRS complex) for each lead of the 12-lead ECG images
+using a Python package called labelImg ( GitHub, 2015 )(Figure 2B ).
+The criteria for ST elevation at the J point was based on theAmerican College of Cardiology/American Heart AssociationSTEMI guidelines, de ﬁned as an elevation of 1 mm or more
+above the baseline at the J point. All labels and annotations inthe STEMI and NSTEMI ECG annotation dataset were performedusing the gold standard of three board-certi ﬁed cardiologists who
+agreed on the annotation placement through discussion. This study
+was retrospective and did not require informed consent.
+2.2 Data preprocessing
+The original ECG data were available in printed papers, and the
+scanned ECG region had a resolution of 1,228 × 2,460. While we
+used 12-lead ECGs, there are 13 different ﬁgures because lead II (L2)
+has one more recording of longer duration, whereas the otherchannels have only short recordings, as shown in Figure 2A . For
+simplicity, we split the long L2 recording into four evenly dividedsubregions and detected ST elevations separately in each subregion.We did not use other clinical information, such as sex or age, whichcan be obtained from the ECG reports.
+2.3 Model architecture
+In this study, we ﬁrst detect regions of STE and lesser STE
+patterns from the given ECG, and two inference procedures wereconducted based on the detection result: STEMI classi ﬁcation and
+prediction of infarction territory. The brief architecture of the modelis illustrated in Figure 1 .
+2.3.1 Detection of ST-segment elevations
+As described in subsection 2.2 , the only preprocessing required
+is the manual separation of image regions for each ECG lead,performed once before data processing begins. These clipped
+images from the original ECG serve as input for our detectormodels. To detect STEs, we trained a Faster R-CNN model ( Ren
+et al., 2016 ) with ResNet-50 ( He et al., 2016 ) serving as the backbone
+network. Faster R-CNN is an object detection algorithm and its
+Region Proposal Network (RPN) is responsible for generating region
+proposals for detections. The algorithm begins by processing theinput image through a Convolutional Neural Network (CNN) togenerate feature maps, which capture important visual informationfrom the image. Next, Faster R-CNN employs a RPN to suggestpotential object locations. The RPN predicts the likelihood of anobject being present in each proposed region and provides thecoordinates of the corresponding bounding boxes. During this
+process, Faster R-CNN performs bounding box regression to
+reﬁne these proposals, aiming to accurately predict the locations
+of objects by minimizing the difference between the predictedbounding boxes and the actual ground truth boxes. Finally, foreach re ﬁned bounding box, the algorithm predicts the object class,
+resulting in the ﬁnal detection output. Through this integrated
+approach, Faster R-CNN achieves high accuracy and speed inobject detection. Thus, Faster R-CNN is notable for its ef ﬁcient
+region proposal mechanism and its focus on accurately predicting
+both the locations and classes of objects within an image. As wedescribed earlier, we utilized pre-trained model weights of ResNet-50 for constructing the convolutional feature maps of the FasterR-CNN, instead of random initialization. In this study, the RPN ofFaster R-CNN applies a 3 × 3 convolutional ﬁlter to generate region
+proposals using anchor boxes of various sizes. ResNet-50, thebackbone network for Faster R-CNN, consists of 50 layers and
+employs residual (shortcut) connections that skip over one or more
+layers. During the training phase of Faster R-CNN, ground-truthbounding boxes of STEs and lesser STEs, annotated by cardiologists,are provided as labels. Using these annotations, the model is trained,enabling it to generate accurate bounding boxes during inference.During bounding box regression of Faster R-CNN ( Ren et al., 2016 ),
+bounding box information is encoded as shown in Equation 1 .
+t
+x/equalsx−xa
+wa,ty/equalsy−ya
+ha,tw/equalslogw
+wa,th/equalslogh
+ha, (1)
+where x,y,w, and hrepresent x-y coordinates of the center of a
+bounding box and its width and height, respectively, while adenotes
+the anchor index. Outputs of Faster R-CNN detectors are predictedbounding boxes of detected objects (STE and lesser STE). Since theraw outputs of the Faster R-CNN detector often include multipleTABLE 1 Distribution of samples for STEMI and NSTEMI datasets.
+Description Counts
+STEMI 677
+Anterior MI 467Lateral MI 233
+Inferior MI 123
+Suspected left main disease 49NSTEMI 211
+Total 888
+Frontiers in Physiology frontiersin.org 04Kim et al. 10.3389/fphys.2024.1462847
+overlapping bounding boxes that are not semantically distinct, to
+reﬁne these results, we additionally apply soft non-maximal
+suppression (soft NMS) ( Bodla et al., 2017 ). We determined
+optimal threshold values for soft NMS ﬁltering by systematically
+evaluating Intersection over Union (IoU) and score threshold valuesfrom 0.0 to 1.0 in increments of 0.1. Finally, an IoU threshold of
+0.5 and a score threshold of 0.7 were selected as they provided the
+best results on the validation dataset. The procedure of the STEdetection is illustrated in Figure 3 . Notably, our approach can
+directly identify STE and lesser STE regions from scanned ECGpaper images, eliminating the need for additional preprocessingsteps like grid removal or smoothing.
+2.3.2 Classi ﬁcation of STEMI
+For automated classi ﬁcation of STEMI, various methods exist to
+encode information detected from an image. In this study, weemployed the following information encodings: (1) the counts ofdetected STEs and lesser STEs from the given image; (2) the countsof detected STEs for each lead; (3) the counts of detected STEs andlesser STEs for each lead; (4) the presence of detected STEs and lesserSTEs from the given image; (5) the presence of detected STEs foreach lead; (6) the presence of detected STEs and lesser STEs for each
+lead. We denote these six feature encoding schemes, as shown in
+Table 2 . For example, if four STEs and one lesser STE are detected at
+theﬁrst lead, and two lesser STEs are at the second lead, then the
+representations will be: (Image-Detailed Count) [4, 3]; (Lead-STECount) [4, 0, 0, ..., 0]; (Lead-Detailed Count) [4, 1, 0, 2, 0, 0, ..., 0];
+(Image-Detailed Presence) [1, 1]; (Lead-STE Presence) [1, 0, 0, ...,
+0]; and (Lead-Detailed Presence) [1, 1, 0, 1, 0, 0, ..., 0]. For these six
+cases, classi ﬁcation performances are separately evaluated in the
+results for comparison. As a classi ﬁcation model, weighted ensemble
+models ( Erickson et al., 2020 ) were trained to classify STEMI from
+the STE detection result. Although we tested classi ﬁers such as
+Support Vector Machines and Random Forests, the weightedensemble model consistently outperformed the others. Therefore,we selected the weighted ensemble model for STEMI classi ﬁcation.
+The weighted ensemble model consists of k-nearest neighbors,LightGBM, CatBoost, XGBoost, RandomForest, ExtraTrees, and
+Multi-layer Perceptron. Comparisons of the encodings are
+presented in Table 5 in the Results subsection.
+2.3.3 Prediction of infarction territory
+In this subsection, we describe a method for identifying
+infarction territory in patients with STEMI. Using detectionresults of STEs on 12 leads as features, we used a weightedensemble model to predict vascular problems. The areas of
+infarction were classi ﬁed into four regions: anterior, lateral,
+inferior, and suspected left main disease. We referenced theclinical criteria in Table 3 to identify infarction territory based on
+ECG ﬁndings.
+We applied these clinical criteria to the AI model, conducting a
+process in which the STE Detector predicted infarction territory
+based on anticipated annotations. The predicted results were thencompared and analyzed for similarity with the target labels
+classi ﬁed by the actual infarctio n territories. A classi ﬁer using
+weighted ensembles learns the relationships between theencodings of detected STEs (and lesser STEs) and the targetterritories.3 Experiments and results
+3.1 Experiment setup
+To implement the proposed system, we used deep learning
+libraries and frameworks such as AutoGluon, MMDetection, and
+PyTorch ( Erickson et al., 2020 ;Chen et al., 2019 ;Paszke et al., 2019 ).
+Speci ﬁcally, we used MMDetection for Faster R-CNN
+implementation, and PyTorch for the baseline models, includingResNet-50, Inception-ResNet-v2 ( Szegedy et al., 2017 ), and
+ConvNeXt ( Liu et al., 2022 ). For the classi ﬁcation of STEMI in
+section 2.3.2 , we used AutoGluon ’s implementations of LightGBM,
+CatBoost, XGBoost, RandomForest, ExtraTrees, and Multi-layerPerceptron. A computing server with three NVIDIA A10 Tensor
+Core GPUs with 24 GB memory is used in the experiments. The total
+training time for a model is approximately 9 h on the server, and a 5-fold cross-validation process, which takes around 45 h. Forinference, processing a single ECG sample takes about500 milliseconds. All performance metrics are obtained byaveraging the results from 5-fold cross-validation. To comparethe performance of the proposed method with end-to-end AImodels consisting of a single classi ﬁcation stage (i.e., without
+explicit detection of STEs), we ﬁne-tuned deep learning models
+such as ResNet-50, Inception-ResNet-v2, and ConvNeXt using theprovided ECG dataset. The pre-training was conducted using theMicrosoft COCO dataset ( Lin et al., 2014 ), a large-scale dataset
+widely used for object detection and segmentation tasks. Thelearning rate was set to 0.001 for 100 epochs of training, and anearly stopping criterion was applied to avoid over ﬁtting.
+3.2 Results
+In this subsection, we present performance evaluations for the
+detection of STE, the classi ﬁcation of STEMI, and the identi ﬁcation
+of infarction territories.
+In each ECG image, there were 16 subregions corresponding to
+the leads. In each subregion, the detector attempts to generate
+bounding boxes for STE or lesser STE patterns. The average
+performance of detecting ST-segment elevations and theirstandard deviations is presented in Table 4 . The experiment was
+conducted using a 5-fold cross-validation technique. Sensitivityscores are slightly higher than precision, which is bene ﬁcial for
+the detector, as false negatives are generally riskier in medicalsituations.
+Table 5 describes the STEMI detection performances with
+various STE encoding schemes. As our initial assumption that
+minor abnormalities, such as lesser STE, can also provide a hintto STEMI, feature encodings with both STE and lesser STEoutperformed other encodings. However, the superiorperformance of Presence encodings over Count encodings was
+difﬁcult to anticipate and requires further interpretation. This
+outcome can be interpreted from the following perspective. Inthe context of STEMI classi ﬁcation, the rich information
+provided by Count encodings might not be as critical because
+clinical decisions are generally unaffected by whether there areﬁve or six STEs. Instead, the simplicity of the feature space in
+Presence encodings offers an advantage over the richness of Count
+Frontiers in Physiology frontiersin.org 05Kim et al. 10.3389/fphys.2024.1462847
+encodings for training AI models, as a more complex feature space
+typically requires more data samples to achieve similargeneralization performance. In this experiment, large-scaletraining data were unavailable; therefore, for the STEMIclassi ﬁcation task, Presence encodings may be more effective
+than Count encodings. As a result, the Lead-Detailed Presenceencoding proved to be the most effective encoding for STE
+detection in the STEMI classi ﬁcation task.
+To compare our approach with other deep learning models, we
+conducted ﬁne-tuning procedures for ResNet-50, Inception-
+ResNet-v2, and ConvNeXt and evaluated their performance onSTEMI detection. These models perform end-to-end learning andone-stage STEMI detection, meaning they do not explicitly detectSTE or lesser STE regions but instead provide a direct decision forthe given image. In contrast, our approach consists of a two-stageprocess: explicit detection of STEs, followed by STEMI classi ﬁcation
+based on the information from the detected STEs. By explicitlydetecting STEs, our model incorporates expert knowledge fromcardiologists during the model construction phase, resulting insuperior performance compared to one-stage deep learningmodels, as shown in Table 6 . Furthermore, in the inference
+phase, our model provides explicit detection results to assist
+medical clinicians in their decision-making process, enhancing
+the explainability of the model and avoiding the limitations of ablack-box approach.
+Based on the STE and lesser STE detection results, we trained
+and tested weighted ensemble models, and Table 5 illustrates the
+average and standard deviations of performances obtained from 5-fold cross-validation. As shown in Table 7 , the performance of
+suspected LM prediction was much worse than predictions of otherTABLE 3 Clinical criteria for identifying infarction territories on the ECG.
+Infarction territory Condition
+Anterior More than one lead shows STE among V1, V2, V3, and V4
+Lateral Two or more leads show STE among V5, V6, L1, and aVL
+Inferior Two or more leads show STE among L2, L3, and aVF
+Suspected left main disease STEs are observed in aVRTABLE 2 Encoding method for STE detection results.
+Encoding method Description
+Image-Detailed Count Counts of detected STEs and lesser STEs from an image
+Lead-STE Count Counts of detected STEs for each lead
+Lead-Detailed Count Counts of detected STEs and lesser STEs for each leadImage-Detailed Presence Presence of detected STEs and lesser STEs from an image
+Lead-STE Presence Presence of detected STEs for each lead
+Lead-Detailed Presence Presence of detected STEs and lesser STEs for each lead
+FIGURE 3
+ST-segment elevation detection procedure.
+TABLE 4 STE detection performances from 5-fold cross-validations.
+Target Ground truths Detections Sensitivity Average precision
+STE 1,414.6 (75.9) 1,350.8 (76.2) 0.825 (0.020) 0.794 (0.020)
+Lesser STE 1,441.2 (108.0) 1,570.8 (181.1) 0.814 (0.024) 0.734 (0.029)
+Frontiers in Physiology frontiersin.org 06Kim et al. 10.3389/fphys.2024.1462847
+territories, and it is partly rooted in the fact that the suspected left
+main disease has much fewer samples than the others, as describedinTable 1 . We also visualized the images to enhance our
+understanding of these experimental results, as shown in Figure 4 .
+4 Discussion
+STEMI is classi ﬁed as the most lethal form of coronary artery
+disease. It is caused by a complete or near-complete blockage of acoronary artery that supplies blood to the heart muscle, which canlead to extensive damage to the myocardial tissue. Rapid andaccurate diagnosis of STEMI can signi ﬁcantly improve patient
+survival and recovery. However, inappropriate and false-positiveactivation in the cardiac catheterization laboratory was reported tobe as high as 2.7% and 20%, respectively ( Rokos et al., 2010 ), which
+was highlighted as a major problem in the diagnostic and treatment
+process. Moreover, the uneven distribution of diagnostic levels andmedical resources increases the possibility of misdiagnosis andmissed diagnosis of STEMI, a major obstacle in providingpatients with optimal diagnostic and treatment strategies.Electrocardiogram is an objective, cost-effective, and widely usedtool for diagnosing STEMI. An ECG records the electrical activity of
+the heart, which allows for identifying signs of coronary arteryocclusion and myocardial damage. However, ECG interpretation ishighly dependent on the experience and judgment of the physician,which can lead to a lack of diagnostic consistency, a time-consumingand labor-intensive process.
+An ECG-based STEMI diagnosis using arti ﬁcial intelligence
+technology represents a signi ﬁcant step forward in addressing these
+issues. AI can learn patterns from large datasets and diagnose STEMI
+quickly and accurately based on these patterns. This is important inreducing the door-to-balloon (D2B) time, with shorter D2B timeassociated with lower in-hospital mortality and 6-month mortality(Nallamothu et al., 2015 ). Reducing D2B time helps to minimize
+damage to the heart muscle, increase the possibility of recovery ofcardiac function, and improve long-term survival. The results of thisstudy suggest that AI, especially CNN deep learning models, can be
+effectively used to analyze each lead by detection in a 12-lead ECG.
+We built an ECG database of 888 MI patients in a real hospitalemergency department. We used 5-fold cross-validation in allexperiments to prevent the model from over ﬁtting to the training
+data and improve its generalization ability. We were able to use thedata ef ﬁciently because all data samples can be used for training andTABLE 6 Comparison to other deep learning models.
+Model AUROC AUPRC Accuracy Sensitivity Speci ﬁcity Precision F1 -score
+ResNet-50 0.780 0.925 0.656 0.578 0.909 0.954 0.719
+Inception-ResNet-v2 0.739 0.911 0.613 0.535 0.864 0.927 0.679
+ConvNeXt 0.594 0.815 0.723 0.859 0.409 0.824 0.841
+Our Work 0.939 0.977 0.895 0.894 0.897 0.965 0.927
+TABLE 7 Infarction territory identi ﬁcation performances from 5-fold cross-validations.
+Territory AUROC Accuracy Sensitivity Speci ﬁcity Precision F1 -score
+Anterior 0.955 (0.015) 0.919 (0.023) 0.940 (0.025) 0.895 (0.045) 0.91 (0.032) 0.924 (0.021)
+Lateral 0.925 (0.047) 0.898 (0.037) 0.874 (0.079) 0.906 (0.039) 0.769 (0.090) 0.816 (0.073)
+Inferior 0.966 (0.039) 0.954 (0.022) 0.904 (0.103) 0.962 (0.029) 0.811 (0.108) 0.848 (0.064)
+Suspected left main disease 0.838 (0.083) 0.924 (0.052) 0.767 (0.133) 0.934 (0.050) 0.450 (0.150) 0.559 (0.149)TABLE 5 Performance of STEMI classi ﬁcation from 5-fold cross-validations.
+Encoding AUROC AUPRC Accuracy Sensitivity Speci ﬁcity Precision F1 -score
+Image-Detailed Count 0.878 0.940 0.891 0.925 0.782 0.930 0.927
+Lead-STE Count 0.775 0.873 0.875 0.973 0.576 0.876 0.922
+Lead-Detailed Count 0.907 0.953 0.899 0.916 0.841 0.948 0.931
+Image-Detailed Presence 0.926 0.971 0.872 0.863 0.901 0.964 0.910
+Lead-STE Presence 0.925 0.969 0.871 0.855 0.918 0.970 0.909
+Lead-Detailed Presence 0.939 0.977 0.895 0.894 0.897 0.965 0.927
+Frontiers in Physiology frontiersin.org 07Kim et al. 10.3389/fphys.2024.1462847
+validation. In addition, by evaluating the model using multiple data
+sets, we increased the stability and reliability of the model, as the
+performance of the model does not depend on a speci ﬁcp a r to ft h e
+data. Our STE detector accurately detected STE and lesser STE with anaverage mAP of 0.76 in each of the 12 leads. When applied to the AImodel, it showed high classi ﬁcation performance with an average
+AUROC of 0.939 and AUPRC of 0.977 for STEMI and NSTEMI,respectively. In addition, the ECG showed a signi ﬁcantly high
+sensitivity for the detection of anterior MI, recording an averageACC (0.91), SEN (0.94), SPEC (0.89), F1-score (0.92), and AUROC
+(0.95). Moreover, the AI model demonstrated accurate performance
+even for lateral MI and inferior MI, which are more challenging tointerpret on ECG than anterior MI. The average scores were ACC(0.89, 0.95), SEN (0.87, 0.90), SPEC (0.90, 0.96), F1-score (0.81, 0.84),and AUROC (0.92, 0.96). Even for the relatively infrequent suspectedleft main disease, it achieved high performance with ACC (0.92), SEN(0.76), SPEC (0.93), and AUROC (0.83).
+The main contribution of this study is to demonstrate that our AI
+model excels in classifying STEMI and NSTEMI and identifying
+infarct locations. Previous studies reported that the classi ﬁcation
+performance of AI for STEMI had average AUROC, ACC, SEN,and SPEC values of 0.99, 0.98, 0.95, and 0.99, respectively, highlightingthe superiority of AI models in classifying STEMI and NSTEMI ECGs(Wu et al., 2022 ;Chen et al., 2022 ;Zhao et al., 2020 ). However, from a
+patient care support perspective, the decisions made by AI did notprovide clear evidence for ST segment elevation, a critical indicator for
+STEMI diagnosis in reliable ECGs. To address this issue, we utilized an
+ST segment elevation (STE) detector to provide clinically interpretableECG analyses to clinicians, demonstrating the detector ’s excellent
+performance in identifying STE and lesser STE across 12 ECG leads.Notably, while our STE detection based on clinical guidelines had the
+AUROC, ACC, SEN, and SPEC values (0.939, 0.895, 0.894, 0.897)
+relatively lower than those of previous AI models, it improved the
+reliability of AI judgments by effectively distinguishing STEMI andNSTEMI at a level comparable to that of cardiologists ( Wu et al., 2022 ;
+Zhao et al., 2020 ) and visualized the ability to classify infarct locations
+similarly to cardiologists ( Figure 4 ). Additionally, it provides more
+detailed information about the anatomical key locations of STsegment elevation myocardial infarction, which differentiates ourstudy from previous research.
+The signi ﬁcance of this work goes beyond the advancement of
+AI technology. We explored ways to improve the depth and accuracyof clinical information that AI models can provide through ECGanalysis. Furthermore, this work demonstrates the potential ofmedical evidence-based AI developed through close collaborationbetween AI developers and healthcare professionals to be usefullyapplied in real clinical settings. Such collaboration will make AItechnology a clinically interpretable and reliable tool for healthcare
+professionals, ultimately leading to better patient outcomes.
+However, several obstacles need to be overcome before the
+results of this study can be applied to actual clinical practice.First, there is a need for data standardization between hospitals.It is dif ﬁcult to guarantee the compatibility of AI tools, as the data
+format or structure varies depending on the type or manufacturer ofthe ECG machine used in each hospital, making it dif ﬁcult to apply
+AI tools to the clinical ﬁeld. It is necessary to ensure technical
+compatibility through standardization of data between hospitals,
+and system integration between medical institutions andmanufacturers is required for this. Secondly, enhancing theunderstanding of AI technology among medical personnel
+FIGURE 4
+Cardiologists provided labels for infarction territories and annotated STE in 12-lead ECGs, and the AI model predicted the area of infarction and
+detected STE in 12-lead ECGs. The color of the annotation boxes for STE (and lesser STE) is as follows: STE is red, lesser STE is blue.
+Frontiers in Physiology frontiersin.org 08Kim et al. 10.3389/fphys.2024.1462847
+presents a signi ﬁcant challenge. Utilizing these tools can be dif ﬁcult
+for those with limited knowledge of AI. An initial solution mightinvolve carefully considering the UI design of these tools toaccommodate non-AI experts better. However, providingadditional promotion and education is crucial for medicalpersonnel to use AI tools effectively ( Kim et al., 2024 ). Such
+measures will encourage the adoption of AI tools across multiple
+centers and promote a safer and more standardized medicalenvironment. Third, AI-based ECG diagnostic algorithms mustbe rigorously validated across diverse racial groups to addressand minimize racial biases and ensure fairness and accuracy.Fourth, the classi ﬁcation performance of AI should be thoroughly
+assessed, including comparisons with a control group without ahistory of acute coronary syndrome (ACS). This evaluation should
+extend to detecting early phases of STEMI by including lesser ST
+elevations alongside signi ﬁcant ones, Additionally, considering rare
+cases that may be observed in STEMI, such as tall T waves and Qwave abnormalities, would enhance the clinical effectiveness of theproposed STEMI classi ﬁcation AI model, which requires further
+exploration. Fifth, while this study ’s retrospective single-center
+design has provided initial insights, its generalizability is limited.Despite rigorous internal validation through cross-validation,
+additional studies involving external validation in varied settings
+are essential to enhance reliability and applicability. Nevertheless,this study employed ECG machines commonly used in clinicalpractice and favored digitized ECG images over raw data toimprove the generalizability of the ﬁndings. However, there is
+still potential to further enhance the method ’s performance by
+leveraging the extensive information available from the rawdigital signals recorded by these devices. As a part of our future
+work, we aim to explore data augmentation using generative models
+that facilitate domain transfers between raw signals and printedECG images. Additionally, we will consider detecting other visualcues, such as peaks or QRS complexes, to enrich the feature space(Ciusdel et al., 2020 ). For instance, heartbeat information derived
+from peak detection could be incorporated into the feature vector orused to calculate additional features, such as the STE rationormalized by cardiac cycles. Furthermore, although we
+measured the performance of the methods using cross-validation,
+there remains a need to investigate the effects of hyper-parametervariations. To gain a deeper understanding and improve robustnessto hyper-parameters, we plan to conduct an ablation study. Lastly,we will perform experiments to thoroughly test the robustness of theproposed model, including its behavior in edge cases. For instance,in some cases, an ECG plot may overlap with the region of anotherlead, causing two signal lines to merge or become dif ﬁcult to
+distinguish. It is crucial to observe how the model responds to
+such abnormal cases to ensure its applicability in real-world scenarios.
+In conclusion, effective use of AI for ECG interpretation
+requires technical development, a supportive institutionalstructure, and an educational system. This integrated approachwill guide future research directions in this study and play a crucialrole in expanding the use of AI in ECG analysis. Such
+advancements will aid medical professionals by providing direct
+support in clinical settings, boosting their con ﬁdence in the
+p e r f o r m a n c eo fA I .T h er o l eo fA Ia sac o - p i l o ti nf a c i l i t a t i n gquick and accurate diagnoses can be critical in saving lives,especially in emergencies. Sinc e the direct diagnosis is still
+made after review by a cardiologist, patients will be free fromanxiety and prejudice about AI. This is expected to make asigniﬁcant contribution to the resolution of the uneven
+distribution of medical resources and the improvement ofpatient outcomes.
+5 Conclusion
+The present study evaluates an AI model for STEMI diagnosis
+and identifying infarction territories from 12-lead ECG images,integrating AI and clinical guidance. Two signi ﬁcant bene ﬁts are
+obtained by explicitly guiding the detection of ST-segment
+elevations.
+First, it addresses the challenge of insuf ﬁcient training data.
+Without clinical guidance, the model would struggle to identifyeffective features from large-scale data, which are often scarce andexpensive to acquire and annotate in medical data analysis. Themodel can focus on relevant features even with a limited dataset byincorporating clinical evidence during the training phase.
+Second, the model offers explainability, aiding clinical
+practitioners, including cardiologists, in understanding its
+diagnostic process. By providing clinical evidence during theinference phase, clinicians can make prompt decisions in urgentsituations and evaluate the reliability of the model ’s outputs, such as
+STEMI classi ﬁcation and identifying infarction territories.
+The study demonstrates the model ’s effectiveness in diagnosing
+STEMI and identifying infarction territories. The proposed modelperforms superiorly compared to conventional end-to-end learning
+AI approaches.
+In summary, this study highlights the potential of AI models
+enhanced with clinical evidence and developed through closecollaboration between AI developers and cardiology specialists.Such implementation ensures that AI technology becomes aclinically interpretable and reliable tool, ultimately improvingpatient outcomes.
+Data availability statement
+The original contributions presented in the study are included in
+the article/supplementary material, further inquiries can be directedto the corresponding authors.
+Ethics statement
+The Kyungpook National University Hospital (KNUH)
+Institutional Review Board approved the use of this dataset(2020-12-022-011). The studies were conducted in accordancewith the local legislation and institutional requirements. Theethics committee/institutional review board waived therequirement of written informed consent for participation from
+the participants or the participants ’legal guardians/next of kin
+because this study was retrospective and did not requireinformed consent. Written informed consent was not obtainedfrom the individual(s) for the publication of any potentially
+Frontiers in Physiology frontiersin.org 09Kim et al. 10.3389/fphys.2024.1462847
+identi ﬁable images or data included in this article because this study
+was retrospective and did not require informed consent.
+Author contributions
+JK: Writing –review and editing, Writing –original draft, Project
+administration, Methodology, Conceptualization. BS:Writing –review and editing, Visualization, Software,
+Methodology, Data curation. SK: Writing –review and editing,
+Writing –original draft, Validation, Methodology, Investigation,
+Data curation. JC: Visualization, Software, Writing –review and
+editing, Data curation. JS: Investigation, Writing –review and
+editing, Project administration, Methodology. SYJ: Writing –original
+draft, Writing –review and editing, Resources, Project administration,
+Methodology, Conceptualization, Data curation. SJ: Writing –original
+draft, Writing –review and editing, Resources, Methodology, Funding
+acquisition, Conceptualization, Project administration.
+Funding
+The author(s) declare that ﬁnancial support was received for the
+research, authorship, and/or publication of this article. This researchwas supported by the MSIT (Ministry of Science and ICT), Korea,under the ITRC (Information Technology Research Center) support
+program (IITP-2024-2020-0-01808) supervised by the IITP(Institute of Information & Communications TechnologyPlanning & Evaluation). And this research was supported by agrant of the Korea Health Technology R&D Project through theKorea Health Industry Development Institute (KHIDI), funded by
+the Ministry of Health & Welfare, Republic of Korea (grant
+number: HR22C1832).
+Conﬂict of interest
+The authors declare that the research was conducted in the
+absence of any commercial or ﬁnancial relationships that could be
+construed as a potential con ﬂict of interest.
+Publisher ’s note
+All claims expressed in this article are solely those of the authors
+and do not necessarily represent those of their af ﬁliated
+organizations, or those of the publisher, the editors and the
+reviewers. Any product that may be evaluated in this article, or
+claim that may be made by its manufacturer, is not guaranteed orendorsed by the publisher.
+References
+Abramson, J., Adler, J., Dunger, J., Evans, R., Green, T., Pritzel, A., et al. (2024).
+Accurate structure prediction of biomolecular interactions with AlphaFold 3. Nature 8,
+493 –500. doi:10.1038/s41586-024-07487-w
+Arbustini, E., Bello, B. D., Morbini, P., Burke, A. P., Bocciarelli, M., Specchia, G., et al.
+(1999). Plaque erosion is a major substrate for coronary thrombosis in acute myocardialinfarction. Heart 82 (3), 269 –272. doi:10.1136/hrt.82.3.269
+Badilini, F., Erdem, T., Zareba, W., and Moss, A. J. (2005). ECGScan: a method for
+conversion of paper electrocardiographic printouts to digital electrocardiographic ﬁles.
+J. Electrocardiol. 38 (4), 310 –318. doi:10.1016/j.jelectrocard.2005.04.003
+Benjamin, E. J., Virani, S. S., Callaway, C. W., Chamberlain, A. M., Chang, A. R.,
+Cheng, S., et al. (2018). Heart disease and stroke statistics –2018 update: a report from
+the American Heart Association. Circulation 137, e67 –e492. doi:10.1161/CIR.
+0000000000000558
+Bhat, P., Dretler, A., Gdowski, M., Ramgopal, R., and Williams, E. D. (2016). The
+Washington manual of medical therapeutics . Saint Louis, MO, USA: Washington
+University.
+Bodla, N., Singh, B., Chellappa, R., and Davis, L. S. (2017). “Soft-NMS--improving
+object detection with one line of code, ”in Proceedings of the IEEE international
+conference on computer vision, Venice, Italy, 22-29 October 2017, 5561 –5569. doi:10.
+1109/ICCV.2017.593
+Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J. D., Dhariwal, P., et al. (2020).
+Language models are few-shot learners. Adv. neural Inf. Process. Syst. 33, 1877 –1901.
+doi:10.48550/arXiv.2005.14165
+Bulluck, H., Yellon, D. M., and Hausenloy, D. J. (2016). Reducing myocardial infarct
+size: challenges and future opportunities. Heart 102, 341 –348. doi:10.1136/heartjnl-
+2015-307855
+Chen, K., Wang, J., Pang, J., Cao, Y., Xiong, Y., Li, X., et al. (2019). MMDetection: open
+mmlab detection toolbox and benchmark . arXiv preprint arXiv:1906.07155v1[cs.CV].
+doi:10.48550/arXiv.1906.07155
+Chen, K. W., Wang, Y. C., Liu, M. H., Tsai, B. Y., Wu, M. Y., Hsieh, P. H., et al. (2022).
+Artiﬁcial intelligence-assisted remote detection of ST-elevation myocardial infarction
+using a mini-12-lead electrocardiogram device in prehospital ambulance care. Front.
+Cardiovasc. Med. 9, 1001982. doi:10.3389/fcvm.2022.1001982
+Ciusdel, C., Turcea, A., Puiu, A., Itu, L., Calmac, L., Weiss, E., et al. (2020). Deep
+neural networks for ECG-free cardiac phase and end-diastolic frame detection oncoronary angiographies. Comput. Med. Imaging Graph. 84, 101749. doi:10.1016/j.
+compmedimag.2020.101749Debrabant, B., Halekoh, U., Soerensen, M., Møller, J. E., Hassager, C., Frydland, M.,
+et al. (2021). STEMI, cardiogenic shock, and mortality in patients admitted for acute
+angiography: associations and predictions from plasma proteome data. Shock 55 (1),
+41–47. doi:10.1097/SHK.0000000000001595
+Erickson, N., Mueller, J., Shirkov, A., Zhang, H., Larroy, P., and Li, M. (2020).
+AutoGluon-Tabular: robust and accurate AutoML for structured data . arXiv preprint
+arXiv:2003.06505v1[stat.ML]. doi:10.48550/arXiv.2003.06505
+GitHub (2015). Tzutalin. LabelImg. Git code. Available at: https://github.com/
+HumanSignal/labelImg.
+He, K., Zhang, X., Ren, S., and Sun, J. (2016). “Deep residual learning for image
+recognition, ”in Proceedings of the IEEE conference on computer vision and pattern
+recognition, Las Vegas, NV, USA, 27-30 June 2016, 770 –778. doi:10.1109/CVPR.
+2016.90
+Kaufmann, E., Bauersfeld, L., Loquercio, A., Müller, M., Koltun, V., and Scaramuzza,
+D. (2023). Champion-level drone racing using deep reinforcement learning. Nature 620
+(7976), 982 –987. doi:10.1038/s41586-023-06419-4
+Kim, J., Bae, S., Yoon, S.-M., and Jeong, S. (2024). Roadmap for providing and
+leveraging annotated data by cytologists in the PDAC domain as open data: support for
+AI-based pathology image analysis development and data utilization strategies. Front.
+Oncol. 14, 1346237. doi:10.3389/fonc.2024.1346237
+Kolansky, D. M. (2009). Acute coronary syndromes: morbidity, mortality, and
+pharmacoeconomic burden. Am. J. Manag. Care 15, S36 –S41. doi:10.1186/1472-
+6963-11-35
+Lence, A., Extramiana, F., Fall, A., Salem, J. E., Zucker, J. D., and Prifti, E. (2023).
+Automatic digitization of paper electrocardiograms –A systematic review.
+J. Electrocardiol. 80, 125 –132. doi:10.1016/j.jelectrocard.2023.05.009
+Lin, T. Y., Maire, M., Belongie, S., Hays, J., Perona, P., Ramanan, D., et al. (2014).
+“Microsoft COCO: common objects in context, ”in Computer Vision –ECCV 2014: 13th
+European Conference, Zurich, Switzerland, September 6-12, 2014 (SpringerInternational Publishing), 740 –755. doi:10.1007/978-3-319-10602-1_48
+Liu, W.-C., Lin, C.-S., Tsai, C.-S., Tsao, T.-P., Cheng, C.-C., Liou, J.-T., et al. (2021). A
+deep learning algorithm for detecting acute myocardial infarction. EuroIntervention 17
+(9), 765 –773. doi:10.4244/eij-d-20-01155
+Liu, Z., Mao, H., Wu, C. Y., Feichtenhofer, C., Darrell, T., and Xie, S. (2022). “A
+convnet for the 2020s, ”in Proceedings of the IEEE/CVF conference on computer vision
+and pattern recognition, New Orleans, LA, USA, 18-24 June 2022, 11976 –11986. doi:10.
+1109/CVPR52688.2022.01167
+Frontiers in Physiology frontiersin.org 10Kim et al. 10.3389/fphys.2024.1462847
+Mankowitz, D. J., Michi, A., Zhernov, A., Gelmi, M., Selvi, M., Paduraru, C., et al.
+(2023). Faster sorting algorithms discovered using deep reinforcement learning. Nature
+618 (7964), 257 –263. doi:10.1038/s41586-023-06004-9
+Meek, S., and Morris, F. (2002). ABC of clinical electrocardiography. Introduction.
+I-Leads, rate, rhythm, and cardiac axis. BMJ 324, 415 –418. doi:10.1136/bmj.324.7334.415
+Mehta, R. H., Lopes, R. D., Ballotta, A., Frigiola, A., Sketch, M. H., Jr, Bossone, E., et al.
+(2010). Percutaneous coronary intervention or coronary artery bypass surgery for
+cardiogenic shock and multivessel coronary artery disease? Am. Heart J. 159, 141 –147.
+doi:10.1016/j.ahj.2009.10.035
+Meyers, H. P., Bracey, A., Lee, D., Lichtenheld, A., Li, W. J., Singer, D. D., et al. (2021).
+Comparison of the ST-elevation myocardial infarction (STEMI) vs. NSTEMI and
+occlusion MI (OMI) vs. NOMI paradigms of acute MI. J. Emerg. Med. 60 (3),
+273 –284. doi:10.1016/j.jemermed.2020.10.026
+Murray, C. J., Barber, R. M., Foreman, K. J., Ozgoren, A. A., Abd-Allah, F., Abera, S.
+F., et al. (2015). Global, regional, and national disability-adjusted life years (DALYs) for
+306 diseases and injuries and healthy life expectancy (HALE) for 188 countries,1990 –2013: quantifying the epidemiological transition. Lancet 386, 2145 –2191.
+doi:10.1016/S0140-6736(15)61340-X
+Nallamothu, B. K., Normand, S. L. T., Wang, Y., Hofer, T. P., Brush, J. E., Jr,
+Messenger, J. C., et al. (2015). Relation between door-to-balloon times and mortality
+after primary percutaneous coronary intervention over time: a retrospective study.
+Lancet 385, 1114 –1122. doi:10.1016/S0140-6736(14)61932-2
+Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., et al. (2019).
+Pytorch: an imperative style, high-performance deep learning library. Adv. neural Inf.
+Process. Syst .
+Rashidi, H. H., Tran, N. K., Betts, E. V., Howell, L. P., and Green, R. (2019). Arti ﬁcial
+intelligence and machine learning in pathology: the present landscape of supervised
+methods. Acad. Pathol. 3 (6), 2374289519873088. doi:10.1177/2374289519873088
+Ren, S., He, K., Girshick, R., and Sun, J. (2016). Faster R-CNN: towards real-time
+object detection with region proposal networks. IEEE Trans. pattern analysis Mach.
+Intell. 39 (6), 1137 –1149. doi:10.1109/TPAMI.2016.2577031
+Ribeiro, A. H., Ribeiro, M. H., Paixão, G. M., Oliveira, D. M., Gomes, P. R., Canazart,
+J. A., et al. (2020). Automatic diagnosis of the 12-lead ECG using a deep neural network.
+Nat. Commun. 11 (1), 1760. doi:10.1038/s41467-020-15432-4Rodríguez-Padial, L., Fernández-Pérez, C., Bernal, J. L., Anguita, M., Sambola, A.,
+Fernández-Ortiz, A., et al. (2021). Differences in in-hospital mortality after STEMI
+versus NSTEMI by sex. Eleven-Year trend in the Spanish national Health service. Rev.
+Esp. Cardiol. 74 (6), 510 –517. doi:10.1016/j.rec.2020.04.017
+Rokos, I. C., French, W. J., Mattu, A., Nichol, G., Farkouh, M. E., Reiffel, J., et al.
+(2010). Appropriate cardiac cath lab activation: optimizing electrocardiogram
+interpretation and clinical decision-making for acute ST-elevation myocardial
+infarction. Am. Heart J. 160, 995 –1003. doi:10.1016/j.ahj.2010.08.011
+Silver, D., Huang, A., Maddison, C. J., Guez, A., Sifre, L., Van, D. D. G., et al. (2016).
+Mastering the game of Go with deep neural networks and tree search. Nature 529
+(7587), 484 –489. doi:10.1038/nature16961
+Siontis, K. C., Noseworthy, P. A., Attia, Z. I., and Friedman, P. A. (2021). Arti ﬁcial
+intelligence-enhanced electrocardiography in cardiovascular disease management. Nat.
+Rev. Cardiol. 18, 465 –478. doi:10.1038/s41569-020-00503-2
+Szegedy, C., Ioffe, S., Vanhoucke, V., and Alemi, A. (2017).
+“Inception-v4, inception-
+resnet and the impact of residual connections on learning, ”in Proceedings of the AAAI
+conference on arti ﬁcial intelligence, San Francisco, California, February 4-9, 2017.
+doi:10.1609/aaai.v31i1.11231
+Thygesen, K., Alpert, J. S., Jaffe, A. S., Chaitman, B. R., Bax, J. J., Morrow, D. A., et al.
+(2018). Fourth universal de ﬁnition of myocardial infarction. J. Am. Coll. Cardiol. 72,
+2231 –2264. doi:10.1016/j.jacc.2018.08.1038
+Thygesen, K., Alpert, J. S., Jaffe, A. S., Simoons, M. L., Chaitman, B. R., White, H. D.,
+et al. (2012). Third universal de ﬁnition of myocardial infarction. J. Am. Coll. Cardiol. 60,
+275 –295. doi:10.1016/j.gheart.2012.08.001
+Waits, G. S., and Soliman, E. Z. (2017). D igitizing paper electrocardiograms:
+status and challenges. J. Electrocardiol. 50 (1), 123 –130. doi:10.1016/j.jelectrocard.
+2016.09.007
+Wu, L., Huang, G., Yu, X., Ye, M., Liu, L., Ling, Y., et al. (2022). Deep learning
+networks accurately detect ST-segment elevation myocardial infarction and culprit
+vessel. Front. Cardiovasc. Med. 9, 797207. doi:10.3389/fcvm.2022.797207
+Z h a o ,Y . ,X i o n g ,J . ,H o u ,Y . ,Z h u ,M . ,L u ,Y . , Xu, Y., et al. (2020) . Early detection
+of ST-segment elevated myocardial infarction by arti ﬁcial intelligence with 12-
+lead electrocardiogram. Int. J. Cardiol. 317, 223 –230. doi:10.1016/j.ijcard.2020.
+04.089
+Frontiers in Physiology frontiersin.org 11Kim et al. 10.3389/fphys.2024.1462847
