@@ -18,9 +18,6 @@ class ChatInterfaceComponent(BaseComponent):
                on_quick_action: Optional[Callable[[str], None]] = None) -> None:
         """渲染聊天介面"""
         
-        # 常用指令按鈕
-        self._render_quick_actions(on_quick_action)
-        
         # 顯示歷史對話
         self._render_message_history(messages)
         

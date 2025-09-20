@@ -53,22 +53,22 @@ class SidebarComponent(BaseComponent):
     
     def _render_coverage_meter(self, coverage: int) -> None:
         """渲染覆蓋率儀表板"""
-        st.subheader("問診覆蓋率 (Checklist Coverage)")
+        st.subheader("📊 問診覆蓋率")
         st.progress(coverage, text=f"{coverage}%")
-        st.caption("此儀表板會根據你的提問即時更新。")
+        st.caption("根據提問即時更新")
     
     def _render_vital_signs_monitor(self, vital_signs: Optional[dict]) -> None:
         """渲染生命體徵監視器"""
-        st.subheader("生命體徵監視器")
+        st.subheader("💓 生命體徵")
         
         if vital_signs:
             # 使用兩欄佈局來顯示
             col1, col2 = st.columns(2)
             
-            col1.metric("心率 (HR)", f"{vital_signs.get('HR_bpm', 'N/A')} bpm", delta_color="inverse")
-            col1.metric("血氧 (SpO2)", f"{vital_signs.get('SpO2_room_air', 'N/A')}", delta_color="inverse")
-            col2.metric("血壓 (BP)", f"{vital_signs.get('BP_mmHg', 'N/A')} mmHg", delta_color="inverse")
-            col2.metric("呼吸 (RR)", f"{vital_signs.get('RR_bpm', 'N/A')} /min", delta_color="inverse")
+            col1.metric("心率", f"{vital_signs.get('HR_bpm', 'N/A')} bpm", delta_color="inverse")
+            col1.metric("血氧", f"{vital_signs.get('SpO2_room_air', 'N/A')}%", delta_color="inverse")
+            col2.metric("血壓", f"{vital_signs.get('BP_mmHg', 'N/A')} mmHg", delta_color="inverse")
+            col2.metric("呼吸", f"{vital_signs.get('RR_bpm', 'N/A')} /min", delta_color="inverse")
         else:
             st.info("待測量")
     
@@ -80,16 +80,16 @@ class SidebarComponent(BaseComponent):
         """渲染控制按鈕"""
         
         # 結束問診按鈕
-        if on_end_session and st.button("進入總結與計畫", disabled=session_ended):
+        if on_end_session and st.button("📋 總結與計畫", disabled=session_ended):
             on_end_session()
         
         # 詳細報告按鈕（只在問診結束後顯示）
         if session_ended and on_generate_detailed_report:
             st.markdown("---")
             st.button(
-                "🤖 生成完整報告 (LLM + RAG)", 
+                "🤖 完整報告", 
                 disabled=detailed_report_available,
-                help="點擊生成包含 RAG 臨床指引的詳細分析報告",
+                help="生成包含臨床指引的詳細分析報告",
                 on_click=on_generate_detailed_report
             )
     
@@ -99,24 +99,24 @@ class SidebarComponent(BaseComponent):
                               session_ended: bool = False,
                               has_started: bool = False) -> None:
         """渲染病例選擇區域"""
-        st.subheader("📋 病例選擇")
+        st.subheader("📋 病例")
         
-        st.info("**目前主訴**: 急性胸痛")
+        st.info("**主訴**: 急性胸痛")
         
         # 只有在未開始問診且未結束時才能選擇病例
         can_select_case = on_select_random_case and not has_started and not session_ended
         
         if can_select_case:
-            if st.button("🎲 隨機選擇病例", use_container_width=True):
+            if st.button("🎲 隨機選擇", use_container_width=True):
                 on_select_random_case()
-            st.caption("點擊上方按鈕隨機選擇一個病例進行問診練習")
+            st.caption("選擇病例進行練習")
         elif has_started and not session_ended:
-            st.button("🎲 隨機選擇病例", use_container_width=True, disabled=True)
-            st.caption("⚠️ 問診已開始，無法切換病例")
+            st.button("🎲 隨機選擇", use_container_width=True, disabled=True)
+            st.caption("⚠️ 問診進行中")
         elif session_ended:
-            if st.button("🎲 選擇新病例", use_container_width=True):
+            if st.button("🎲 新病例", use_container_width=True):
                 on_select_random_case()
-            st.caption("問診已結束，可以選擇新病例開始新一輪練習")
+            st.caption("開始新一輪練習")
     
     def _render_osce_tips(self) -> None:
         """渲染 OSCE 技巧小抄"""
