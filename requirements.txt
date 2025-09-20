@@ -1,2 +1,5 @@
-python-dotenv==1.1.1
-tavily_python==0.7.12
+tavily-python
+python-dotenv
+openai
+faiss-cpu
+sentence-transformers
