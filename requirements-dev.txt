@@ -1,0 +1,26 @@
+# 開發環境依賴 (Mac/Windows)
+# 包含 Ollama 和完整的開發工具
+
+# 基礎依賴
+-r requirements-base.txt
+
+# AI/LLM 相關
+ollama
+sentence-transformers
+
+# RAG 系統
+faiss-cpu==1.12.0
+langchain==0.3.27
+langchain-community==0.3.29
+langchain-core==0.3.76
+langchain-text-splitters==0.3.11
+
+# 開發工具
+pytest
+black
+flake8
+mypy
+
+# 可選的開發依賴
+jupyter
+ipython

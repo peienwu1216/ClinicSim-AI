@@ -1,0 +1,25 @@
+# Lemonade Server 環境依賴
+# 針對比賽環境優化的最小依賴集
+
+# 基礎依賴
+-r requirements-base.txt
+
+# RAG 系統 (Lemonade 環境)
+# 使用較輕量的向量搜索方案
+faiss-cpu==1.12.0
+langchain==0.3.27
+langchain-community==0.3.29
+langchain-core==0.3.76
+
+# 文檔處理 (輕量版)
+pypdf==6.0.0
+
+# 注意：Lemonade 環境可能已經預裝了某些依賴
+# 如果遇到衝突，可以移除重複的依賴
+
+# 生產環境優化
+gunicorn
+
+# 如果 Lemonade 有自己的 AI 服務，移除以下依賴：
+# ollama  # 移除，使用 Lemonade 的 AI 服務
+# sentence-transformers  # 可能需要移除，視情況而定
