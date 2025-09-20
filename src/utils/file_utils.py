@@ -96,3 +96,55 @@ def cleanup_old_files(directory_path: Path, pattern: str = "*.tmp", max_age_hour
         print(f"清理檔案失敗 {directory_path}: {e}")
     
     return cleaned_count
+
+
+def save_report_to_file(report_content: str, filename: str, directory_path: Path) -> Optional[Path]:
+    """將報告內容儲存到檔案"""
+    try:
+        # 確保目錄存在
+        if not ensure_directory_exists(directory_path):
+            return None
+        
+        # 建立檔案路徑
+        file_path = directory_path / filename
+        
+        # 寫入檔案
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(report_content)
+        
+        return file_path
+    except Exception as e:
+        print(f"儲存報告檔案失敗 {filename}: {e}")
+        return None
+
+
+def generate_report_filename(case_id: str, report_type: str, timestamp: str = None) -> str:
+    """生成報告檔案名稱"""
+    from datetime import datetime
+    
+    if timestamp is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # 清理 case_id 和 report_type，移除特殊字元
+    safe_case_id = "".join(c for c in case_id if c.isalnum() or c in "_-")
+    safe_report_type = "".join(c for c in report_type if c.isalnum() or c in "_-")
+    
+    return f"{safe_case_id}_{safe_report_type}_{timestamp}.md"
+
+
+def list_report_files(directory_path: Path, case_id: str = None) -> List[Path]:
+    """列出報告檔案"""
+    if not directory_path.exists():
+        return []
+    
+    files = []
+    try:
+        for file_path in directory_path.glob("*.md"):
+            if file_path.is_file():
+                # 如果指定了 case_id，只返回匹配的檔案
+                if case_id is None or case_id in file_path.name:
+                    files.append(file_path)
+    except Exception as e:
+        print(f"列出報告檔案失敗 {directory_path}: {e}")
+    
+    return sorted(files, key=lambda x: x.stat().st_mtime, reverse=True)

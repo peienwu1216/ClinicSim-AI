@@ -13,6 +13,7 @@ from ..services.ai_service import get_ai_service
 from ..services.rag_service import RAGService
 from ..services.case_service import CaseService
 from ..config.settings import get_settings
+from ..utils.file_utils import save_report_to_file, generate_report_filename
 
 
 class ReportService:
@@ -51,6 +52,10 @@ class ReportService:
         )
         
         conversation.mark_report_generated()
+        
+        # 儲存報告到檔案
+        self._save_report_to_file(report)
+        
         return report
     
     def generate_detailed_report(self, conversation: Conversation) -> Report:
@@ -90,6 +95,10 @@ class ReportService:
         )
         
         conversation.mark_detailed_report_generated()
+        
+        # 儲存報告到檔案
+        self._save_report_to_file(report)
+        
         return report
     
     def _generate_basic_analysis(self, conversation: Conversation, case: Case) -> str:
@@ -271,3 +280,108 @@ class ReportService:
             suggestions += "\n"
         
         return suggestions
+    
+    def _save_report_to_file(self, report: Report) -> Optional[str]:
+        """將報告儲存到本地 md 檔案"""
+        try:
+            # 生成檔案名稱
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = generate_report_filename(
+                case_id=report.case_id,
+                report_type=report.report_type.value,
+                timestamp=timestamp
+            )
+            
+            # 構建完整的報告內容（包含 metadata）
+            full_report_content = self._format_report_for_file(report)
+            
+            # 儲存到檔案
+            file_path = save_report_to_file(
+                report_content=full_report_content,
+                filename=filename,
+                directory_path=self.settings.report_history_dir
+            )
+            
+            if file_path:
+                print(f"報告已儲存至: {file_path}")
+                return str(file_path)
+            else:
+                print("報告儲存失敗")
+                return None
+                
+        except Exception as e:
+            print(f"儲存報告時發生錯誤: {e}")
+            return None
+    
+    def _format_report_for_file(self, report: Report) -> str:
+        """格式化報告內容用於檔案儲存"""
+        # 報告標題
+        report_title = "即時回饋報告" if report.report_type == ReportType.FEEDBACK else "詳細分析報告"
+        
+        # 基本資訊
+        metadata_section = f"""# {report_title}
+
+## 報告資訊
+- **案例 ID**: {report.case_id}
+- **報告類型**: {report.report_type.value}
+- **生成時間**: {report.metadata.get('generated_at', 'N/A')}
+- **問診覆蓋率**: {report.coverage}%
+- **對話長度**: {report.metadata.get('conversation_length', 'N/A')} 條訊息
+
+"""
+        
+        # 如果有引註，添加引註資訊
+        citations_section = ""
+        if report.citations:
+            citations_section = f"""
+## 引註資訊
+- **引註數量**: {len(report.citations)}
+- **RAG 查詢**: {', '.join(report.rag_queries) if report.rag_queries else 'N/A'}
+
+"""
+        
+        # 報告內容
+        content_section = f"""
+## 報告內容
+
+{report.content}
+"""
+        
+        # 如果有引註，添加詳細引註
+        detailed_citations = ""
+        if report.citations:
+            detailed_citations = f"""
+
+## 詳細引註
+
+"""
+            for i, citation in enumerate(report.citations, 1):
+                score_info = ""
+                if hasattr(citation, 'score') and citation.score is not None:
+                    score_info = f"- **相關性分數**: {citation.score:.3f}\n"
+                
+                detailed_citations += f"""### 引註 {citation.id}
+- **查詢**: {citation.query}
+- **來源**: {citation.source}
+{score_info}- **內容**: 
+```
+{citation.content}
+```
+
+---
+"""
+        
+        # 組合完整內容
+        full_content = (
+            metadata_section +
+            citations_section +
+            content_section +
+            detailed_citations +
+            f"""
+
+---
+*此報告由 ClinicSim-AI 系統自動生成於 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*
+"""
+        )
+        
+        return full_content
