@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     cases_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "cases")
     documents_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "documents")
     faiss_index_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "faiss_index")
+    report_history_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "report_history")
     
     # RAG 設定
     rag_model_name: str = Field(default="nomic-ai/nomic-embed-text-v1.5", env="RAG_MODEL_NAME")
