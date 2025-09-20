@@ -41,7 +41,7 @@ numpy==2.3.3
 orjson==3.11.3
 packaging==25.0
 pandas==2.3.2
-pillow==11.3.2
+pillow==11.3.0
 propcache==0.3.2
 protobuf==6.32.1
 pyarrow==21.0.0

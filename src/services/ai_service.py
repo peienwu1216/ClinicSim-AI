@@ -81,15 +81,17 @@ class OllamaAIService(AIService):
 class LemonadeAIService(AIService):
     """Lemonade AI 服務實現"""
     
-    def __init__(self):
+    def __init__(self, model: str = "Qwen2.5-0.5B-Instruct-CPU"):
+        self.model = model
         self._available = self._check_availability()
     
     def _check_availability(self) -> bool:
         """檢查 Lemonade 是否可用"""
         try:
-            from lemonade import expose
-            return True
-        except ImportError:
+            import requests
+            response = requests.get("http://localhost:8000/api/v1/models", timeout=5)
+            return response.status_code == 200
+        except Exception:
             return False
     
     def chat(self, messages: List[Message], **kwargs) -> str:
@@ -97,9 +99,24 @@ class LemonadeAIService(AIService):
         if not self.is_available():
             raise RuntimeError("Lemonade service not available")
         
-        # 這裡需要根據實際的 Lemonade API 進行實現
-        # 目前返回模擬回應
-        return "[From Lemonade] 這是一個來自 Lemonade 的回應..."
+        # 导入并使用 call_AI.py 的方法
+        import sys
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        from call_AI import call_ai
+        
+        # 将消息列表转换为字符串
+        if isinstance(messages, list) and len(messages) > 0:
+            # 获取最后一条用户消息
+            last_message = messages[-1]
+            if hasattr(last_message, 'content'):
+                message_content = last_message.content
+            else:
+                message_content = str(last_message)
+        else:
+            message_content = str(messages)
+        
+        return call_ai(message_content)
     
     def is_available(self) -> bool:
         """檢查 Lemonade 服務是否可用"""

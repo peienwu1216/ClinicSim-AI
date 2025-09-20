@@ -26,15 +26,22 @@ class Settings(BaseSettings):
     ollama_host: str = Field(default="http://127.0.0.1:11434", env="OLLAMA_HOST")
     ollama_model: str = Field(default="llama3:8b", env="OLLAMA_MODEL")
     
+    # Lemonade 設定
+    lemonade_host: str = Field(default="http://localhost:8000", env="LEMONADE_HOST")
+    lemonade_model: str = Field(default="Qwen2.5-0.5B-Instruct-CPU", env="LEMONADE_MODEL")
+    
     # 路徑設定
     project_root: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent)
     cases_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "cases")
+    cases_path: str = Field(default="cases", env="CASES_PATH")  # 兼容性字段
     documents_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "documents")
     faiss_index_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "faiss_index")
+    rag_index_path: str = Field(default="faiss_index", env="RAG_INDEX_PATH")  # 兼容性字段
     report_history_dir: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent / "report_history")
     
     # RAG 設定
     rag_model_name: str = Field(default="nomic-ai/nomic-embed-text-v1.5", env="RAG_MODEL_NAME")
+    embedding_model: str = Field(default="nomic-ai/nomic-embed-text-v1.5", env="EMBEDDING_MODEL")  # 兼容性字段
     rag_chunk_size: int = Field(default=800, env="RAG_CHUNK_SIZE")
     rag_chunk_overlap: int = Field(default=100, env="RAG_CHUNK_OVERLAP")
     rag_search_k: int = Field(default=3, env="RAG_SEARCH_K")
@@ -46,6 +53,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        extra = "allow"  # 允许额外字段
         
     def get_case_path(self, case_id: str) -> Path:
         """取得案例檔案路徑"""

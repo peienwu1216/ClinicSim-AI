@@ -17,13 +17,18 @@ PATH_B_DEVELOPMENT = False # Mac/Windows (Ollama)
 
 # 偵測路徑 A：優先偵測 Lemonade Server
 try:
-    # 這裡假設 lemonade server 會透過某種方式 expose 函式
-    # 由於我們沒有 lemonade 的具體 API，我們將模擬一個 expose 裝飾器
-    # 在真實的 lemonade 環境中，你可能需要從 lemonade 導入 expose
-    from lemonade import expose
-    PATH_A_DEMO = True
-    print("✅ 偵測到 Lemonade 環境 -> 啟用【路線 A: Demo 模式】")
-except (ImportError, ModuleNotFoundError):
+    # 檢查 Lemonade Server 是否可用
+    import requests
+    response = requests.get("http://localhost:8000/api/v1/models", timeout=5)
+    if response.status_code == 200:
+        PATH_A_DEMO = True
+        print("✅ 偵測到 Lemonade 環境 -> 啟用【路線 A: Demo 模式】")
+        # 建立一個假的 expose 裝飾器，讓程式碼在開發模式下也能運行
+        def expose(func):
+            return func
+    else:
+        raise Exception("Lemonade server not responding")
+except Exception:
     # 建立一個假的 expose 裝飾器，讓程式碼在開發模式下也能運行
     def expose(func):
         return func
@@ -80,10 +85,20 @@ def ask_patient(history: list, case_id: str) -> str:
     # --- 路線 A: Demo (Lemonade) ---
     if PATH_A_DEMO:
         print("[Lemonade] 正在呼叫語言模型...")
-        # 這裡是你實際呼叫 lemonade LLM 的地方
-        # response = lemonade.llm.chat(model="Qwen3-1.7B-GGUF", messages=messages)
-        # return response.choices[0].message.content
-        return "[From Lemonade] [表情痛苦] 醫生，我胸口真的很痛..."
+        # 使用 call_AI.py 的方法
+        from call_AI import call_ai
+        
+        # 将系统提示和对话历史合并为单个消息
+        combined_message = ""
+        for msg in messages:
+            if msg["role"] == "system":
+                combined_message += f"系统指令: {msg['content']}\n\n"
+            elif msg["role"] == "user":
+                combined_message += f"用户: {msg['content']}\n"
+            elif msg["role"] == "assistant":
+                combined_message += f"助手: {msg['content']}\n"
+        
+        return call_ai(combined_message)
 
     # --- 路線 B: 開發 (Ollama) ---
     elif PATH_B_DEVELOPMENT:
@@ -167,10 +182,14 @@ def get_feedback_report(full_conversation: list, case_id: str) -> dict:
     # --- 路線 A: Demo (Lemonade) ---
     if PATH_A_DEMO:
         print("[Lemonade] 正在呼叫語言模型生成分析報告...")
-        # 這裡是你實際呼叫 lemonade LLM 的地方
-        # response = lemonade.llm.chat(model="Qwen3-1.7B-GGUF", messages=messages)
-        # return {"report_text": response.choices[0].message.content}
-        return {"report_text": f"[From Lemonade] 報告分析：學生應優先考慮 ECG。\n\n證據：{rag_context}"}
+        # 使用 call_AI.py 的方法
+        from call_AI import call_ai
+        
+        # 将系统提示转换为字符串
+        prompt_text = messages[0]["content"] if messages else prompt
+        
+        report_text = call_ai(prompt_text)
+        return {"report_text": report_text}
 
     # --- 路線 B: 開發 (Ollama) ---
     elif PATH_B_DEVELOPMENT:
@@ -315,10 +334,13 @@ def get_detailed_report(full_conversation: list, case_id: str) -> dict:
     # --- 路線 A: Demo (Lemonade) ---
     if PATH_A_DEMO:
         print("[Lemonade] 正在生成詳細報告...")
-        # 這裡是你實際呼叫 lemonade LLM 的地方
-        # response = lemonade.llm.chat(model="Qwen3-1.7B-GGUF", messages=messages)
-        # return {"report_text": response.choices[0].message.content}
-        report_text = f"[From Lemonade] 詳細報告分析：\n\n基於 RAG 提供的臨床指引：\n{combined_rag_context[:200]}...\n\n這是一份來自 Lemonade 的詳細分析報告..."
+        # 使用 call_AI.py 的方法
+        from call_AI import call_ai
+        
+        # 将系统提示转换为字符串
+        prompt_text = messages[0]["content"] if messages else detailed_prompt
+        
+        report_text = call_ai(prompt_text)
         
         # 添加基於 RAG 的建議
         if citations:
