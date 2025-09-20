@@ -1,9 +1,15 @@
 import os
+import sys
 from pathlib import Path
 from langchain_community.document_loaders import PyMuPDFLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+
+# 添加 src 目錄到 Python 路徑
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
+from src.utils.image_processor import process_images_in_directory
 
 # --- 設定 ---
 DOCUMENTS_PATH = "documents"  # 將你的 PDF、TXT 檔案放在這裡
@@ -25,6 +31,8 @@ def build_index():
     # 1. 載入所有文件
     all_docs = []
     p = Path(DOCUMENTS_PATH)
+    
+    # 載入 PDF 和文字檔案
     for file in p.glob('**/*'):
         if file.is_dir():
             continue
@@ -39,6 +47,11 @@ def build_index():
                 all_docs.extend(loader.load())
         except Exception as e:
             print(f"載入檔案 {file.name} 失敗: {e}")
+    
+    # 載入圖片檔案
+    print("\n--- 開始處理圖片檔案 ---")
+    image_docs = process_images_in_directory(p, method="easyocr")
+    all_docs.extend(image_docs)
 
     if not all_docs:
         print(f"在 '{DOCUMENTS_PATH}' 資料夾中找不到任何可讀取的文件。")
