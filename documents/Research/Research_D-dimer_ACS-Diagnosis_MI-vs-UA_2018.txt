@@ -1,0 +1,260 @@
+Articles © The authors   |   Journal compilation © Cardiol Res and Elmer Press Inc™   |   www.cardiologyres.org
+This article is distributed under the terms of the Creative Commons Attribution Non-Commercial 4.0 International License, which permits 
+unrestricted non-commercial use, distribution, and reproduction in any medium, provided the original work is properly cited17Original Article
+ Cardiol Res. 2018;9(1):17-21
+Diagnostic Value of D-Dimer in Acute Myocardial Infarction 
+Among Patients With Suspected Acute Coronary Syndrome
+Hamidreza Reihania, Alireza Sepehri Shamloob, 
+ Assadollah Keshmiric, d
+Abstract
+Background:  The role of D-dimer as a diagnostic marker in myo-
+cardial infarction (MI) and acute coronary syndrome (ACS) is still 
+a question. The aim of this study was to evaluate the diagnostic 
+value of D-dimer in the diagnosis of AMI in patients suspected with ACS.
+Methods:  This cross-sectional study was conducted on patients 
+suspected with ACS. Serial standard 12-lead electrocardiogram 
+(ECG), D-dimer, and troponin tests were done for all the patients. 
+According to the examinations, ECG changes, and troponin, pa-
+tients were allocated into two groups of MI and unstable angina (UA). Chi-square, independent t -test, and Pearson correlation test 
+were used by SPSS ver, 17. Cut-off point of D-dimer for MI di-agnosis was evaluated by receiver operating characteristic (ROC) curve analysis.
+Results:  Seventy-five patients with a mean age of 63.1 ± 9.75 
+years were studied in two groups of MI (n = 34) and UA (n = 
+41). Patients were homogeneous based on age, gender, and risk 
+factors for diabetes and dyslipidemia. D-dimer in patients with MI patients was higher than in patients with UA (P = 0.001). The optimal cut-off point of D-dimer for diagnosis of MI was 
+548 mEq/L with sensitivity and specifity of 63.4% and 91.2%, 
+respectively.
+Conclusions: Based on the results of this study, it seems that the 
+measurement of D-dimer serum level can be appropriate as a marker with high sensitivity and relatively high specificity for differentiating MI from UA in patients with suspected ACS.
+Keywords: Myocardial infarction; Unstable angina; Acute coronary syndrome; D-dimer; Troponin
+Introduction
+Acute coronary syndrome (ACS) is a common cause of pres-
+entation in emergency departments (EDs) [1]. Early detection 
+and rapid ruleout of acute myocardial infarction (AMI) have 
+always been one of the great concerns to reduce mortality, morbidity, and hospitalization costs and avoid doing further 
+diagnostic and unnecessary interventions in low risk patients 
+[1, 2]. Routinely, the serial electrocardiograms (ECGs), bio-
+markers, and clinical decision rules have been used for the 
+risk stratifications and diagnosis of ACS [3]. Cardiac enzymes start to rise within hours after onset of symptoms. On the other 
+hand, ECG has not shown to have a reliable sensitivity in early 
+diagnosis of MI [1, 4]. Thus, attempts continue to find a better 
+way to triage and a more rapid diagnosis of ACS. Coronary 
+artery thrombosis is the cause of acute ischemic syndromes. Several markers involved in the formation and lysis of arte -
+rial thrombosis have been identified among which Fibrinogen, plasmin-α
+2 antiplasmin, prothrombin, activated factor VII and 
+D-dimer can be noted. It is anticipated that the levels of these enzymes change with the incidence of coronary artery throm-bosis [1, 3, 5]. The D-dimer was used as a diagnostic marker 
+in venous thromboembolism [6], but few studies recently dem-
+onstrated the diagnostic value of D-dimer in the diagnosis of 
+MI and ACS [3, 5, 7-10]. This study aimed to evaluate the di-
+agnostic value of D-dimer in the diagnosis of AMI in patients 
+suspected with ACS in an academic ED.
+Methods
+Research design and setting
+This cross-sectional study was conducted from April 2015 to 
+February 2016 in the ED of Imam Reza Hospital, and urban academic ED located in Mashhad, Iran. Inclusion criteria were 
+patients with typical chest pain, which defines as a substernal 
+pain, provoked by exertion, or relieved by rest or nitroglycer -
+in-suspected ACS presented to ED with age greater than 18 years old, onset of symptoms less than 24 h. Exclusion criteria were positive family history of cardiovascular disease, use of Manuscript submitted October 9, 2017, accepted October 19, 2017
+aDepartment of Emergency Medicine, Imam Reza Hospital, Mashhad Univer -
+sity of Medical Sciences, Mashhad, Iran
+bCardiac Anesthesia Research Center, Faculty of Medicine, Mashhad Univer -
+sity of Medical Sciences, Mashhad, Iran
+cFaculty of Medicine, Mashhad University of Medical Sciences, Mashhad, 
+Iran
+dCorresponding Author: Assadollah Keshmiri, Department of Emergency 
+Medicine, Imam Reza Hospital, Edalatian Emergency Center, Mashhad, Iran. 
+Email: asad.keshmiri@yahoo.com
+doi: https://doi.org/10.14740/cr620w
+Articles © The authors   |   Journal compilation © Cardiol Res and Elmer Press Inc™   |   www.cardiologyres.org 18
+D-Dimer in AMI Cardiol Res. 2018;9(1):17-21
+steroidal and non-steroidal anti-inflammatory drugs, cytotoxic 
+drugs, beta blockers, nitrate and aspirin, anticoagulants such as warfarin and heparin.
+SamplingSample size and method
+Patients were studied in purposive random sampling in the two 
+groups with and without MI. The sample size of this study was estimated based on alpha of 0.05 and beta of 20% and using comparison of two mean sample size formula. Accordingly, at 
+least 28 patients were studied in each of the two groups.
+Data collection
+The patients with typical chest pain for ACS and related his-
+tory and physical examination were enrolled in the study. Their data about age, sex, duration of pain, location of pain, onset of pain, quality of pain, radiation of pain, associated symptoms, and ACS risk factors such as diabetes and dyslipidemia were collected. All patients were subjected to ECG and blood sam-pling in order to measure serum level of D-dimer and troponin on ED presentation. Then with ECG’s findings and troponin serum levels, they were categorized to STEMI, non-STEMI, 
+or UA.
+Measurement tool
+D-dimer
+Serum sample was taken to determine D-dimer level at the 
+time of presentation to ED and before receiving heparin. Se-rum D-dimer level was measured by enzyme-linked immuno -
+sorbent assay (ELISA).
+Diagnosis of MI
+Patients with the diagnosis of AMI were classified into two 
+groups of STEMI and non-STEMI according to ECG changes. Other patients under study were placed in the UA group if not diagnosed with MI.
+Ethical consideration
+This study was approved by the Ethics Committee of Mashhad 
+University of Medical Sciences (code: 930281) and all patients were informed about the plan and signed written consent form was available.
+Statistical analysis
+Demographic and paraclinical data obtained from patients 
+were statistically analyzed using SPSS 17.0 for Windows (SSPS Inc., Chicago, IL, USA). Data were expressed as mean ± SD and P < 0.05 was considered significant. How to distrib-ute data was initially examined. Then the homogeneity of the groups under comparison (MI and UA) was studied in terms of age, sex and risk factors for diabetes and dyslipidemia. Then to compare quantitative data (D-dimer serum level and troponin) between MI and UA groups, independent t -test and 
+to compare the data among the three groups of STEMI, NSTE-MI, and UA, ANOV A test were used. In case of non-normal distribution of data, non-parametric equivalents of tests were used. In order to determine cut-off point to diagnose MI based on the level of D-dimer, the rock curve was used and to calcu-late the sensitivity, specificity and positive and negative pre-dictive value of D-dimer in the diagnosis of MI, MedCalc 15 software was used.
+Results
+Baseline characteristics
+Over the 10-month course of study, 97 patients were enrolled 
+and 22 patients were excluded. Exclusion causes included a positive family history of cardiovascular disease (14 patients), using heart medications like beta blockers, nitrate and aspirin (four patients), occurrence of arrhythmias (two patients), and using anticoagulants (two patients). Finally, 75 patients with a mean age of 63.1 ± 9.75 years were studied. The two groups Table 1.  Baseline Characteristics of Patients With Myocardial Infarction Compared to Patients With Unstable Angina
+Variables Myocardial infarction (n = 34) Unstable angina (n = 41) P
+Sex, male, n (%) 22 (64.7%) 19 (46.3%) 0.162
+Age (mean ± SD) 63.3 ± 6.9 63.0 ± 11.6 0.886
+Diabetes, n (%) 22 (64.7%) 20 (47.8%) 0.325
+Dyslipidemia, n (%) 12 (35.2) 13 (31.7) 0.808
+Blood glucose (mean ± SD), mg/dL 247.0 ± 94.5 209.5 ± 91.6 0.086
+Troponin (mean ± SD), mg/dL 0.73 ± 0.4 0.16 ± 0.3 0.001
+D-dimer (mean ± SD), mg/dL 1,087.6 ± 395.6 584.6 ± 444.1 0.001
+Articles © The authors   |   Journal compilation © Cardiol Res and Elmer Press Inc™   |   www.cardiologyres.org 19
+Reihani et al Cardiol Res. 2018;9(1):17-21
+of patients with MI (n = 34) and UA (n = 41) were not signifi-
+cantly different in age, gender, and risk factors for diabetes and dyslipidemia (Table 1).
+Troponin and D-dimer level
+Average troponin in all patients was 0.42 ± 0.4 mEq/L. MI 
+group has a higher level of serum troponin in admission com-pared to UA group (P = 0.001) (Table 1). Besides, the mean serum level of D-dimer was 1,087.61 ± 395.63 mEq/L in all patients and was higher in patients with MI than in patients with UA (P = 0.001) (Table 1).
+Subgroup analysis
+Moreover, the results of this study showed that the three 
+groups of STEMI, NSTEMI and UA are significantly different in terms of troponin levels (P = 0.001) and D-dimer levels (P = 0.001), based on ANOV A (Table 2). But according to the post hoc test, this dispute arises from the difference in the serum levels between the group of patients with UA and NSTEMI and the group with UA and STEMI (Table 2).
+D-dimer and correlated factors
+Based on the analysis of Pearson correlation, a moderate to 
+weak correlation was observed between D-dimer and age (P = 0.005, r = 0.32), blood glucose (P = 0.006, r = 0.31) and tro-ponin (P = 0.000, r = 0.57).
+Diagnostic value of D-dimer
+To find the cut-off point with the highest sensitivity and spec-
+ificity of D-dimer serum level in the diagnosis of MI, ROC curve was used. Based on the results of ROC curve, the best cut-off point for MI is 548 mEq/L in terms of D-dimer (Fig. 1). The sensitivity and specificity of this point in differentiat -
+ing MI from UA in patients presenting with ACS is 63.4% and Table 2.  Comparing Serum Level of D-Dimer and Troponin in Three Groups of Patients With Myocardial Infarction With ST Segment 
+Elevation, Without ST Segment Elevation, and Unstable Angina
+VariablesMyocardial infarction with 
+ST segment elevation (n = 34)Myocardial infarction without ST segment elevation (n = 12)Unstable angina (n = 29) P
+Troponin (mean ± SD), mg/dL 0.73 ± 0.4 0.51 ± 0.3 0.02 ± 0.1 0.001
+D-dimer (mean ± SD), mg/dL 1,087.6 ± 395.6 846.0 ± 592.6 476.4 ± 320.1 0.001
+Figure 1. Receiver operating characteristic curve on the diagnostic value of D-dimer in diagnosis of acute myocardial infarction.
+Articles © The authors   |   Journal compilation © Cardiol Res and Elmer Press Inc™   |   www.cardiologyres.org 20
+D-Dimer in AMI Cardiol Res. 2018;9(1):17-21
+91.2%, respectively (Table 3).
+Discussion
+In the past, D-dimer was simply used as a marker in venous 
+thromboembolism as well as aortic dissection and few studies have been conducted on its role in the diagnosis of MI [1-5]. 
+Our study was aimed to determine the diagnostic value of a 
+D-dimer test for MI in patients with suspected ACS and the results showed that D-dimer can also be used as a diagnostic 
+marker with appropriate sensitivity and specificity in the diag-
+nosis of MI.
+Today, the measurement of troponin is considered as one 
+of the most selective markers in the diagnosis of myocardial 
+damage [5, 8]. Although, the fundamental flaw against them 
+is an increase in their serum level 3 - 4 h after the onset of symptoms. Thus, in most centers, these markers should be re-viewed in consecutive times. And in this case, their application 
+in rapid triage of patients with MI is faced with ambiguity [2]. 
+Also, it is still believed that more biomarkers should be found for the faster diagnosis of coronary thrombosis as a hallmark 
+of ACS [1]. D-dimer is produced by destruction and the break-
+down of fibrin clot at the site of injury by plasmin, which rep-resents the manufacture of active thrombosis and its lysis [11, 12]. D-dimer level is expected to increase in acute ischemic 
+events faster than in other cardiac markers because D-dimer 
+is created faster than other markers in the course of the ACS pathophysiology [9, 12].
+On the other hand, studies have shown that D-dimer is in 
+direct relationship with the occurrence or recurrence of cardio -
+vascular diseases, so that patients whose D-dimer is in upper one-third of D-dimer levels, are 70% more at risk of CHD than those in lower one-third of D-dimer levels [3]. Baya-Genis et 
+al have shown that plasma level of D-dimer in patients with 
+MI and UA is more than in patients without ischemic event. Also, plasma D-dimer in patients with MI was higher than in patients with UA [3]. Besides, this study also demonstrated 
+that D-dimer greater than 500 ng/mL along with ECG findings 
+and patients’ histories, can improve diagnosis of MI (sensitiv-
+ity increases from 73% to 92%) [3]. In our study, the best cut-
+off point was achieved in differentiating MI from UA in 548, so that it had sensitivity of 91.2% and specificity of 63.4%. Moreover, by raising the cut-off point to 682 ng/mL in our 
+study, the results indicate an increase in specificity of D-di-
+mer test up to 70.7% and by lowering the cut-off point to 474 ng/mL, the results indicate an increase in D-dimer sensitivity 
+up to 100%. Considering the present results of this study and Bayes-Genis’ study, it seems that the serum level higher than 
+500 - 550 ng/mL can be assumed as a reliable cut-off point in 
+differentiating MI from UA in reality as well [3]. The main 
+objective of our study is differentiating MI from non-MI in patients with ACS. However, most studies have evaluated the 
+diagnostic value of D-dimer in forecasting ACS from pains 
+with non-cardiac origin. In Orak et al’s study, D-dimer serum level in the case group with ACS was obtained about 2.31 ± 
+2.34 and the D-dimer sensitivity and specificity in the dif-
+ferentiating ACS from non-ACS was specified as 95.4% and 
+83.7%, respectively [13]. However, in all studies, high positive 
+predictive value of D-dimer has not been reported. And it is expressed in Lippi et al’s study that D-dimer cannot be used as 
+an independent diagnostic factor in MI due to specificity and low negative predictive value (41% and 27%, respectively) 
+and it must be used alongside another diagnostic marker [10]. Moreover, the use of multiple biomarkers including D-dimer 
+has been recommended in Tello-Montoliu’s study in diagnosis 
+of ACS [4]. But what seems to be the main cause of the dif-ference between the results such as the found cut-off point and 
+the diagnostic power of that point for diagnosis of MI or ACS, 
+is the duration of onset of symptoms up to measuring D-dimer 
+level apart from racial differences, sample size, the instrument 
+used to measure D-dimer and the applied method and this is 
+the subject which has not been referred to in various studies in-
+cluding ours and is one of the limitations of our study. Besides, other limitations of this study are the lack of a control group 
+of normal subjects. If a group of normal subjects were enrolled 
+in this study, we could evaluate the diagnostic power of D-
+dimer in differentiating ACS from non-ACS events. Moreover, 
+a recent study has not examined the prognostic value of D-dimer in patients with ACS, while some studies conducted in 
+recent decade have examined the prognostic value of D-dimer 
+in predicting mortality following ACS [7, 14-16]. Therefore, it 
+is recommended that future studies to be carried out as clinical 
+trials for comparing different methods of measuring D-dimer and its impact on its diagnostic power in differentiating ACS 
+from non-ACS and MI from UA.
+Conclusion
+Based on the results of this study, it seems that the measurement 
+of D-dimer serum level can be appropriate as a marker with 
+high sensitivity and relatively high specificity for differentiat -
+ing MI from UA in patients with suspected ACS. Especially, 
+given the high sensitivity of this marker, and its availability in 
+most EDs, it seems that D-dimer can be used for the appropri-
+ate triage of patients, and referring them to cardiologists fast for more specialized treatments. However, it is suggested other 
+cardiac biomarkers to be used in combination with D-dimer measurement based on the findings of other results in order to 
+improve diagnostic power of D-dimer.
+Conflict of Interest
+The author declare that there is no conflict of interest regarding Table 3.  Operative Characteristics of D-Dimer for the Diagno -
+sis of Myocardial Infarction
+Discriminate level (ng/mL) Sensitivity, % Specificity, %
+474 100 56.1
+548 91.2 63.4
+682 85.3 70.7
+548 91.2 63.4
+Articles © The authors   |   Journal compilation © Cardiol Res and Elmer Press Inc™   |   www.cardiologyres.org 21
+Reihani et al Cardiol Res. 2018;9(1):17-21
+the publication of this paper.
+References
+1. Wu AH, Smith A, Christenson RH, Murakami MM, Ap-
+ple FS. Evaluation of a point-of-care assay for cardiac 
+markers for patients suspected of acute myocardial in-farction. Clin Chim Acta. 2004;346(2):211-219.
+2. Wu AH, Christenson RH. Analytical and assay issues for use of cardiac troponin testing for risk stratification in pri-
+mary care. Clin Biochem. 2013;46(12):969-978.
+3. Bayes-Genis A, Mateo J, Santalo M, Oliver A, Guindo J, Badimon L, Martinez-Rubio A, et al. D-Dimer is an early 
+diagnostic marker of coronary ischemia in patients with chest pain. Am Heart J. 2000;140(3):379-384.
+4. Tello-Montoliu A, Marin F, Roldan V , Mainar L, Lopez MT, Sogorb F, Vicente V , et al. A multimarker risk stratifi-
+cation approach to non-ST elevation acute coronary syn-
+drome: implications of troponin T, CRP, NT pro-BNP and 
+fibrin D-dimer levels. J Intern Med. 2007;262(6):651-
+658.
+5. Fathil MF, Md Arshad MK, Gopinath SC, Hashim U, 
+Adzhri R, Ayub RM, Ruslinda AR, et al. Diagnostics on acute myocardial infarction: Cardiac troponin biomark -
+ers. Biosens Bioelectron. 2015;70:209-220.
+6. Bergh TH, Steen K, Lindau T, Soldal LA, Bernardshaw SV , Lunde L, Lie SA, et al. Costs analysis and compari -
+son of usefulness of acute MRI and 2 weeks of cast im-mobilization for clinically suspected scaphoid fractures. 
+Acta Orthop. 2015;86(3):303-309.
+7. Danesh J, Whincup P, Walker M, Lennon L, Thomson A, Appleby P, Rumley A, et al. Fibrin D-dimer and coronary 
+heart disease: prospective study and meta-analysis. Cir -
+culation. 2001;103(19):2323-2327.
+8. Hamm CW, Goldmann BU, Heeschen C, Kreymann G, Berger J, Meinertz T. Emergency room triage of patients with acute chest pain by means of rapid test-
+ing for cardiac troponin T or troponin I. N Engl J Med. 
+1997;337(23):1648-1653.
+9. Kruskal JB, Commerford PJ, Franks JJ, Kirsch RE. Fi-
+brin and fibrinogen-related antigens in patients with sta-ble and unstable coronary artery disease. N Engl J Med. 
+1987;317(22):1361-1365.
+10. Lippi G, Filippozzi L, Montagnana M, Salvagno GL, 
+Guidi GC. Diagnostic value of D-dimer measurement in 
+patients referred to the emergency department with sus-pected myocardial ischemia. J Thromb Thrombolysis. 
+2008;25(3):247-250.
+11. Wada H, Sakuragawa N. Are fibrin-related markers useful for the diagnosis of thrombosis? Semin Thromb Hemost. 2008;34(1):33-38.
+12. Righini M, Robert-Ebadi H, Le Gal G. Diagnosis of pul-
+monary embolism. Presse Med. 2015;44(12 Pt 2):e385-391.
+13. Orak M, Ustundag M, Guloglu C, Alyan O, Sayhan MB. 
+The role of serum D-dimer level in the diagnosis of pa-
+tients admitted to the emergency department complaining of chest pain. J Int Med Res. 2010;38(5):1772-1779.
+14. Ridker PM, Hennekens CH, Cerskus A, Stampfer MJ. 
+Plasma concentration of cross-linked fibrin degradation 
+product (D-dimer) and the risk of future myocardial in-
+farction among apparently healthy men. Circulation. 
+1994;90(5):2236-2240.
+15. Menown IB, Mathew TP, Gracey HM, Nesbitt GS, Mur -
+ray P, Young IS, Adgey AA, et al. Prediction of recurrent events by D-Dimer and inflammatory markers in patients 
+with normal cardiac Troponin I (PREDICT) Study. Am 
+Heart J. 2003;145(6):986-992.
+16. Lowe GD, Yarnell JW, Sweetnam PM, Rumley A, Thom-as HF, Elwood PC. Fibrin D-dimer, tissue plasminogen 
+activator, plasminogen activator inhibitor, and the risk of 
+major ischaemic heart disease in the Caerphilly Study. 
+Thromb Haemost. 1998;79(1):129-133.
