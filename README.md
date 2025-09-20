@@ -1,114 +1,158 @@
-# ClinicSim-AI - 臨床技能教練
+# 🧑‍⚕️ ClinicSim-AI
 
-一個為醫學生設計的 AI 臨床技能教練，提供真實的臨床問診模擬體驗。
+> 一個為醫學生設計的 AI 臨床技能教練，結合 RAG 技術提供智能化的臨床問診訓練
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+## 📖 專案簡介
+
+ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透過 AI 技術模擬真實的臨床問診情境，結合 RAG (Retrieval-Augmented Generation) 技術，提供基於臨床指引的智能回饋，幫助學生提升臨床診斷能力。
+
+### ✨ 主要特色
+
+- 🎯 **智能問診模擬**：AI 病人提供真實的臨床互動體驗
+- 📚 **RAG 技術整合**：基於臨床指引提供專業回饋
+- 📊 **即時評估系統**：動態追蹤問診覆蓋率和學習進度
+- 🏥 **標準化流程**：遵循急性胸痛診斷標準流程
+- 💊 **臨床決策支援**：整合診斷工具和處置建議
+- 📱 **響應式設計**：支援多種裝置使用
 
 ## 🚀 快速開始
 
-### 1. 啟動後端服務
+### 環境需求
+
+- Python 3.8+
+- Ollama (本地 AI 模型)
+- 或 OpenAI API Key
+
+### 安裝步驟
+
+1. **克隆專案**
 ```bash
-python main.py
+git clone https://github.com/your-username/ClinicSim-AI.git
+cd ClinicSim-AI
 ```
 
-### 2. 啟動前端應用
-```bash
-streamlit run app.py
-```
-
-## ✨ 主要功能
-
-### 🏥 臨床問診模擬
-- **AI病人對話**：與模擬病人進行真實的問診對話
-- **即時回饋**：AI提供專業的臨床回饋和指導
-- **覆蓋率追蹤**：即時顯示問診覆蓋率進度
-
-### 📋 臨床決策面板
-- **床邊檢查**：ECG心電圖（含視覺化）、POCUS超音波
-- **實驗室檢驗**：心肌酵素、全血球計數
-- **影像學檢查**：胸部X光（含視覺化）
-- **藥物處方**：氧氣、阿斯匹靈、硝化甘油、嗎啡
-
-### 📊 智能評估系統
-- **即時評估報告**：問診結束後立即生成評估
-- **詳細分析報告**：包含RAG臨床指引的深度分析
-- **引註來源**：提供臨床指引的詳細引用
-
-### 💓 生命體徵監控
-- **即時監控**：心率、血壓、血氧、呼吸頻率
-- **動態更新**：根據問診進度自動更新
-
-## 🎨 界面特色
-
-- **專業設計**：醫療級UI設計，提供專業的學習環境
-- **響應式佈局**：左側聊天，右側臨床Orders，底部監控面板
-- **視覺化學習**：ECG、X光等檢查結果的圖片顯示
-- **緊湊設計**：節省空間，提高操作效率
-
-## 🛠️ 技術架構
-
-### 前端
-- **Streamlit**：現代化的Python Web應用框架
-- **自定義CSS**：專業的醫療級界面設計
-- **組件化架構**：模組化的組件設計
-
-### 後端
-- **FastAPI**：高性能的API服務
-- **AI集成**：集成大型語言模型
-- **RAG系統**：檢索增強生成，提供臨床指引
-
-## 📁 項目結構
-
-```
-ClinicSim-AI/
-├── app.py                 # 統一前端入口
-├── main.py               # 後端服務入口
-├── src/                  # 源代碼目錄
-│   ├── frontend/         # 前端組件
-│   ├── services/         # 業務邏輯
-│   └── models/          # 數據模型
-├── static/              # 靜態資源
-│   └── samples/         # 樣本圖片
-├── cases/               # 病例數據
-└── requirements.txt     # 依賴包
-```
-
-## 🔧 開發設置
-
-### 安裝依賴
+2. **安裝依賴**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 環境變量
-創建 `.env` 文件並配置：
+3. **配置環境變數**
+```bash
+# 複製環境變數範本
+cp .env.example .env
+
+# 編輯 .env 文件
+# OLLAMA_HOST=http://127.0.0.1:11434
+# OLLAMA_MODEL=llama3:8b
 ```
-OPENAI_API_KEY=your_api_key
-HOST=127.0.0.1
-PORT=5001
+
+4. **啟動服務**
+```bash
+# 啟動後端服務
+python main.py
+
+# 啟動前端介面
+streamlit run app.py
 ```
 
-## 📖 使用指南
+5. **訪問應用**
+- 前端界面：http://localhost:8501
+- 後端 API：http://127.0.0.1:5001
 
-1. **開始問診**：在聊天框中輸入問題開始與AI病人對話
-2. **開立醫囑**：使用右側臨床決策面板開立檢查和藥物
-3. **查看結果**：ECG、X光等檢查會自動顯示相應圖片
-4. **結束問診**：點擊「總結與計畫」按鈕結束問診
-5. **查看報告**：獲得即時評估和詳細分析報告
+## 📁 專案結構
 
-## 🎯 學習目標
+```
+ClinicSim-AI/
+├── 📁 src/                    # 核心源碼
+│   ├── 📁 api/                # API 路由和依賴
+│   ├── 📁 config/             # 配置管理
+│   ├── 📁 frontend/           # 前端組件
+│   ├── 📁 models/             # 數據模型
+│   ├── 📁 services/           # 業務邏輯服務
+│   └── 📁 utils/              # 工具函數
+├── 📁 docs/                   # 文檔
+│   ├── 📁 development/        # 開發文檔
+│   └── 📁 reports/            # 開發報告
+├── 📁 scripts/                # 腳本和工具
+├── 📁 cases/                  # 病例數據
+├── 📁 documents/              # 臨床文檔
+├── 📁 static/                 # 靜態資源
+├── 📁 reports/                # 報告歷史
+├── 📄 app.py                  # 主應用程式
+├── 📄 main.py                 # 後端服務入口
+└── 📄 requirements.txt        # 依賴清單
+```
 
-- **問診技巧**：學習標準的臨床問診流程
-- **臨床思維**：培養系統性的臨床診斷思維
-- **決策能力**：練習臨床檢查和治療決策
-- **專業素養**：提升醫學專業素養和溝通技巧
+## 🎯 核心功能
 
-## 🤝 貢獻
+### 1. 智能問診系統
+- 模擬真實病人互動
+- 支援多種問診技巧
+- 即時語音轉文字
 
-歡迎提交Issue和Pull Request來改進這個項目！
+### 2. 臨床決策支援
+- 急性胸痛診斷流程
+- 標準化檢查建議
+- 緊急處置指引
 
-## 📄 許可證
+### 3. 學習評估系統
+- 問診覆蓋率追蹤
+- 生命體徵監測
+- 智能回饋報告
 
-MIT License
+### 4. RAG 知識庫
+- 臨床指引檢索
+- 證據基礎建議
+- 多語言支援
+
+## 🛠️ 技術架構
+
+- **前端**：Streamlit + HTML/CSS/JavaScript
+- **後端**：Flask + FastAPI
+- **AI 模型**：Ollama (本地) / OpenAI API
+- **RAG 技術**：FAISS + LangChain
+- **數據庫**：JSON 文件存儲
+- **部署**：Docker + Cloud Platforms
+
+## 📚 文檔
+
+- [安裝指南](docs/installation.md)
+- [快速開始](docs/quick-start.md)
+- [開發者指南](docs/developer-guide.md)
+- [API 文檔](docs/api-documentation.md)
+- [架構說明](docs/architecture.md)
+- [故障排除](docs/troubleshooting.md)
+
+## 🤝 貢獻指南
+
+我們歡迎社區貢獻！請查看 [開發者指南](docs/developer-guide.md) 了解如何參與開發。
+
+1. Fork 本專案
+2. 創建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交變更 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 開啟 Pull Request
+
+## 📄 授權條款
+
+本專案採用 MIT 授權條款 - 查看 [LICENSE](LICENSE) 文件了解詳情。
+
+## 🙏 致謝
+
+- 感謝所有臨床醫師提供的專業指導
+- 感謝開源社區的技術支援
+- 感謝醫學教育專家的建議
+
+## 📞 聯絡我們
+
+- 專案維護者：[您的姓名]
+- 電子郵件：[your.email@example.com]
+- 專案網站：[https://clinic-sim-ai.example.com]
 
 ---
 
-**🧑‍⚕️ ClinicSim AI - 讓醫學教育更智能、更有效！**
+⭐ 如果這個專案對您有幫助，請給我們一個 Star！
