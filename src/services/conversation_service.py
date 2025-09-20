@@ -89,12 +89,22 @@ class ConversationService:
         conversation_text = conversation.get_conversation_text().lower()
         
         covered_items = 0
+        partial_items = 0
+        
         for item in checklist:
             keywords = item.get('keywords', [])
-            if any(keyword.lower() in conversation_text for keyword in keywords):
+            matched_keywords = [kw for kw in keywords if kw.lower() in conversation_text]
+            
+            # 完全覆蓋：匹配2個或以上關鍵字
+            if len(matched_keywords) >= 2:
                 covered_items += 1
+            # 部分覆蓋：匹配1個關鍵字
+            elif len(matched_keywords) == 1:
+                partial_items += 0.5  # 部分覆蓋算0.5分
         
-        coverage_percentage = int((covered_items / len(checklist)) * 100) if checklist else 0
+        # 計算總覆蓋率：完全覆蓋項目 + 部分覆蓋項目
+        total_covered = covered_items + partial_items
+        coverage_percentage = int((total_covered / len(checklist)) * 100) if checklist else 0
         return min(coverage_percentage, 100)
     
     def _should_update_vital_signs(self, conversation: Conversation) -> bool:

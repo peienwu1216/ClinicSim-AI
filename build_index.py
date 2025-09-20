@@ -59,12 +59,38 @@ def build_index():
         
     print(f"文件載入完成，共 {len(all_docs)} 頁。開始切塊...")
     
-    # 2. 切割文件
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
+    # 2. 切割文件 - 使用更小的chunk size以提高精準度
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=400,  # 減少chunk大小以提高精準度
+        chunk_overlap=50,  # 減少重疊以提高精準度
+        separators=["\n\n", "\n", "。", "！", "？", "；", "，", " ", ""]  # 更細緻的分隔符
+    )
     chunks = text_splitter.split_documents(all_docs)
     print(f"切塊完成，共生成 {len(chunks)} 個知識片段。")
+    
+    # 3. 過濾低品質的chunks
+    filtered_chunks = []
+    for chunk in chunks:
+        content = chunk.page_content.strip()
+        
+        # 過濾太短的chunks
+        if len(content) < 30:
+            continue
+            
+        # 過濾包含太多無意義內容的chunks
+        if content.count('案例') > 2 or content.count('案例1') > 0:
+            continue
+            
+        # 過濾只包含標題的chunks
+        if content.count('\n') == 0 and len(content) < 100:
+            continue
+            
+        filtered_chunks.append(chunk)
+    
+    chunks = filtered_chunks
+    print(f"過濾後，共保留 {len(chunks)} 個高品質知識片段。")
 
-    # 3. 初始化 Embedding 模型
+    # 4. 初始化 Embedding 模型
     print(f"正在初始化 Embedding 模型: {EMBEDDING_MODEL} (可能需要一些時間下載)...")
     embeddings = HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL,
@@ -72,7 +98,7 @@ def build_index():
         encode_kwargs={'normalize_embeddings': True}
     )
 
-    # 4. 建立 FAISS 索引並儲存
+    # 5. 建立 FAISS 索引並儲存
     print("正在將知識片段轉換為向量並建立 FAISS 索引...")
     vectorstore = FAISS.from_documents(chunks, embeddings)
     vectorstore.save_local(INDEX_PATH)

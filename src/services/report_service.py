@@ -31,6 +31,11 @@ class ReportService:
         if not case:
             raise ValueError(f"Case not found: {conversation.case_id}")
         
+        # 確保覆蓋率是最新的
+        from ..services.conversation_service import ConversationService
+        conversation_service = ConversationService(self.settings)
+        conversation_service._update_conversation_metrics(conversation, case)
+        
         # 生成基本分析報告
         report_content = self._generate_basic_analysis(conversation, case)
         
@@ -130,16 +135,33 @@ class ReportService:
         # 分析關鍵行動
         critical_analysis = []
         for action in critical_actions:
-            if any(keyword in conversation_text for keyword in ["心電圖", "ECG", "12導程", "立刻", "馬上", "10分"]):
-                critical_analysis.append(f"- ✅ 關鍵決策：學生提及了「{action}」")
+            # 針對不同的關鍵行動使用不同的關鍵字匹配
+            if "ECG" in action or "心電圖" in action:
+                # ECG相關行動的關鍵字
+                ecg_keywords = ["心電圖", "ECG", "12導程", "12導", "立刻", "馬上", "立即", "10分", "十分"]
+                if any(keyword in conversation_text for keyword in ecg_keywords):
+                    critical_analysis.append(f"- ✅ 關鍵決策：學生提及了「{action}」")
+                else:
+                    critical_analysis.append(f"- ❌ 關鍵決策：學生未提及「{action}」")
+            elif "Troponin" in action or "心肌鈣蛋白" in action:
+                # Troponin相關行動的關鍵字
+                troponin_keywords = ["troponin", "心肌鈣蛋白", "心肌酵素", "抽血", "檢驗", "血液"]
+                if any(keyword in conversation_text for keyword in troponin_keywords):
+                    critical_analysis.append(f"- ✅ 關鍵決策：學生提及了「{action}」")
+                else:
+                    critical_analysis.append(f"- ❌ 關鍵決策：學生未提及「{action}」")
             else:
-                critical_analysis.append(f"- ❌ 關鍵決策：學生未提及「{action}」")
+                # 其他關鍵行動的通用匹配
+                if any(keyword in conversation_text for keyword in ["心電圖", "ECG", "12導程", "立刻", "馬上", "10分"]):
+                    critical_analysis.append(f"- ✅ 關鍵決策：學生提及了「{action}」")
+                else:
+                    critical_analysis.append(f"- ❌ 關鍵決策：學生未提及「{action}」")
         
         coverage_percentage = conversation.coverage
         
         return f"""### 診後分析報告
 
-**問診覆蓋率：{coverage_percentage}% ({covered_count}/{len(checklist)})**
+**問診覆蓋率：{coverage_percentage}% ({covered_count + partial_count}/{len(checklist)})**
 **完整項目：{covered_count} | 部分項目：{partial_count} | 未覆蓋：{len(checklist) - covered_count - partial_count}**
 
 **詳細評估：**
@@ -151,7 +173,7 @@ class ReportService:
 ### 總結與建議
 
 **優點：**
-- 問診覆蓋率達 {coverage_percentage}%
+- 問診覆蓋率達 {coverage_percentage}%，共覆蓋 {covered_count + partial_count} 個項目
 - 學生展現了基本的問診技巧
 - 能夠與病人建立良好的溝通
 
