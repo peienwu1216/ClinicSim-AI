@@ -17,13 +17,19 @@ class SidebarComponent(BaseComponent):
                session_ended: bool = False,
                on_end_session: Optional[Callable] = None,
                on_generate_detailed_report: Optional[Callable] = None,
-               detailed_report_available: bool = False) -> None:
+               detailed_report_available: bool = False,
+               on_select_random_case: Optional[Callable] = None,
+               current_case_id: Optional[str] = None,
+               has_started: bool = False) -> None:
         """渲染側邊欄"""
         
         with st.sidebar:
             # 標題
             st.title("🧑‍⚕️ ClinicSim AI")
             st.info("一個為醫學生設計的 AI 臨床技能教練。")
+            
+            # 病例選擇
+            self._render_case_selection(on_select_random_case, current_case_id, session_ended, has_started)
             
             # 覆蓋率儀表板
             self._render_coverage_meter(coverage)
@@ -86,6 +92,31 @@ class SidebarComponent(BaseComponent):
                 help="點擊生成包含 RAG 臨床指引的詳細分析報告",
                 on_click=on_generate_detailed_report
             )
+    
+    def _render_case_selection(self, 
+                              on_select_random_case: Optional[Callable],
+                              current_case_id: Optional[str],
+                              session_ended: bool = False,
+                              has_started: bool = False) -> None:
+        """渲染病例選擇區域"""
+        st.subheader("📋 病例選擇")
+        
+        st.info("**目前主訴**: 急性胸痛")
+        
+        # 只有在未開始問診且未結束時才能選擇病例
+        can_select_case = on_select_random_case and not has_started and not session_ended
+        
+        if can_select_case:
+            if st.button("🎲 隨機選擇病例", use_container_width=True):
+                on_select_random_case()
+            st.caption("點擊上方按鈕隨機選擇一個病例進行問診練習")
+        elif has_started and not session_ended:
+            st.button("🎲 隨機選擇病例", use_container_width=True, disabled=True)
+            st.caption("⚠️ 問診已開始，無法切換病例")
+        elif session_ended:
+            if st.button("🎲 選擇新病例", use_container_width=True):
+                on_select_random_case()
+            st.caption("問診已結束，可以選擇新病例開始新一輪練習")
     
     def _render_osce_tips(self) -> None:
         """渲染 OSCE 技巧小抄"""

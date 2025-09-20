@@ -5,6 +5,7 @@
 import re
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from pathlib import Path
 
 from ..models.conversation import Conversation, MessageRole
 from ..models.case import Case
@@ -39,11 +40,16 @@ class ReportService:
         # 生成基本分析報告
         report_content = self._generate_basic_analysis(conversation, case)
         
-        # 如果有 RAG 服務，添加相關指引
+        # 如果有 RAG 服務，基於回饋內容添加相關指引
         if self.rag_service.is_available():
-            rag_context = self.rag_service.search("急性胸痛診斷和治療指引")
-            if rag_context and "RAG 系統未初始化" not in rag_context:
-                report_content += f"\n\n### 相關臨床指引\n{rag_context}"
+            # 基於已生成的回饋內容生成相關查詢
+            rag_queries = self._generate_queries_from_feedback(report_content)
+            
+            # 使用查詢獲取最相關的指引
+            if rag_queries:
+                rag_context = self._search_multiple_queries(rag_queries, k=2)
+                if rag_context and "RAG 系統未初始化" not in rag_context:
+                    report_content += f"\n\n### 相關臨床指引\n{rag_context}"
         
         report = Report(
             report_type=ReportType.FEEDBACK,
@@ -69,15 +75,16 @@ class ReportService:
         if not case:
             raise ValueError(f"Case not found: {conversation.case_id}")
         
-        # 生成 RAG 查詢和引註
-        rag_queries = self.rag_service.generate_rag_queries(
-            conversation.get_conversation_text(),
-            case_type="chest_pain"
-        )
+        # 先生成初步分析報告
+        initial_feedback = self._generate_basic_analysis(conversation, case)
+        
+        # 基於初步回饋內容生成更精準的 RAG 查詢
+        rag_queries = self._generate_queries_from_feedback(initial_feedback)
         
         citations = []
         if self.rag_service.is_available():
-            citations = self.rag_service.search_with_citations(rag_queries)
+            # 使用新的 search_with_citations 方法生成帶有完整來源資訊的引註
+            citations = self.rag_service.search_with_citations(rag_queries, k=2)
         
         # 生成詳細報告內容
         report_content = self._generate_detailed_analysis_with_llm(
@@ -102,7 +109,12 @@ class ReportService:
         conversation.mark_detailed_report_generated()
         
         # 儲存報告到檔案
-        self._save_report_to_file(report)
+        file_path = self._save_report_to_file(report)
+        
+        # 將檔案路徑添加到報告元資料
+        if file_path:
+            report.metadata['file_path'] = file_path
+            report.metadata['filename'] = Path(file_path).name
         
         return report
     
@@ -302,6 +314,61 @@ class ReportService:
             suggestions += "\n"
         
         return suggestions
+    
+    def _generate_queries_from_feedback(self, feedback_content: str) -> List[str]:
+        """基於AI回饋內容生成相關的RAG查詢"""
+        queries = []
+        content_lower = feedback_content.lower()
+        
+        # 根據回饋內容中的關鍵詞生成查詢
+        if any(keyword in content_lower for keyword in ["問診", "病史", "osce", "覆蓋率"]):
+            queries.append("OSCE 問診技巧和病史詢問指南")
+            
+        if any(keyword in content_lower for keyword in ["ecg", "心電圖", "12導程", "關鍵決策"]):
+            queries.append("ECG 心電圖在胸痛評估中的重要性")
+            
+        if any(keyword in content_lower for keyword in ["鑑別", "診斷", "檢查", "stemi"]):
+            queries.append("STEMI 和不穩定型心絞痛的診斷標準")
+            queries.append("急性胸痛的鑑別診斷和檢查項目")
+            
+        if any(keyword in content_lower for keyword in ["opqrst", "疼痛", "性質", "位置", "放射"]):
+            queries.append("胸痛問診的 OPQRST 技巧和重點")
+            
+        if any(keyword in content_lower for keyword in ["系統性", "流程", "順序"]):
+            queries.append("急性胸痛診斷流程和檢查順序")
+            
+        if any(keyword in content_lower for keyword in ["改進", "建議", "練習"]):
+            queries.append("臨床診斷技巧和最佳實踐")
+            
+        # 如果沒有找到特定關鍵詞，使用通用查詢
+        if not queries:
+            queries = [
+                "急性胸痛診斷流程和檢查順序",
+                "ECG 心電圖在胸痛評估中的重要性"
+            ]
+            
+        return queries[:3]  # 返回最多3個查詢
+    
+    def _search_multiple_queries(self, queries: List[str], k: int = 2) -> str:
+        """執行多個查詢並合併結果"""
+        all_results = []
+        
+        for i, query in enumerate(queries, 1):
+            try:
+                result = self.rag_service.search(query, k=k)
+                if result and "RAG 系統未初始化" not in result and "找不到相關資料" not in result:
+                    # 添加查詢標識
+                    formatted_result = f"📚 **{query}**\n\n{result}"
+                    all_results.append(formatted_result)
+            except Exception as e:
+                print(f"查詢失敗: {query} - {e}")
+                continue
+                
+        # 合併結果，避免重複
+        if all_results:
+            return "\n\n---\n\n".join(all_results[:2])  # 最多返回2個結果
+        else:
+            return ""
     
     def _save_report_to_file(self, report: Report) -> Optional[str]:
         """將報告儲存到本地 md 檔案"""

@@ -3,6 +3,7 @@
 """
 
 import json
+import random
 from typing import Optional, Dict, Any
 from pathlib import Path
 
@@ -67,6 +68,23 @@ class CaseService:
     def clear_cache(self) -> None:
         """清除案例緩存"""
         self._case_cache.clear()
+    
+    def get_random_case(self) -> Optional[Case]:
+        """隨機選擇一個可用的案例"""
+        available_cases = self.list_available_cases()
+        if not available_cases:
+            return None
+        
+        random_case_id = random.choice(available_cases)
+        return self.get_case(random_case_id)
+    
+    def get_random_case_id(self) -> Optional[str]:
+        """隨機選擇一個可用的案例 ID"""
+        available_cases = self.list_available_cases()
+        if not available_cases:
+            return None
+        
+        return random.choice(available_cases)
     
     def reload_case(self, case_id: str) -> Case:
         """重新載入案例"""

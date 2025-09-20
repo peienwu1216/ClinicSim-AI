@@ -11,11 +11,11 @@ def highlight_citations(text: str, citations: List[Dict[str, Any]]) -> str:
     if not citations:
         return text
     
-    # 為每個引註標記添加樣式
+    # 為每個引註標記添加樣式，確保字體大小與其他文字一致
     for citation in citations:
         citation_id = citation['id']
         pattern = f'\\[引註 {citation_id}\\]'
-        replacement = f'<span style="background-color: #e1f5fe; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0277bd;">[引註 {citation_id}]</span>'
+        replacement = f'<span style="background-color: #e1f5fe !important; padding: 2px 6px !important; border-radius: 4px !important; font-weight: bold !important; color: #0277bd !important; font-size: 14px !important; line-height: 1.6 !important; display: inline !important;">[引註 {citation_id}]</span>'
         text = re.sub(pattern, replacement, text)
     
     return text

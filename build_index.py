@@ -40,11 +40,26 @@ def build_index():
             if file.suffix == '.pdf':
                 print(f"正在載入 PDF: {file.name}")
                 loader = PyMuPDFLoader(str(file))
-                all_docs.extend(loader.load())
+                docs = loader.load()
+                # 確保每個文檔都有正確的來源資訊
+                for doc in docs:
+                    # PyMuPDFLoader 會自動在 metadata 中包含 'source' 和 'page' 資訊
+                    # 我們只需要確保這些資訊存在
+                    if 'source' not in doc.metadata:
+                        doc.metadata['source'] = str(file)
+                    if 'page' not in doc.metadata:
+                        doc.metadata['page'] = 0  # 預設頁碼
+                    print(f"  - 頁面 {doc.metadata.get('page', 0) + 1}: {len(doc.page_content)} 字元")
+                all_docs.extend(docs)
             elif file.suffix in ['.txt', '.md']:
                 print(f"正在載入文字檔: {file.name}")
                 loader = TextLoader(str(file), encoding='utf-8')
-                all_docs.extend(loader.load())
+                docs = loader.load()
+                # 為文字檔案添加來源資訊
+                for doc in docs:
+                    doc.metadata['source'] = str(file)
+                    doc.metadata['page'] = 0  # 文字檔案沒有頁碼概念
+                all_docs.extend(docs)
         except Exception as e:
             print(f"載入檔案 {file.name} 失敗: {e}")
     

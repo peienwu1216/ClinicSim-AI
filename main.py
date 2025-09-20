@@ -4,6 +4,10 @@ ClinicSim-AI 主應用程式入口
 
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+# 載入 .env 檔案
+load_dotenv()
 
 # 添加 src 目錄到 Python 路徑
 project_root = Path(__file__).parent

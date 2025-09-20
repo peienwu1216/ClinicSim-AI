@@ -80,32 +80,54 @@ class ConversationService:
             conversation.vital_signs = self._generate_vital_signs(case)
     
     def _calculate_coverage(self, conversation: Conversation, case: Case) -> int:
-        """計算問診覆蓋率"""
+        """計算問診覆蓋率（累加式）"""
         checklist = case.get_feedback_checklist()
         if not checklist:
             return 0
         
-        # 將對話轉換為文字
-        conversation_text = conversation.get_conversation_text().lower()
+        # 取得最新的使用者訊息
+        user_messages = conversation.get_user_messages()
+        if not user_messages:
+            return conversation.coverage
         
-        covered_items = 0
-        partial_items = 0
+        # 只分析最新的使用者訊息
+        latest_message = user_messages[-1].content.lower()
+        
+        # 檢查是否有新的覆蓋項目
+        new_covered_items = []
+        new_partially_covered_items = []
         
         for item in checklist:
+            item_id = item.get('id', '')
+            if not item_id:
+                continue
+            
+            # 跳過已經完全覆蓋的項目
+            if item_id in conversation.covered_items:
+                continue
+            
             keywords = item.get('keywords', [])
-            matched_keywords = [kw for kw in keywords if kw.lower() in conversation_text]
+            matched_keywords = [kw for kw in keywords if kw.lower() in latest_message]
             
             # 完全覆蓋：匹配2個或以上關鍵字
             if len(matched_keywords) >= 2:
-                covered_items += 1
+                new_covered_items.append(item_id)
             # 部分覆蓋：匹配1個關鍵字
-            elif len(matched_keywords) == 1:
-                partial_items += 0.5  # 部分覆蓋算0.5分
+            elif len(matched_keywords) == 1 and item_id not in conversation.partially_covered_items:
+                new_partially_covered_items.append(item_id)
+        
+        # 更新對話的覆蓋項目（累加式）
+        conversation.covered_items.extend(new_covered_items)
+        conversation.partially_covered_items.extend(new_partially_covered_items)
         
         # 計算總覆蓋率：完全覆蓋項目 + 部分覆蓋項目
-        total_covered = covered_items + partial_items
+        total_covered = len(conversation.covered_items) + (len(conversation.partially_covered_items) * 0.5)
         coverage_percentage = int((total_covered / len(checklist)) * 100) if checklist else 0
-        return min(coverage_percentage, 100)
+        
+        # 更新對話的覆蓋率
+        conversation.coverage = min(coverage_percentage, 100)
+        
+        return conversation.coverage
     
     def _should_update_vital_signs(self, conversation: Conversation) -> bool:
         """檢查是否需要更新生命體徵"""
