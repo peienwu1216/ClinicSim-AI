@@ -13,6 +13,7 @@ from ..models.report import Report, ReportType, Citation
 from ..services.ai_service import get_ai_service
 from ..services.rag_service import RAGService
 from ..services.case_service import CaseService
+from ..services.scoring_service import ScoringService
 from ..config.settings import get_settings
 from ..utils.file_utils import save_report_to_file, generate_report_filename
 
@@ -20,11 +21,12 @@ from ..utils.file_utils import save_report_to_file, generate_report_filename
 class ReportService:
     """報告生成服務"""
     
-    def __init__(self, settings=None, case_service=None, ai_service=None, rag_service=None):
+    def __init__(self, settings=None, case_service=None, ai_service=None, rag_service=None, scoring_service=None):
         self.settings = settings or get_settings()
         self.case_service = case_service or CaseService(self.settings)
         self.ai_service = ai_service or get_ai_service(self.settings)
         self.rag_service = rag_service or RAGService(self.settings)
+        self.scoring_service = scoring_service or ScoringService(self.settings)
     
     def generate_feedback_report(self, conversation: Conversation) -> Report:
         """生成即時回饋報告"""
@@ -37,8 +39,11 @@ class ReportService:
         conversation_service = ConversationService(self.settings)
         conversation_service._update_conversation_metrics(conversation, case)
         
-        # 生成基本分析報告
-        report_content = self._generate_basic_analysis(conversation, case)
+        # 使用新的結構化評分系統
+        scoring_result = self.scoring_service.score_conversation(conversation)
+        
+        # 生成基本分析報告（包含新評分）
+        report_content = self._generate_enhanced_analysis(conversation, case, scoring_result)
         
         # 如果有 RAG 服務，基於回饋內容添加相關指引
         if self.rag_service.is_available():
@@ -474,3 +479,82 @@ class ReportService:
         )
         
         return full_content
+    
+    def _generate_enhanced_analysis(self, conversation: Conversation, case: Case, scoring_result) -> str:
+        """生成增強分析報告（包含結構化評分）"""
+        # 基本覆蓋率分析（保持向後兼容）
+        checklist = case.get_feedback_checklist()
+        conversation_text = conversation.get_conversation_text().lower()
+        
+        report_items = []
+        covered_count = 0
+        partial_count = 0
+        
+        for item in checklist:
+            keywords = item.get('keywords', [])
+            matched_keywords = [kw for kw in keywords if kw.lower() in conversation_text]
+            
+            if len(matched_keywords) >= 2:
+                report_items.append(f"- ✅ {item['point']}：學生透過提問「{matched_keywords[0]}」等成功問診")
+                covered_count += 1
+            elif len(matched_keywords) == 1:
+                report_items.append(f"- ⚠️ {item['point']}：學生有相關提問「{matched_keywords[0]}」，但可更深入")
+                partial_count += 1
+            else:
+                report_items.append(f"- ❌ {item['point']}：學生未詢問此項目")
+        
+        # 結構化評分分析
+        scoring_analysis = self._format_scoring_analysis(scoring_result)
+        
+        coverage_percentage = conversation.coverage
+        
+        return f"""### 診後分析報告
+
+**總體評分：{scoring_result.percentage:.1f}% ({scoring_result.grade})**
+**問診覆蓋率：{coverage_percentage}% ({covered_count + partial_count}/{len(checklist)})**
+
+{scoring_analysis}
+
+**詳細評估：**
+{chr(10).join(report_items)}
+
+### 總結與建議
+
+**優點：**
+- 總體評分達 {scoring_result.percentage:.1f}%，等級：{scoring_result.grade}
+- 問診覆蓋率達 {coverage_percentage}%，共覆蓋 {covered_count + partial_count} 個項目
+- 學生展現了基本的問診技巧
+
+**改進建議：**
+1. **系統性問診**：建議按照 OPQRST 結構進行問診
+2. **深入探索**：對於已觸及的主題，可以進一步深入詢問
+3. **關鍵決策**：加強臨床決策能力，及時提出關鍵檢查
+4. **完整性**：注意問診的全面性，避免遺漏重要項目
+
+**具體建議：**
+- 多練習標準化問診流程
+- 加強對關鍵症狀的識別能力
+- 提升臨床決策的時效性
+
+*註：此為即時分析報告，詳細報告請點擊「生成完整報告」按鈕。*"""
+    
+    def _format_scoring_analysis(self, scoring_result) -> str:
+        """格式化評分分析"""
+        analysis_parts = []
+        
+        # 各類別評分
+        for section in scoring_result.section_scores:
+            section_percentage = (section.achieved_score / section.max_score * 100) if section.max_score > 0 else 0
+            analysis_parts.append(f"**{section.title}**: {section_percentage:.1f}% ({section.achieved_score:.1f}/{section.max_score})")
+            
+            # 顯示關鍵項目
+            key_criteria = [c for c in section.criteria_scores if c.achieved_score > 0]
+            if key_criteria:
+                analysis_parts.append(f"  - 完成項目: {', '.join([c.description for c in key_criteria[:3]])}")
+            
+            # 顯示懲罰項目
+            penalties = [p for p in section.penalties if p.achieved_score > 0]
+            if penalties:
+                analysis_parts.append(f"  - 扣分項目: {', '.join([p.description for p in penalties])}")
+        
+        return "\n".join(analysis_parts)

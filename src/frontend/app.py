@@ -34,6 +34,9 @@ class StreamlitApp:
         self.api_base_url = f"http://{self.settings.backend_host}:{self.settings.backend_port}"
         self.case_id = self.settings.default_case_id
         
+        # 輸出當前案例到終端機
+        print(f"🎯 當前案例: {self.case_id}")
+        
         # 初始化組件
         self.sidebar = SidebarComponent("sidebar")
         self.chat_interface = ChatInterfaceComponent("chat")
@@ -340,6 +343,9 @@ class StreamlitApp:
             case_title = case_data.get("case_title", "未知病例")
             
             if new_case_id:
+                # 輸出選中的案例到終端機
+                print(f"🎲 隨機選擇案例: {new_case_id} - {case_title}")
+                
                 # 更新當前病例 ID
                 self.case_id = new_case_id
                 

@@ -232,6 +232,9 @@ def register_routes(app: Flask) -> None:
             if not case:
                 return jsonify({"error": f"無法載入案例: {random_case_id}"}), 500
             
+            # 輸出選中的案例到終端機
+            print(f"🎲 後端API: 隨機選擇案例 {random_case_id} - {case.data.case_title}")
+            
             return jsonify({
                 "case_id": case.data.case_id,
                 "case_title": case.data.case_title,

@@ -84,3 +84,17 @@ pymupdf
 langchain-community
 langchain-text-splitters
 faiss-cpu
+
+# --- 圖片處理相關依賴 ---
+pytesseract
+easyocr
+torchvision
+opencv-python-headless
+scikit-image
+python-bidi
+pyclipper
+ninja
+Shapely
+imageio
+tifffile
+lazy-loader

@@ -26,13 +26,13 @@ class Settings(BaseSettings):
     backend_port: int = Field(default=5001, env="BACKEND_PORT")
     
     # AI 模型設定
-    ai_provider: str = Field(default="ollama", env="AI_PROVIDER")  # ollama, lemonade, openai
+    ai_provider: str = Field(default="lemonade", env="AI_PROVIDER")  # ollama, lemonade, openai
     ollama_host: str = Field(default="http://127.0.0.1:11434", env="OLLAMA_HOST")
     ollama_model: str = Field(default="llama3:8b", env="OLLAMA_MODEL")
     
     # Lemonade Server 設定
-    lemonade_base_url: str = Field(default="http://localhost:8080/api/v1", env="LEMONADE_BASE_URL")
-    lemonade_model: str = Field(default="Llama-3.2-1B-Instruct-Hybrid", env="LEMONADE_MODEL")
+    lemonade_base_url: str = Field(default="http://localhost:8000/api/v1", env="LEMONADE_BASE_URL")
+    lemonade_model: str = Field(default="Qwen2.5-0.5B-Instruct-CPU", env="LEMONADE_MODEL")
     
     # 路徑設定
     project_root: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent)
@@ -63,7 +63,25 @@ class Settings(BaseSettings):
         
     def get_case_path(self, case_id: str) -> Path:
         """取得案例檔案路徑"""
-        return self.cases_dir / f"{case_id}.json"
+        # 首先嘗試直接匹配
+        direct_path = self.cases_dir / f"{case_id}.json"
+        if direct_path.exists():
+            return direct_path
+        
+        # 如果直接匹配失敗，搜索所有文件內容
+        import json
+        case_files = list(self.cases_dir.glob("*.json"))
+        for case_file in case_files:
+            try:
+                with open(case_file, 'r', encoding='utf-8') as f:
+                    case_data = json.load(f)
+                    if case_data.get('case_id') == case_id:
+                        return case_file
+            except Exception:
+                continue
+        
+        # 如果都找不到，返回預期路徑（讓上層處理錯誤）
+        return direct_path
     
     def get_document_paths(self) -> list[Path]:
         """取得所有文檔路徑"""

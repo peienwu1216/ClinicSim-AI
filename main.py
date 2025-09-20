@@ -31,6 +31,7 @@ def main():
     print(f"📍 伺服器地址: http://{settings.host}:{settings.port}")
     print(f"🔧 除錯模式: {'啟用' if settings.debug else '停用'}")
     print(f"🤖 AI 提供者: {settings.ai_provider}")
+    print(f"🎯 預設案例: {settings.default_case_id}")
     
     if settings.ai_provider == "ollama":
         print(f"   Ollama 主機: {settings.ollama_host}")

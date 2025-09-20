@@ -63,7 +63,25 @@ class CaseService:
             return []
         
         case_files = list(self.settings.cases_dir.glob("*.json"))
-        return [f.stem for f in case_files]
+        case_ids = []
+        
+        for case_file in case_files:
+            try:
+                # 讀取文件內容獲取實際的case_id
+                with open(case_file, 'r', encoding='utf-8') as f:
+                    case_data = json.load(f)
+                    actual_case_id = case_data.get('case_id')
+                    if actual_case_id:
+                        case_ids.append(actual_case_id)
+                    else:
+                        # 如果沒有case_id，使用文件名
+                        case_ids.append(case_file.stem)
+            except Exception as e:
+                print(f"⚠️ 無法讀取案例文件 {case_file}: {e}")
+                # 如果讀取失敗，使用文件名
+                case_ids.append(case_file.stem)
+        
+        return case_ids
     
     def clear_cache(self) -> None:
         """清除案例緩存"""
