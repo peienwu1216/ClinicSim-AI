@@ -1,6 +1,6 @@
 # 🧑‍⚕️ ClinicSim-AI
 
-> 一個為醫學生設計的 AI 臨床技能教練，結合 RAG 技術提供智能化的臨床問診訓練
+> 一個為醫學生設計的 AI 臨床技能教練，結合 RAG 技術提供智慧化的臨床問診訓練
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
@@ -11,11 +11,11 @@
 
 ## 📖 專案簡介
 
-ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透過 AI 技術模擬真實的臨床問診情境，結合 RAG (Retrieval-Augmented Generation) 技術，提供基於臨床指引的智能回饋，幫助學生提升臨床診斷能力。
+ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透過 AI 技術模擬真實的臨床問診情境，結合 RAG (Retrieval-Augmented Generation) 技術，提供基於臨床指引的智慧回饋，幫助學生提升臨床診斷能力。
 
 ### ✨ 主要特色
 
-- 🎯 **智能問診模擬**：AI 病人提供真實的臨床互動體驗
+- 🎯 **智慧問診模擬**：AI 病人提供真實的臨床互動體驗
 - 📚 **RAG 技術整合**：基於臨床指引提供專業回饋
 - 📊 **即時評估系統**：動態追蹤問診覆蓋率和學習進度
 - 🏥 **標準化流程**：遵循急性胸痛診斷標準流程
@@ -106,7 +106,7 @@ ClinicSim-AI/
 
 ## 🎯 核心功能
 
-### 1. 智能問診系統
+### 1. 智慧問診系統
 - 模擬真實病人互動
 - 支援多種問診技巧
 - 即時語音轉文字
@@ -119,7 +119,7 @@ ClinicSim-AI/
 ### 3. 學習評估系統
 - 問診覆蓋率追蹤
 - 生命體徵監測
-- 智能回饋報告
+- 智慧回饋報告
 
 ### 4. RAG 知識庫
 - 臨床指引檢索

@@ -293,7 +293,7 @@ load_balancer:
 ### 2. 快取策略
 
 ```yaml
-# 智能快取配置
+# 智慧快取配置
 cache:
   strategy: "lru"
   max_size: "8GB"

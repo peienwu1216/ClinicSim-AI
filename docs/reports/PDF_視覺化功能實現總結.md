@@ -47,7 +47,7 @@
 3. **RAG 服務升級** (`src/services/rag_service.py`)
    - 新的 `search_with_citations()` 方法
    - 自動提取頁碼和來源資訊
-   - 智能相關性過濾
+   - 智慧相關性過濾
 
 4. **前端顯示組件** (`src/frontend/components/report_display.py`)
    - 視覺化引註渲染
@@ -117,7 +117,7 @@ python main.py
 
 ### 2. 自動化視覺化
 - 無需手動處理 PDF
-- 智能文字定位和高亮
+- 智慧文字定位和高亮
 - 一鍵生成專業截圖
 
 ### 3. 用戶體驗優化
