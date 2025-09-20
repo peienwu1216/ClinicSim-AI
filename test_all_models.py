@@ -32,7 +32,7 @@ def call_ai_with_model(model_name: str, message: str) -> str:
     
     # Initialize the client to use Lemonade Server
     client = OpenAI(
-        base_url="http://localhost:8000/api/v1",
+        base_url="http://127.0.0.1:8080/api/v1",
         api_key="lemonade"  # required but unused
     )
 

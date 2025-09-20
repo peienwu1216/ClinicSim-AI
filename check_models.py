@@ -9,7 +9,7 @@ def check_available_models():
         print("🔍 正在檢查 Lemonade Server 上的可用模型...")
         
         # 檢查可用模型
-        models_url = "http://localhost:8000/api/v1/models"
+        models_url = "http://127.0.0.1:8080/api/v1/models"
         response = requests.get(models_url)
         response.raise_for_status()
         
@@ -35,7 +35,7 @@ def check_available_models():
     except requests.exceptions.ConnectionError:
         print("❌ 無法連接到 Lemonade Server")
         print("請確認：")
-        print("1. Lemonade Server 正在運行 (localhost:8000)")
+        print("1. Lemonade Server 正在運行 (127.0.0.1:5001)")
         print("2. 伺服器狀態正常")
         return None
         

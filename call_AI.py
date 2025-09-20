@@ -3,54 +3,35 @@ import requests
 from openai import OpenAI
 import base64
 
-def call_ai(messages: str)-> str:
-    r = requests.get("http://localhost:8000/api/v1/models")
+def call_ai(messages: str, model: str = "Qwen2.5-0.5B-Instruct-CPU", host: str = "http://127.0.0.1:5001") -> str:
+    """呼叫 AI 服務"""
+    try:
+        # 檢查服務是否可用
+        r = requests.get(f"{host}/api/v1/models", timeout=5)
+        if r.status_code != 200:
+            raise Exception(f"AI 服務不可用，狀態碼: {r.status_code}")
 
-    # Initialize the client to use Lemonade Server
-    client = OpenAI(
-        base_url="http://localhost:8000/api/v1",
-        api_key="lemonade"  # required but unused
-    )
+        # Initialize the client to use Lemonade Server
+        client = OpenAI(
+            base_url=f"{host}/api/v1",
+            api_key="lemonade"  # required but unused
+        )
 
-    # Create a chat completion
-    completion = client.chat.completions.create(
-        model="Qwen2.5-0.5B-Instruct-CPU",  # or any other available model
-        messages=[
-            {"role": "user", "content": messages}
-        ]
-    )
+        # Create a chat completion
+        completion = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "user", "content": messages}
+            ]
+        )
 
-    # Print the response
-    print(completion.choices[0].message.content)
-    return completion.choices[0].message.content
+        # Print the response
+        response = completion.choices[0].message.content
+        print(f"[AI Response] {response}")
+        return response
+        
+    except Exception as e:
+        error_msg = f"AI 服務錯誤: {str(e)}"
+        print(f"[AI Error] {error_msg}")
+        return error_msg
 
-
-# def call_ai_multimodal(messages: list, model: str = "squeeze-ai-lab/TinyAgent-1.1B") -> str:
-#     """
-#     调用多模态模型处理图像和文本
-    
-#     Args:
-#         messages: 消息列表，可以包含文本和图像
-#         model: 使用的模型名称
-    
-#     Returns:
-#         str: AI 的响应
-#     """
-#     # Initialize the client to use Lemonade Server
-#     client = OpenAI(
-#         base_url="http://localhost:8000/api/v1",
-#         api_key="lemonade"  # required but unused
-#     )
-
-#     # Create a chat completion
-#     completion = client.chat.completions.create(
-#         model=model,
-#         messages=messages
-#     )
-
-#     # Print the response
-#     print(completion.choices[0].message.content)
-#     return completion.choices[0].message.content
-
-
-call_ai( "What is the capital of France?")

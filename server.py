@@ -4,49 +4,23 @@ import random
 import re
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-
-# 導入我們新建的 RAG 系統
+from call_AI import call_ai
 from rag_handler import rag_system
+import requests
 
-# --- 自動環境偵測與設定 ---
 load_dotenv() # 從 .env 檔案載入環境變數
 
-# 執行路徑旗標
-PATH_A_DEMO = False    # AMD AI PC (Lemonade)
-PATH_B_DEVELOPMENT = False # Mac/Windows (Ollama)
 
-# 偵測路徑 A：優先偵測 Lemonade Server
-try:
-    # 檢查 Lemonade Server 是否可用
-    import requests
-    response = requests.get("http://localhost:8000/api/v1/models", timeout=5)
-    if response.status_code == 200:
-        PATH_A_DEMO = True
-        print("✅ 偵測到 Lemonade 環境 -> 啟用【路線 A: Demo 模式】")
-        # 建立一個假的 expose 裝飾器，讓程式碼在開發模式下也能運行
-        def expose(func):
-            return func
-    else:
-        raise Exception("Lemonade server not responding")
-except Exception:
+response = requests.get("http://127.0.0.1:5001/api/v1/models", timeout=5)
+if response.status_code == 200:
+    PATH_A_DEMO = True
+    print("✅ 偵測到 Lemonade 環境 -> 啟用【路線 A: Demo 模式】")
     # 建立一個假的 expose 裝飾器，讓程式碼在開發模式下也能運行
     def expose(func):
         return func
-        
-    # 偵測路徑 B：若無 Lemonade，則偵測 Ollama 設定
-    try:
-        import ollama
-        PATH_B_DEVELOPMENT = True
-        OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
-        OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3:8b")
-        OLLAMA_CLIENT = ollama.Client(host=OLLAMA_HOST)
-        print("✅ 偵測到 Ollama 設定 -> 啟用【路線 B: 開發模式】")
-        print(f"   使用模型: {OLLAMA_MODEL}")
-    except ImportError:
-        print("❌ 錯誤：缺少 `ollama` 套件。請執行 `pip install ollama`。")
-    except Exception as e:
-        print(f"🟡 警告：Ollama 連接失敗: {e}")
-        print("🟡 後端將以無 AI 功能的狀態運行。")
+else:
+    raise Exception("Lemonade server not responding")
+
 
 # --- Flask App 初始化 ---
 # 在兩種路徑下我們都需要 Flask app
@@ -65,11 +39,8 @@ def load_case_data(case_id: str) -> dict:
 # --- 核心 AI 服務函式 (雙路徑實作) ---
 @expose
 def ask_patient(history: list, case_id: str) -> str:
-    """根據對話歷史生成 AI 病人的回應"""
+    #根據對話歷史生成 AI 病人的回應
     case_data = load_case_data(case_id)
-    if not case_data:
-        return "錯誤：找不到指定的案例檔案。"
-
     system_prompt = f"""
     你是一位模擬病人（標準化病人）。你的所有輸出必須使用『繁體中文』。
     【角色設定與回應規則】
@@ -82,37 +53,23 @@ def ask_patient(history: list, case_id: str) -> str:
     """
     messages = [{"role": "system", "content": system_prompt}] + history
 
-    # --- 路線 A: Demo (Lemonade) ---
-    if PATH_A_DEMO:
-        print("[Lemonade] 正在呼叫語言模型...")
-        # 使用 call_AI.py 的方法
-        from call_AI import call_ai
-        
-        # 将系统提示和对话历史合并为单个消息
-        combined_message = ""
-        for msg in messages:
-            if msg["role"] == "system":
-                combined_message += f"系统指令: {msg['content']}\n\n"
-            elif msg["role"] == "user":
-                combined_message += f"用户: {msg['content']}\n"
-            elif msg["role"] == "assistant":
-                combined_message += f"助手: {msg['content']}\n"
-        
-        return call_ai(combined_message)
+   
+    print("[Lemonade] 正在呼叫語言模型...")
+    # 使用 call_AI.py 的方法
+   
+    
+    # 将系统提示和对话历史合并为单个消息
+    combined_message = ""
+    for msg in messages:
+        if msg["role"] == "system":
+            combined_message += f"系统指令: {msg['content']}\n\n"
+        elif msg["role"] == "user":
+            combined_message += f"用户: {msg['content']}\n"
+        elif msg["role"] == "assistant":
+            combined_message += f"助手: {msg['content']}\n"
+    
+    return call_ai(combined_message)
 
-    # --- 路線 B: 開發 (Ollama) ---
-    elif PATH_B_DEVELOPMENT:
-        model_name = os.getenv("OLLAMA_MODEL", "llama3:8b")
-        print(f"[Ollama] 正在呼叫模型: {model_name}...")
-        response = OLLAMA_CLIENT.chat(
-            model=model_name,
-            messages=messages
-        )
-        return response['message']['content']
-        
-    # --- 備用：無 AI 環境 ---
-    else:
-        return "[無 AI] 這是一個備用回應，請檢查你的 Lemonade 或 .env 設定。"
 
 @expose
 def get_feedback_report(full_conversation: list, case_id: str) -> dict:
@@ -179,39 +136,17 @@ def get_feedback_report(full_conversation: list, case_id: str) -> dict:
 
     messages = [{"role": "system", "content": prompt}]
 
-    # --- 路線 A: Demo (Lemonade) ---
-    if PATH_A_DEMO:
-        print("[Lemonade] 正在呼叫語言模型生成分析報告...")
-        # 使用 call_AI.py 的方法
-        from call_AI import call_ai
-        
-        # 将系统提示转换为字符串
-        prompt_text = messages[0]["content"] if messages else prompt
-        
-        report_text = call_ai(prompt_text)
-        return {"report_text": report_text}
+    print("[Lemonade] 正在呼叫語言模型生成分析報告...")
+    # 使用 call_AI.py 的方法
+    from call_AI import call_ai
+    
+    # 将系统提示转换为字符串
+    prompt_text = messages[0]["content"] if messages else prompt
+    
+    report_text = call_ai(prompt_text)
+    return {"report_text": report_text}
 
-    # --- 路線 B: 開發 (Ollama) ---
-    elif PATH_B_DEVELOPMENT:
-        print(f"[Ollama] 正在生成報告...")
-        try:
-            response = OLLAMA_CLIENT.chat(
-                model=os.getenv("OLLAMA_MODEL"),
-                messages=messages
-            )
-            report_text = response['message']['content']
-        except Exception as e:
-            print(f"[Ollama] 生成報告失敗，使用備用方案: {e}")
-            # 備用方案：使用增強版分析
-            user_messages = [msg['content'] for msg in full_conversation if msg['role'] == 'user']
-            conversation_analysis = analyze_conversation_enhanced(user_messages, checklist, critical_actions)
-            report_text = f"{conversation_analysis}\n\n### RAG 提供的臨床指引\n{rag_context}"
-        
-        return {"report_text": report_text}
-        
-    # --- 備用：無 AI 環境 ---
-    else:
-        return {"error": "無法生成分析報告：未找到 AI 環境設定。"}
+   
 
 @expose
 def get_detailed_report(full_conversation: list, case_id: str) -> dict:
@@ -364,60 +299,6 @@ def get_detailed_report(full_conversation: list, case_id: str) -> dict:
             "rag_queries": rag_queries
         }
 
-    # --- 路線 B: 開發 (Ollama) ---
-    elif PATH_B_DEVELOPMENT:
-        print(f"[Ollama] 正在生成詳細報告...")
-        try:
-            response = OLLAMA_CLIENT.chat(
-                model=os.getenv("OLLAMA_MODEL"),
-                messages=messages
-            )
-            report_text = response['message']['content']
-        except Exception as e:
-            print(f"[Ollama] 生成詳細報告失敗，使用備用方案: {e}")
-            # 備用方案：使用增強版分析 + RAG 內容
-            user_messages = [msg['content'] for msg in full_conversation if msg['role'] == 'user']
-            conversation_analysis = analyze_conversation_enhanced(user_messages, checklist, critical_actions)
-            report_text = f"""
-# 詳細診後分析報告
-
-{conversation_analysis}
-
----
-
-## RAG 提供的臨床指引
-
-{combined_rag_context}
-
----
-
-*註：此為備用詳細報告，包含 RAG 搜尋的臨床指引內容。*
-            """
-        
-        # 如果 LLM 沒有生成引註標記，我們手動添加
-        if not re.search(r'\[引註 \d+\]', report_text) and citations:
-            # 在報告末尾添加基於 RAG 的建議
-            rag_suggestions = "\n\n## 基於臨床指引的建議\n\n"
-            for i, citation in enumerate(citations, 1):
-                rag_suggestions += f"**根據 [引註 {i}] 的指引：**\n"
-                # 從 RAG 內容中提取關鍵建議
-                content = citation['content']
-                if 'ECG' in content or '心電圖' in content:
-                    rag_suggestions += "- ECG 心電圖檢查應在 10 分鐘內完成，這是急性胸痛評估的第一優先檢查\n"
-                if 'STEMI' in content:
-                    rag_suggestions += "- 疑似 STEMI 時應立即啟動心導管團隊，時間就是心肌\n"
-                if 'OPQRST' in content:
-                    rag_suggestions += "- 問診應遵循 OPQRST 結構：發作時間、誘發因子、疼痛性質、放射位置、嚴重程度、持續時間\n"
-                rag_suggestions += "\n"
-            
-            report_text += rag_suggestions
-        
-        return {
-            "report_text": report_text,
-            "citations": citations,
-            "rag_queries": rag_queries
-        }
-        
     # --- 備用：無 AI 環境 ---
     else:
         return {"error": "無法生成詳細報告：未找到 AI 環境設定。"}
@@ -577,9 +458,8 @@ def get_detailed_report_route():
 # --- 啟動器 ---
 # 只有在「開發模式」下，這個 Flask 伺服器才會直接被啟動。
 # 在「Demo 模式」下，這個檔案會被 Lemonade 作為模組載入，不會執行這一段。
-if __name__ == '__main__' and not PATH_A_DEMO:
-    if PATH_B_DEVELOPMENT:
-        print(f"Flask 開發伺服器正在 http://127.0.0.1:5002 上運行...")
-        app.run(host='0.0.0.0', port=5002, debug=True)
-    else:
-        print("無法啟動：未找到 Lemonade 或 Ollama 設定。請檢查你的環境。")
+# 此檔案已廢棄，請使用 main.py 啟動應用程式
+if __name__ == '__main__':
+    print("⚠️ 警告：此檔案已廢棄")
+    print("請使用以下命令啟動應用程式：")
+    print("python main.py")

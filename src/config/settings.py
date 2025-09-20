@@ -22,12 +22,8 @@ class Settings(BaseSettings):
     port: int = Field(default=5001, env="PORT")
     
     # AI 模型設定
-    ai_provider: str = Field(default="ollama", env="AI_PROVIDER")  # ollama, lemonade, openai
-    ollama_host: str = Field(default="http://127.0.0.1:11434", env="OLLAMA_HOST")
-    ollama_model: str = Field(default="llama3:8b", env="OLLAMA_MODEL")
-    
-    # Lemonade 設定
-    lemonade_host: str = Field(default="http://localhost:8000", env="LEMONADE_HOST")
+    ai_provider: str = Field(default="lemonade", env="AI_PROVIDER")  # lemonade, openai
+    lemonade_host: str = Field(default="http://127.0.0.1:5001", env="LEMONADE_HOST")
     lemonade_model: str = Field(default="Qwen2.5-0.5B-Instruct-CPU", env="LEMONADE_MODEL")
     
     # 路徑設定

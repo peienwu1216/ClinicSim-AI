@@ -8,7 +8,8 @@ from pathlib import Path
 # 添加 src 目錄到 Python 路徑
 project_root = Path(__file__).parent
 src_path = project_root / "src"
-sys.path.insert(0, str(src_path))
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
 
 from src.api import create_app
 from src.config import get_settings
@@ -28,9 +29,9 @@ def main():
     print(f"🔧 除錯模式: {'啟用' if settings.debug else '停用'}")
     print(f"🤖 AI 提供者: {settings.ai_provider}")
     
-    if settings.ai_provider == "ollama":
-        print(f"   Ollama 主機: {settings.ollama_host}")
-        print(f"   Ollama 模型: {settings.ollama_model}")
+    if settings.ai_provider == "lemonade":
+        print(f"   Lemonade 主機: {settings.lemonade_host}")
+        print(f"   Lemonade 模型: {settings.lemonade_model}")
     
     print("=" * 50)
     

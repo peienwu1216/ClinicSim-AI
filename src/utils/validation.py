@@ -2,6 +2,7 @@
 數據驗證工具函式
 """
 
+import re
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 

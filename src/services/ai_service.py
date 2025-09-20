@@ -11,7 +11,6 @@ from ..models.conversation import Message, MessageRole
 
 class AIProvider(str, Enum):
     """AI 提供者類型"""
-    OLLAMA = "ollama"
     LEMONADE = "lemonade"
     OPENAI = "openai"
     MOCK = "mock"
@@ -31,65 +30,19 @@ class AIService(ABC):
         pass
 
 
-class OllamaAIService(AIService):
-    """Ollama AI 服務實現"""
-    
-    def __init__(self, host: str, model: str):
-        self.host = host
-        self.model = model
-        self._client = None
-        self._initialize_client()
-    
-    def _initialize_client(self):
-        """初始化 Ollama 客戶端"""
-        try:
-            import ollama
-            self._client = ollama.Client(host=self.host)
-        except ImportError:
-            raise ImportError("ollama package not installed. Run: pip install ollama")
-    
-    def chat(self, messages: List[Message], **kwargs) -> str:
-        """發送聊天請求到 Ollama"""
-        if not self._client:
-            raise RuntimeError("Ollama client not initialized")
-        
-        # 轉換訊息格式
-        ollama_messages = [
-            {"role": msg.role.value, "content": msg.content}
-            for msg in messages
-        ]
-        
-        response = self._client.chat(
-            model=self.model,
-            messages=ollama_messages,
-            **kwargs
-        )
-        return response['message']['content']
-    
-    def is_available(self) -> bool:
-        """檢查 Ollama 服務是否可用"""
-        try:
-            if not self._client:
-                return False
-            # 嘗試列出模型來測試連接
-            self._client.list()
-            return True
-        except Exception:
-            return False
-
-
 class LemonadeAIService(AIService):
     """Lemonade AI 服務實現"""
     
-    def __init__(self, model: str = "Qwen2.5-0.5B-Instruct-CPU"):
+    def __init__(self, model: str = "Qwen2.5-0.5B-Instruct-CPU", host: str = "http://127.0.0.1:5001"):
         self.model = model
+        self.host = host
         self._available = self._check_availability()
     
     def _check_availability(self) -> bool:
         """檢查 Lemonade 是否可用"""
         try:
             import requests
-            response = requests.get("http://localhost:8000/api/v1/models", timeout=5)
+            response = requests.get(f"{self.host}/api/v1/models", timeout=5)
             return response.status_code == 200
         except Exception:
             return False
@@ -102,7 +55,9 @@ class LemonadeAIService(AIService):
         # 导入并使用 call_AI.py 的方法
         import sys
         import os
-        sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        if project_root not in sys.path:
+            sys.path.append(project_root)
         from call_AI import call_ai
         
         # 将消息列表转换为字符串
@@ -116,7 +71,7 @@ class LemonadeAIService(AIService):
         else:
             message_content = str(messages)
         
-        return call_ai(message_content)
+        return call_ai(message_content, model=self.model, host=self.host)
     
     def is_available(self) -> bool:
         """檢查 Lemonade 服務是否可用"""
@@ -144,13 +99,10 @@ class AIServiceFactory:
     @staticmethod
     def create_service(provider: AIProvider, **kwargs) -> AIService:
         """創建 AI 服務實例"""
-        if provider == AIProvider.OLLAMA:
-            return OllamaAIService(
-                host=kwargs.get("host", "http://127.0.0.1:11434"),
-                model=kwargs.get("model", "llama3:8b")
-            )
-        elif provider == AIProvider.LEMONADE:
-            return LemonadeAIService()
+        if provider == AIProvider.LEMONADE:
+            model = kwargs.get('model', 'Qwen2.5-0.5B-Instruct-CPU')
+            host = kwargs.get('host', 'http://127.0.0.1:5001')
+            return LemonadeAIService(model=model, host=host)
         elif provider == AIProvider.MOCK:
             return MockAIService()
         else:
@@ -161,13 +113,11 @@ class AIServiceFactory:
         """從配置創建 AI 服務"""
         provider = AIProvider(config.ai_provider)
         
-        if provider == AIProvider.OLLAMA:
-            return OllamaAIService(
-                host=config.ollama_host,
-                model=config.ollama_model
+        if provider == AIProvider.LEMONADE:
+            return LemonadeAIService(
+                model=config.lemonade_model,
+                host=config.lemonade_host
             )
-        elif provider == AIProvider.LEMONADE:
-            return LemonadeAIService()
         elif provider == AIProvider.MOCK:
             return MockAIService()
         else:

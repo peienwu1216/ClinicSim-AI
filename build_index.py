@@ -14,7 +14,7 @@ INDEX_PATH = "faiss_index"    # 向量資料庫儲存路徑
 EMBEDDING_MODEL = "nomic-ai/nomic-embed-text-v1.5" # 中英雙語皆表現優異的開源模型
 
 # --- Lemonade Server 設定 ---
-LEMONADE_API_URL = "http://localhost:8000/v1/chat/completions"
+LEMONADE_API_URL = "http://127.0.0.1:8080/v1/chat/completions"
 LEMONADE_API_KEY = "lemonade"  # API Key 認證
 LEMONADE_VLM_MODEL = "squeeze-ai-lab/TinyAgent-1.1B"   # 多模態模型
 
