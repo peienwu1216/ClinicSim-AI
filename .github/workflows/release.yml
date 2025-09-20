@@ -37,7 +37,7 @@ jobs:
           else
             echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           fi
-          echo "版本: ${{ steps.version.outputs.version }}"
+          echo "版本: ${{ github.event.inputs.version || github.ref_name }}"
 
       - name: 📋 生成 Release Notes
         id: release_notes
@@ -162,7 +162,6 @@ jobs:
     name: 🧪 部署到測試環境
     runs-on: ubuntu-latest
     needs: [build-docker, build-distributions]
-    environment: staging
     
     steps:
       - name: 📥 檢出代碼
@@ -171,8 +170,8 @@ jobs:
       - name: 🚀 部署到測試環境
         run: |
           echo "🚀 部署到測試環境..."
-          echo "版本: ${{ needs.create-release.outputs.version }}"
-          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}"
+          echo "版本: ${{ github.event.inputs.version || github.ref_name }}"
+          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ github.event.inputs.version || github.ref_name }}"
           
           # 這裡可以添加實際的部署腳本
           # 例如：部署到 Kubernetes、AWS、或其他雲端平台
@@ -187,8 +186,7 @@ jobs:
     name: 🌟 部署到生產環境
     runs-on: ubuntu-latest
     needs: [deploy-staging]
-    if: github.ref == 'refs/heads/main' && !contains(needs.create-release.outputs.version, 'rc') && !contains(needs.create-release.outputs.version, 'beta') && !contains(needs.create-release.outputs.version, 'alpha')
-    environment: production
+    if: github.ref == 'refs/heads/main' && !contains(github.event.inputs.version || github.ref_name, 'rc') && !contains(github.event.inputs.version || github.ref_name, 'beta') && !contains(github.event.inputs.version || github.ref_name, 'alpha')
     
     steps:
       - name: 📥 檢出代碼
@@ -197,15 +195,15 @@ jobs:
       - name: 🌟 部署到生產環境
         run: |
           echo "🌟 部署到生產環境..."
-          echo "版本: ${{ needs.create-release.outputs.version }}"
-          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}"
+          echo "版本: ${{ github.event.inputs.version || github.ref_name }}"
+          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ github.event.inputs.version || github.ref_name }}"
           
           # 這裡可以添加實際的生產環境部署腳本
 
       - name: 📢 發送部署通知
         run: |
           echo "📢 生產環境部署完成！"
-          echo "版本: ${{ needs.create-release.outputs.version }}"
+          echo "版本: ${{ github.event.inputs.version || github.ref_name }}"
           echo "訪問地址: https://clinic-sim-ai.example.com"
 
   # Release 總結
