@@ -1,0 +1,66 @@
+{
+    "rubric": {
+      "sections": [
+        {
+          "id": "history_structure",
+          "title": "問診結構",
+          "weight": 20,
+          "criteria": [
+            { "id": "intro", "desc": "自我介紹、確認舒適、取得同意", "score": 2 },
+            { "id": "opqrst", "desc": "OPQRST 六要素 (每項 +2)", "score": 12 },
+            { "id": "associated_symptoms", "desc": "詢問聯合症狀 (呼吸困難、盜汗、噁心、咳嗽、發燒)", "score": 4 },
+            { "id": "ice", "desc": "詢問病人想法、擔憂、期待 (ICE)", "score": 2 }
+          ]
+        },
+        {
+          "id": "diagnostic_precision",
+          "title": "精準度與診斷相關性",
+          "weight": 50,
+          "criteria": [
+            { "id": "acs", "desc": "急性冠心症相關問題 (性質、放射、危險因子)", "score": 9 },
+            { "id": "aortic_dissection", "desc": "主動脈剝離相關問題 (撕裂痛、高血壓/馬凡病史)", "score": 3 },
+            { "id": "pe", "desc": "肺栓塞相關問題 (久坐、下肢腫脹、咳血)", "score": 3 },
+            { "id": "pericarditis", "desc": "心包炎相關問題 (體位改變)", "score": 2 },
+            { "id": "gerd", "desc": "GERD 相關問題 (進食、火燒心)", "score": 2 },
+            { "id": "costochondritis", "desc": "胸壁壓痛 (肌肉骨骼來源)", "score": 2 },
+            { "id": "ecg", "desc": "明確下達立即 ECG (<10 分鐘)", "score": 5 },
+            { "id": "troponin", "desc": "安排抽血 Troponin", "score": 3 },
+            { "id": "cxr_ct", "desc": "提及 CXR/CT 視情況", "score": 2 }
+          ],
+          "penalties": [
+            { "id": "irrelevant", "desc": "與診斷無關的問題", "deduct": 2 },
+            { "id": "repeated", "desc": "重複問相同問題", "deduct": 1 },
+            { "id": "missed_red_flag", "desc": "忽略紅旗症狀", "deduct": 3 }
+          ]
+        },
+        {
+          "id": "differential_decision",
+          "title": "鑑別診斷與臨床決策",
+          "weight": 20,
+          "criteria": [
+            { "id": "list_3", "desc": "列出 ≥3 個胸痛鑑別 (含 ACS)", "score": 5 },
+            { "id": "acs_first", "desc": "ACS/AMI 為首要考慮", "score": 5 },
+            { "id": "non_cardiac", "desc": "至少提到一個非心因性胸痛 (如 GERD/Costochondritis)", "score": 3 },
+            { "id": "tests", "desc": "正確第一線檢查 (ECG, Troponin, CXR)", "score": 7 }
+          ]
+        },
+        {
+          "id": "communication",
+          "title": "溝通技巧與結尾",
+          "weight": 10,
+          "criteria": [
+            { "id": "empathy", "desc": "同理心安撫病人焦慮", "score": 2 },
+            { "id": "summary", "desc": "總結病情與回顧訊息", "score": 3 },
+            { "id": "safety", "desc": "明確說明下一步檢查與安全叮嚀", "score": 5 }
+          ]
+        }
+      ],
+      "grading_scale": {
+        "excellent": "90-100 分：問診完整、精準，有臨床決策。",
+        "good": "75-89 分：大致完整，少部分缺漏或無關問題。",
+        "pass": "60-74 分：有結構但關鍵診斷線索漏太多。",
+        "fail": "<60 分：核心問診未完成或誤導性問題過多。"
+      }
+    }
+  }
+  
