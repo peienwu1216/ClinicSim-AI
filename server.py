@@ -5,8 +5,13 @@ import re
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 
-# 導入我們新建的 RAG 系統
-from rag_handler import rag_system
+# 導入我們新建的 RAG 系統 (簡化版本，不依賴 langchain_community)
+try:
+    from rag_handler import rag_system
+    print("✅ 使用完整版 RAG 系統 (langchain_community)")
+except ImportError:
+    from rag_handler_simple import rag_system
+    print("✅ 使用簡化版 RAG 系統 (基本文本搜索)")
 
 # --- 自動環境偵測與設定 ---
 load_dotenv() # 從 .env 檔案載入環境變數
@@ -558,6 +563,10 @@ def get_detailed_report_route():
 if __name__ == '__main__' and not PATH_A_DEMO:
     if PATH_B_DEVELOPMENT:
         print(f"Flask 開發伺服器正在 http://127.0.0.1:5002 上運行...")
-        app.run(host='0.0.0.0', port=5002, debug=True)
+        print("注意：這是開發服務器，僅用於開發和測試。生產環境請使用 WSGI 服務器。")
+        # 禁用 Flask 的警告訊息
+        import warnings
+        warnings.filterwarnings("ignore", category=UserWarning, module="werkzeug")
+        app.run(host='0.0.0.0', port=5002, debug=True, use_reloader=False)
     else:
         print("無法啟動：未找到 Lemonade 或 Ollama 設定。請檢查你的環境。")

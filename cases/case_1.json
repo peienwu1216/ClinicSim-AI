@@ -1,0 +1,102 @@
+{
+    "case_id": "chest_pain_angina_01",
+    "case_title": "反覆胸痛評估 (疑似不穩定心絞痛)",
+    "station_info": {
+      "type": "門診/急診情境 - 集中式病史採集",
+      "time_limit_minutes": 8,
+      "objectives": [
+        "以 OPQRST 結構完成胸痛病史採集。",
+        "辨識不穩定心絞痛與心肌梗塞的危險徵象。",
+        "完整詢問心血管危險因子與家族史。",
+        "下達立即安排 12 導程 ECG 與抽血檢驗 (含 Troponin) 的指令。"
+      ]
+    },
+    "patient_profile": {
+      "name": "特魯希略．納西爾",
+      "age": 53,
+      "gender": "男性",
+      "occupation": "退休零售商"
+    },
+    "ai_instructions": {
+      "persona": "你是一位 53 歲退休零售商，反覆胸痛，語氣焦慮而擔憂。你說話簡短，偶爾會停頓，帶有害怕的情緒。",
+      "core_principles": [
+        "根據學生的提問，提供直接相關的資訊。",
+        "所有症狀細節必須來自 patient_story_data，不得編造。",
+        "不要主動引導新領域資訊，等學生問到再回答。",
+        "輸出格式必須為繁體中文，並用 [動作描述] 對話內容。"
+      ],
+      "behavioral_guidelines": {
+        "description": "焦慮的病人，擔心心臟惡化。",
+        "anxiety_triggers": [
+          "被問到是否會惡化或致命時更焦慮。",
+          "醫學生用太多專業術語時表達困惑。"
+        ],
+        "good_example_1": "[眉頭緊皺，手按著胸口] 痛...就像壓著一樣，好難受...",
+        "bad_example_1": "[shows pain] 5/10 pain.",
+        "good_example_2": "[眼神閃爍，語氣顫抖] 我爸以前就是心臟病走的...我怕會一樣...",
+        "bad_example_2": "[looks concerned] Yes, family history positive."
+      }
+    },
+    "patient_story_data": {
+      "initial_statement": "醫生，我胸口又開始痛了，跟以前不太一樣，好像更嚴重了...",
+      "OPQRST_details": {
+        "Onset": "五年前診斷狹心症，近期頻繁發作，一小時前在公園坐著看雜誌時又發作。",
+        "Provocation_Palliation": "活動或緊張會誘發，休息不會明顯改善；使用 GTN 噴霧會稍緩解。",
+        "Quality": "壓迫感、緊繃，不是刺痛。",
+        "Radiation": "會延伸到左臂和頸部。",
+        "Severity_0_10": "大概 7–8 分。",
+        "Timing": "最近一週有多次發作，這次持續約 7 分鐘，之後仍覺得悶。"
+      },
+      "associated_symptoms": ["有時呼吸困難", "偶爾冒冷汗", "否認咳嗽或發燒"],
+      "differential_clues": {
+        "Pulmonary_Embolism": ["否認近期長途旅行", "否認下肢腫脹", "否認咳血"],
+        "Aortic_Dissection": ["否認撕裂樣胸痛", "否認馬凡氏症或高血壓病史"],
+        "Pericarditis": ["姿勢改變無影響"],
+        "GERD": ["否認與進食相關"]
+      },
+      "history": {
+        "past_medical_history": ["狹心症", "高血壓", "高膽固醇血症"],
+        "past_surgical_history": ["無重大手術史"],
+        "medications": ["每日口服 Simvastatin, Aspirin, Bisoprolol, Lisinopril", "必要時使用 GTN 噴霧"],
+        "allergies": ["無藥物過敏史"],
+        "social_history": ["每天抽菸 20 支，30 年", "僅在社交場合飲酒", "少運動", "偏好油炸食物"],
+        "family_history": ["父親 50 歲死於心臟病發作", "弟弟近期接受心臟繞道手術"]
+      },
+      "ideas_concerns_expectations": {
+        "ideas": "懷疑是心臟病發作。",
+        "concerns": "很怕跟父親一樣早逝。",
+        "expectations": "希望能查清楚並治療。"
+      },
+      "vital_signs": {
+        "BP_mmHg": "135/85",
+        "HR_bpm": "88",
+        "RR_bpm": "18",
+        "Temp_C": "36.8",
+        "SpO2_room_air": "96%"
+      }
+    },
+    "feedback_system": {
+      "critical_actions": [
+        "必須明確要求立即安排 12 導程 ECG，並提及『10 分鐘內完成』。",
+        "必須在計畫中包含抽血檢驗心肌鈣蛋白 (Troponin)。"
+      ],
+      "checklist": [
+        { "id": "intro", "point": "開場與建立關係", "category": "溝通技巧" },
+        { "id": "site", "point": "疼痛位置 (Site)", "category": "病史詢問 (OPQRST)" },
+        { "id": "onset", "point": "發作情境 (Onset)", "category": "病史詢問 (OPQRST)" },
+        { "id": "provocation", "point": "誘發/緩解因子 (P/P)", "category": "病史詢問 (OPQRST)" },
+        { "id": "quality", "point": "疼痛性質 (Quality)", "category": "病史詢問 (OPQRST)" },
+        { "id": "radiation", "point": "放射位置 (Radiation)", "category": "病史詢問 (OPQRST)" },
+        { "id": "severity", "point": "嚴重程度 (Severity)", "category": "病史詢問 (OPQRST)" },
+        { "id": "timing", "point": "時間型態 (Timing)", "category": "病史詢問 (OPQRST)" },
+        { "id": "associated_symptoms", "point": "聯合症狀", "category": "病史詢問" },
+        { "id": "risk_factors", "point": "心血管危險因子", "category": "病史詢問" },
+        { "id": "past_history_meds_allergy", "point": "既往史/用藥/過敏", "category": "病史詢問" },
+        { "id": "differential_diagnosis", "point": "鑑別診斷", "category": "鑑別診斷" },
+        { "id": "ideas_concerns", "point": "病患的擔憂與想法 (ICE)", "category": "溝通技巧" },
+        { "id": "critical_action_ecg", "point": "關鍵決策：立即執行 ECG", "category": "臨床決策" },
+        { "id": "summary_and_plan", "point": "總結病情與安全叮嚀", "category": "溝通技巧" }
+      ]
+    }
+  }
+  
