@@ -1,353 +1,256 @@
 # 📦 安裝指南
 
-> **詳細的安裝步驟** | 支援多平台和多環境部署
+本指南將協助您在不同環境中安裝和配置 ClinicSim-AI。
 
-## 🖥️ 支援的環境
+## 🎯 安裝選項
 
-| 環境 | 狀態 | 推薦配置 |
+### 選項一：基本安裝 (推薦)
+適用於大多數用戶，包含所有核心功能。
+
+```bash
+pip install -r requirements.txt
+```
+
+### 選項二：開發環境安裝
+適用於開發者，包含測試工具和開發依賴。
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+## 📋 依賴文件說明
+
+| 文件 | 用途 | 包含內容 |
 |------|------|----------|
-| **macOS** | ✅ 完全支援 | `requirements-dev.txt` |
-| **Windows** | ✅ 完全支援 | `requirements-windows.txt` |
-| **Linux** | ✅ 完全支援 | `requirements-dev.txt` |
-| **Lemonade Server** | ✅ 比賽環境 | `requirements-lemonade.txt` |
+| `requirements.txt` | 主要依賴 | 核心功能、AI服務、RAG系統 |
+| `requirements-dev.txt` | 開發依賴 | 測試框架、代碼檢查工具、Jupyter |
+| `requirements-base.txt` | 基礎依賴 | Web框架、數據處理、基礎工具 |
 
-## 🚀 快速安裝
+## 🔧 環境配置
 
-### 自動安裝（推薦）
+### 1. 創建虛擬環境 (推薦)
+
+```bash
+# 創建虛擬環境
+python -m venv venv
+
+# 啟動虛擬環境
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
+# 安裝依賴
+pip install -r requirements.txt
+```
+
+### 2. 配置環境變數
+
+創建 `.env` 文件：
+
+```bash
+# AI 模型配置
+OLLAMA_HOST=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3:8b
+OPENAI_API_KEY=your_openai_api_key_here
+
+# 應用程式配置
+HOST=127.0.0.1
+PORT=5001
+DEBUG=false
+
+# RAG 配置
+RAG_MODEL_NAME=nomic-ai/nomic-embed-text-v1.5
+RAG_CHUNK_SIZE=800
+RAG_CHUNK_OVERLAP=100
+RAG_SEARCH_K=3
+```
+
+## 🍋 Lemonade Server 配置
+
+如果您使用 Lemonade Server，請參考 [Lemonade Server 配置指南](lemonade-setup.md)。
+
+### 環境變數配置
+
+```bash
+# Lemonade Server 配置
+LEMONADE_HOST=http://127.0.0.1:11434
+LEMONADE_MODEL=llama3:8b
+LEMONADE_GPU_LAYERS=35
+LEMONADE_CONTEXT_LENGTH=4096
+```
+
+## 🖥️ 平台特定安裝
+
+### Windows
+
+```bash
+# 基本安裝
+pip install -r requirements.txt
+
+# 如果遇到 FAISS 問題，開發環境包含替代方案
+pip install -r requirements-dev.txt
+```
+
+### macOS
+
+```bash
+# 基本安裝
+pip install -r requirements.txt
+
+# 如果需要 M1/M2 優化
+pip install --upgrade torch torchvision torchaudio
+```
+
+### Linux
+
+```bash
+# 基本安裝
+pip install -r requirements.txt
+
+# 系統依賴 (Ubuntu/Debian)
+sudo apt-get update
+sudo apt-get install python3-dev python3-pip
+```
+
+## 🐳 Docker 安裝
+
+### 使用 Docker Compose
 
 ```bash
 # 克隆專案
 git clone https://github.com/your-username/ClinicSim-AI.git
 cd ClinicSim-AI
 
-# 自動檢測環境並安裝
-python install.py
+# 啟動服務
+docker-compose up -d
 ```
 
-## 📋 手動安裝步驟
-
-### 1. 環境準備
-
-#### 檢查 Python 版本
-```bash
-python --version
-# 應該顯示 Python 3.8 或更高版本
-```
-
-#### 更新 pip
-```bash
-python -m pip install --upgrade pip
-```
-
-### 2. 建立虛擬環境
+### 手動 Docker 構建
 
 ```bash
-# 建立虛擬環境
-python -m venv venv
+# 構建映像
+docker build -t clinic-sim-ai .
 
-# 啟動虛擬環境
-# macOS/Linux
-source venv/bin/activate
-
-# Windows
-venv\Scripts\activate
+# 運行容器
+docker run -p 8501:8501 -p 5001:5001 clinic-sim-ai
 ```
 
-### 3. 安裝依賴
-
-#### macOS/Linux 開發環境
-```bash
-pip install -r requirements-dev.txt
-```
-
-#### Windows 開發環境
-```bash
-pip install -r requirements-windows.txt
-```
-
-#### 生產環境
-```bash
-pip install -r requirements-production.txt
-```
-
-#### Lemonade 比賽環境
-```bash
-pip install -r requirements-lemonade.txt
-```
-
-### 4. 建立 RAG 索引
-
-```bash
-# 確保 documents/ 資料夾中有臨床指引文件
-python build_index.py
-```
-
-### 5. 環境配置
-
-創建 `.env` 檔案：
-
-```env
-# AI 服務配置
-AI_PROVIDER=ollama
-OLLAMA_HOST=http://127.0.0.1:11434
-OLLAMA_MODEL=llama3:8b
-
-# 伺服器配置
-HOST=0.0.0.0
-PORT=5001
-DEBUG=false
-
-# RAG 配置
-RAG_INDEX_PATH=faiss_index
-EMBEDDING_MODEL=nomic-ai/nomic-embed-text-v1.5
-
-# 案例配置
-CASES_PATH=cases
-```
-
-## 🔧 環境特定配置
-
-### macOS 安裝
-
-```bash
-# 使用 Homebrew 安裝 Python（可選）
-brew install python
-
-# 安裝依賴
-pip install -r requirements-dev.txt
-
-# 如果遇到權限問題
-pip install --user -r requirements-dev.txt
-```
-
-### Windows 安裝
-
-```bash
-# 安裝 Windows 特殊依賴
-pip install -r requirements-windows.txt
-
-# 如果 FAISS 安裝失敗，使用替代方案
-pip install chromadb
-```
-
-#### Windows 常見問題
-
-**問題 1: FAISS 安裝失敗**
-```bash
-# 解決方案：使用 ChromaDB
-pip install chromadb
-# 然後修改代碼使用 ChromaDB 而不是 FAISS
-```
-
-**問題 2: 編譯錯誤**
-```bash
-# 安裝 Visual Studio Build Tools
-# 或使用預編譯的 wheel
-pip install --only-binary=all faiss-cpu
-```
-
-### Linux 安裝
-
-```bash
-# Ubuntu/Debian
-sudo apt-get update
-sudo apt-get install python3-dev python3-pip
-
-# CentOS/RHEL
-sudo yum install python3-devel python3-pip
-
-# 安裝依賴
-pip install -r requirements-dev.txt
-```
-
-## 🤖 AI 模型配置
-
-### 使用 Ollama（本地模型）
-
-```bash
-# 1. 安裝 Ollama
-# 訪問 https://ollama.ai/ 下載安裝
-
-# 2. 下載模型
-ollama pull llama3:8b
-
-# 3. 啟動 Ollama 服務
-ollama serve
-
-# 4. 驗證安裝
-ollama list
-```
-
-### 使用 Lemonade AI
-
-```env
-# 在 .env 中設定
-AI_PROVIDER=lemonade
-# Lemonade 環境會自動配置其他參數
-```
-
-## 🧪 驗證安裝
+## 🔍 驗證安裝
 
 ### 1. 檢查依賴
+
 ```bash
-python -c "import flask, streamlit, langchain; print('✅ 核心依賴安裝成功')"
+# 檢查主要依賴
+python -c "import streamlit, flask, langchain; print('✅ 主要依賴安裝成功')"
+
+# 檢查 AI 服務
+python -c "import ollama, openai; print('✅ AI 服務依賴安裝成功')"
+
+# 檢查 RAG 系統
+python -c "import faiss, sentence_transformers; print('✅ RAG 系統依賴安裝成功')"
 ```
 
-### 2. 測試 RAG 系統
+### 2. 運行測試
+
 ```bash
-python -c "from rag_handler import rag_system; print('✅ RAG 系統載入成功')"
+# 運行基本測試
+python -m pytest tests/ -v
+
+# 運行特定測試
+python tests/test_multilingual_rag.py
 ```
 
-### 3. 啟動測試
+### 3. 啟動應用
+
 ```bash
-# 啟動後端
+# 啟動後端服務
 python main.py
 
-# 在新終端啟動前端
-streamlit run app_new.py
+# 啟動前端 (新終端)
+streamlit run app.py
 ```
 
-### 4. 訪問系統
-- 前端：http://localhost:8501
-- 後端：http://localhost:5001/health
+## 🚨 常見問題
 
-## 🐛 故障排除
+### 問題 1: FAISS 安裝失敗
 
-### 常見問題
-
-#### 1. Python 版本不符
+**解決方案：**
 ```bash
-# 錯誤：Python 版本過低
-# 解決：升級到 Python 3.8+
-pyenv install 3.11.0  # 使用 pyenv
+# Windows 用戶使用開發依賴
+pip install -r requirements-dev.txt
+
+# 或使用替代方案
+pip install chromadb
 ```
 
-#### 2. 依賴安裝失敗
+### 問題 2: PyTorch 安裝問題
+
+**解決方案：**
 ```bash
-# 清理並重新安裝
-pip cache purge
-pip install --force-reinstall -r requirements-dev.txt
+# 訪問 PyTorch 官網獲取正確命令
+# https://pytorch.org/get-started/locally/
+
+# 例如：CPU 版本
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 ```
 
-#### 3. RAG 索引建立失敗
+### 問題 3: 依賴衝突
+
+**解決方案：**
 ```bash
-# 檢查 documents/ 資料夾
-ls documents/
-# 應該包含 acute_chest_pain_guidelines.txt
+# 創建新的虛擬環境
+python -m venv venv_new
+source venv_new/bin/activate  # 或 Windows: venv_new\Scripts\activate
 
-# 重新建立索引
-rm -rf faiss_index/
-python build_index.py
+# 重新安裝
+pip install -r requirements.txt
 ```
 
-#### 4. 記憶體不足
+### 問題 4: 記憶體不足
+
+**解決方案：**
 ```bash
-# 減少 chunk_size
-# 編輯 build_index.py 中的參數
-chunk_size = 500  # 預設 1000
+# 使用較小的模型
+export OLLAMA_MODEL=llama3:8b
+export RAG_CHUNK_SIZE=400
+export RAG_SEARCH_K=2
 ```
 
-#### 5. 端口被佔用
+## 📊 系統需求
+
+### 最低需求
+- Python 3.8+
+- 4GB RAM
+- 2GB 磁碟空間
+
+### 推薦需求
+- Python 3.10+
+- 8GB RAM
+- 10GB 磁碟空間
+- GPU (可選，用於加速)
+
+## 🔄 更新依賴
+
 ```bash
-# 查看端口使用情況
-lsof -i:5001  # macOS/Linux
-netstat -ano | findstr :5001  # Windows
+# 更新所有依賴到最新版本
+pip install --upgrade -r requirements.txt
 
-# 修改 .env 中的 PORT
-PORT=5002
-```
+# 檢查過時的依賴
+pip list --outdated
 
-### 日誌檢查
-
-```bash
-# 後端日誌
-python main.py --log-level debug
-
-# 前端日誌
-streamlit run app_new.py --logger.level debug
-```
-
-## 📊 系統監控
-
-### 檢查系統狀態
-```bash
-# 記憶體使用
-free -h  # Linux
-vm_stat  # macOS
-
-# 磁碟空間
-df -h
-
-# 網路連接
-netstat -an | grep :5001
-```
-
-### 效能優化
-
-#### 1. 減少記憶體使用
-```python
-# 在 .env 中調整
-CHUNK_SIZE=500
-CHUNK_OVERLAP=50
-```
-
-#### 2. 啟用快取
-```python
-# 在 settings.py 中
-ENABLE_CACHE=true
-CACHE_TTL=3600
-```
-
-## 🔒 安全配置
-
-### 環境變數安全
-```bash
-# 不要將 .env 提交到版本控制
-echo ".env" >> .gitignore
-
-# 使用系統環境變數
-export OLLAMA_HOST="http://127.0.0.1:11434"
-```
-
-### 檔案權限
-```bash
-# 設定適當的檔案權限
-chmod 600 .env
-chmod -R 755 faiss_index/
-```
-
-## 🚀 生產環境部署
-
-### Docker 部署
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY requirements-production.txt .
-RUN pip install -r requirements-production.txt
-
-COPY . .
-EXPOSE 5001
-
-CMD ["python", "main.py"]
-```
-
-### 使用 Gunicorn
-```bash
-pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:5001 main:app
+# 更新特定依賴
+pip install --upgrade package_name
 ```
 
 ## 📞 獲取幫助
 
-如果遇到問題：
+如果遇到安裝問題，請：
 
-1. **查看日誌** - 檢查錯誤訊息
-2. **檢查版本** - 確認 Python 和依賴版本
-3. **重啟服務** - 重新啟動 Ollama 和應用程式
-4. **查看文檔** - 參考其他文檔
-5. **回報問題** - 創建 Issue 並提供詳細資訊
+1. 檢查 [故障排除指南](troubleshooting.md)
+2. 查看 [GitHub Issues](https://github.com/your-username/ClinicSim-AI/issues)
+3. 聯絡技術支援：peienwu.ee13@nycu.edu.tw
 
 ---
 
-**安裝完成後，請查看 [快速開始指南](quick-start.md) 開始使用！** 🎉
+🎉 安裝完成後，請查看 [快速開始指南](quick-start.md) 開始使用 ClinicSim-AI！

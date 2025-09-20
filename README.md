@@ -5,6 +5,9 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CI/CD](https://github.com/your-username/ClinicSim-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/ClinicSim-AI/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/your-username/ClinicSim-AI/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/ClinicSim-AI)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://github.com/your-username/ClinicSim-AI/pkgs/container/clinic-sim-ai)
 
 ## 📖 專案簡介
 
@@ -38,11 +41,11 @@ cd ClinicSim-AI
 
 2. **安裝依賴**
 ```bash
-# 使用 Lemonade 依賴 (推薦)
-pip install -r requirements-lemonade.txt
-
-# 或使用標準依賴
+# 基本安裝 (適用於所有環境)
 pip install -r requirements.txt
+
+# 開發環境 (包含測試和開發工具)
+pip install -r requirements-dev.txt
 ```
 
 3. **配置環境變數**
@@ -88,13 +91,17 @@ ClinicSim-AI/
 │   ├── 📁 development/        # 開發文檔
 │   └── 📁 reports/            # 開發報告
 ├── 📁 scripts/                # 腳本和工具
+├── 📁 tests/                  # 測試文件
 ├── 📁 cases/                  # 病例數據
 ├── 📁 documents/              # 臨床文檔
 ├── 📁 static/                 # 靜態資源
 ├── 📁 reports/                # 報告歷史
 ├── 📄 app.py                  # 主應用程式
 ├── 📄 main.py                 # 後端服務入口
-└── 📄 requirements.txt        # 依賴清單
+├── 📄 CONTRIBUTING.md         # 貢獻指南
+├── 📄 requirements.txt        # 主要依賴
+├── 📄 requirements-dev.txt    # 開發依賴
+└── 📄 requirements-base.txt   # 基礎依賴
 ```
 
 ## 🎯 核心功能
@@ -141,6 +148,7 @@ ClinicSim-AI/
 - [安裝指南](docs/installation.md)
 - [快速開始](docs/quick-start.md)
 - [🍋 Lemonade Server 配置指南](docs/lemonade-setup.md)
+- [🚀 CI/CD 指南](docs/ci-cd-guide.md)
 - [開發者指南](docs/developer-guide.md)
 - [API 文檔](docs/api-documentation.md)
 - [架構說明](docs/architecture.md)

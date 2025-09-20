@@ -57,10 +57,29 @@ reports/report_history/
 *.tmp
 *.log
 
+# 測試文件 (保留重要測試，忽略臨時測試)
+tests/temp_*
+tests/*_temp.py
+
 # 開發和測試文件
 scripts/test_*.py
 scripts/*_test.py
 
+# PDF 解析臨時文件
+documents/**/*.txt
+!documents/**/README.txt
+
 # 系統文件
 .DS_Store
 Thumbs.db
+
+# IDE 和編輯器
+.vscode/settings.json
+.idea/workspace.xml
+*.swp
+*.swo
+
+# 臨時開發文件
+*.bak
+*.orig
+*~

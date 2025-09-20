@@ -1,0 +1,233 @@
+name: 🚀 Release Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本號 (例如: v1.0.0)'
+        required: true
+        type: string
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # 創建 Release
+  create-release:
+    name: 📦 創建 Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ 提取版本號
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+          echo "版本: ${{ steps.version.outputs.version }}"
+
+      - name: 📋 生成 Release Notes
+        id: release_notes
+        run: |
+          # 生成變更日誌
+          CHANGELOG="## 🎉 新版本發布\n\n"
+          CHANGELOG+="**版本**: ${{ steps.version.outputs.version }}\n\n"
+          
+          # 獲取最近的提交
+          COMMITS=$(git log --pretty=format:"- %s (%h)" --since="1 month ago")
+          CHANGELOG+="### 📝 最近的變更\n$COMMITS\n\n"
+          
+          # 添加安裝說明
+          CHANGELOG+="### 📦 安裝方式\n\n"
+          CHANGELOG+="\`\`\`bash\n"
+          CHANGELOG+="# 克隆專案\n"
+          CHANGELOG+="git clone https://github.com/${{ github.repository }}.git\n"
+          CHANGELOG+="cd ClinicSim-AI\n\n"
+          CHANGELOG+="# 安裝依賴\n"
+          CHANGELOG+="pip install -r requirements.txt\n\n"
+          CHANGELOG+="# 啟動應用\n"
+          CHANGELOG+="python main.py\n"
+          CHANGELOG+="\`\`\`\n\n"
+          
+          # 添加 Docker 說明
+          CHANGELOG+="### 🐳 Docker 安裝\n\n"
+          CHANGELOG+="\`\`\`bash\n"
+          CHANGELOG+="docker run -p 8501:8501 -p 5001:5001 ghcr.io/${{ github.repository }}:latest\n"
+          CHANGELOG+="\`\`\`\n\n"
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 📦 創建 GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: ClinicSim-AI ${{ steps.version.outputs.version }}
+          body: ${{ steps.release_notes.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+  # 構建 Docker 映像
+  build-docker:
+    name: 🐳 構建 Docker 映像
+    runs-on: ubuntu-latest
+    needs: create-release
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐳 設置 Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 登錄到 GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏗️ 構建並推送 Docker 映像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}
+            ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}-amd64
+            ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}-arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 構建分發包
+  build-distributions:
+    name: 📦 構建分發包
+    runs-on: ${{ matrix.os }}
+    needs: create-release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.11']
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: 📦 安裝構建工具
+        run: |
+          python -m pip install --upgrade pip
+          pip install build wheel twine
+
+      - name: 🏗️ 構建分發包
+        run: |
+          python -m build
+
+      - name: 📤 上傳分發包到 Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/
+          asset_name: ClinicSim-AI-${{ needs.create-release.outputs.version }}-${{ matrix.os }}-python${{ matrix.python-version }}.zip
+          asset_content_type: application/zip
+
+  # 部署到測試環境
+  deploy-staging:
+    name: 🧪 部署到測試環境
+    runs-on: ubuntu-latest
+    needs: [build-docker, build-distributions]
+    environment: staging
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🚀 部署到測試環境
+        run: |
+          echo "🚀 部署到測試環境..."
+          echo "版本: ${{ needs.create-release.outputs.version }}"
+          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}"
+          
+          # 這裡可以添加實際的部署腳本
+          # 例如：部署到 Kubernetes、AWS、或其他雲端平台
+
+      - name: 🧪 運行部署後測試
+        run: |
+          echo "🧪 運行部署後測試..."
+          # 這裡可以添加部署後的健康檢查
+
+  # 部署到生產環境 (僅限 main 分支的正式版本)
+  deploy-production:
+    name: 🌟 部署到生產環境
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/main' && !contains(needs.create-release.outputs.version, 'rc') && !contains(needs.create-release.outputs.version, 'beta') && !contains(needs.create-release.outputs.version, 'alpha')
+    environment: production
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🌟 部署到生產環境
+        run: |
+          echo "🌟 部署到生產環境..."
+          echo "版本: ${{ needs.create-release.outputs.version }}"
+          echo "Docker 映像: ghcr.io/${{ github.repository }}:${{ needs.create-release.outputs.version }}"
+          
+          # 這裡可以添加實際的生產環境部署腳本
+
+      - name: 📢 發送部署通知
+        run: |
+          echo "📢 生產環境部署完成！"
+          echo "版本: ${{ needs.create-release.outputs.version }}"
+          echo "訪問地址: https://clinic-sim-ai.example.com"
+
+  # Release 總結
+  release-summary:
+    name: 📋 Release 總結
+    runs-on: ubuntu-latest
+    needs: [create-release, build-docker, build-distributions, deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+      - name: 📊 生成 Release 總結
+        run: |
+          echo "## 🚀 Release 總結" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**版本**: ${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 步驟 | 狀態 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 創建 Release | ${{ needs.create-release.result == 'success' && '✅ 成功' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 構建 Docker | ${{ needs.build-docker.result == 'success' && '✅ 成功' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 構建分發包 | ${{ needs.build-distributions.result == 'success' && '✅ 成功' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 測試環境部署 | ${{ needs.deploy-staging.result == 'success' && '✅ 成功' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 生產環境部署 | ${{ needs.deploy-production.result == 'success' && '✅ 成功' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎉 Release 流程完成！" >> $GITHUB_STEP_SUMMARY

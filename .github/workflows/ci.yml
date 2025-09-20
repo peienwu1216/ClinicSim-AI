@@ -1,0 +1,281 @@
+name: 🧪 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+
+jobs:
+  # 代碼質量檢查
+  lint-and-format:
+    name: 🔍 代碼質量檢查
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🔍 Flake8 代碼檢查
+        run: |
+          flake8 src/ --max-line-length=120 --count --statistics
+
+      - name: 🎨 Black 代碼格式檢查
+        run: |
+          black --check src/
+
+      - name: 🔬 MyPy 類型檢查
+        run: |
+          mypy src/ --ignore-missing-imports
+
+  # 單元測試
+  unit-tests:
+    name: 🧪 單元測試
+    runs-on: ubuntu-latest
+    needs: lint-and-format
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🧪 運行單元測試
+        run: |
+          python scripts/run_tests.py --type unit
+
+      - name: 📊 生成測試報告
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: 單元測試報告
+          path: test-results.xml
+          reporter: java-junit
+
+  # 集成測試
+  integration-tests:
+    name: 🔗 集成測試
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    services:
+      # 模擬 Ollama 服務
+      ollama:
+        image: ollama/ollama:latest
+        ports:
+          - 11434:11434
+        options: --health-cmd "curl -f http://localhost:11434/api/tags || exit 1" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🚀 啟動後端服務
+        run: |
+          python main.py &
+          sleep 10
+        env:
+          OLLAMA_HOST: http://localhost:11434
+          HOST: 0.0.0.0
+          PORT: 5001
+
+      - name: 🔗 運行集成測試
+        run: |
+          python scripts/run_tests.py --type integration
+
+  # 測試覆蓋率
+  coverage:
+    name: 📊 測試覆蓋率
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 📊 運行覆蓋率測試
+        run: |
+          python scripts/run_tests.py --type coverage
+
+      - name: 📈 上傳覆蓋率到 Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  # 多平台測試
+  cross-platform-tests:
+    name: 🌐 多平台測試
+    runs-on: ${{ matrix.os }}
+    needs: lint-and-format
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11']
+        exclude:
+          - os: windows-latest
+            python-version: '3.9'
+          - os: macos-latest
+            python-version: '3.9'
+
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🧪 運行快速測試
+        run: |
+          python scripts/run_tests.py --type quick
+
+  # 安全掃描
+  security-scan:
+    name: 🔒 安全掃描
+    runs-on: ubuntu-latest
+    needs: lint-and-format
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝安全掃描工具
+        run: |
+          pip install safety bandit
+
+      - name: 🔒 依賴安全檢查
+        run: |
+          safety check -r requirements.txt
+
+      - name: 🛡️ 代碼安全掃描
+        run: |
+          bandit -r src/ -f json -o bandit-report.json
+
+      - name: 📊 上傳安全報告
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: bandit-report.json
+
+  # 構建和部署
+  build-and-deploy:
+    name: 🚀 構建和部署
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, coverage]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: 📥 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: 🐍 設置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: 📦 安裝依賴
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🐳 構建 Docker 映像
+        run: |
+          docker build -t clinic-sim-ai:${{ github.sha }} .
+          docker build -t clinic-sim-ai:latest .
+
+      - name: 🏷️ 標記 Docker 映像
+        run: |
+          docker tag clinic-sim-ai:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+          docker tag clinic-sim-ai:${{ github.sha }} ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: 📤 推送到 GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: 🎉 部署成功通知
+        if: success()
+        run: |
+          echo "🎉 部署成功！"
+          echo "Docker 映像: ghcr.io/${{ github.repository }}:latest"
+
+  # 測試總結
+  test-summary:
+    name: 📋 測試總結
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, coverage, cross-platform-tests, security-scan]
+    if: always()
+    
+    steps:
+      - name: 📊 生成測試總結
+        run: |
+          echo "## 🧪 測試總結" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 測試類型 | 狀態 |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 單元測試 | ${{ needs.unit-tests.result == 'success' && '✅ 通過' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 集成測試 | ${{ needs.integration-tests.result == 'success' && '✅ 通過' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 覆蓋率測試 | ${{ needs.coverage.result == 'success' && '✅ 通過' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 多平台測試 | ${{ needs.cross-platform-tests.result == 'success' && '✅ 通過' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 安全掃描 | ${{ needs.security-scan.result == 'success' && '✅ 通過' || '❌ 失敗' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 所有測試完成！" >> $GITHUB_STEP_SUMMARY

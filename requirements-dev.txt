@@ -1,26 +1,37 @@
-# Development environment dependencies (Mac/Windows)
-# Includes Ollama and complete development tools
+# ClinicSim-AI Development Dependencies
+# 開發環境依賴 - 包含開發工具和測試框架
 
 # Base dependencies
 -r requirements-base.txt
 
-# AI/LLM related
-ollama
-sentence-transformers
+# Main dependencies
+-r requirements.txt
 
-# RAG system
-faiss-cpu==1.12.0
-langchain==0.3.27
-langchain-community==0.3.29
-langchain-core==0.3.76
-langchain-text-splitters==0.3.11
+# Development Tools
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+pre-commit>=3.0.0
 
-# Development tools
-pytest
-black
-flake8
-mypy
+# Jupyter and Interactive Development
+jupyter>=1.0.0
+ipython>=8.0.0
+notebook>=6.5.0
 
-# Optional development dependencies
-jupyter
-ipython
+# Additional Development Utilities
+python-dotenv>=1.0.0
+rich>=13.0.0  # Better console output
+click>=8.0.0
+
+# Windows-specific dependencies (only installed on Windows)
+pywin32>=306; sys_platform == "win32"
+winshell>=0.6; sys_platform == "win32"
+
+# Alternative vector database for Windows compatibility
+chromadb>=0.4.0; sys_platform == "win32"
+
+# Testing utilities
+httpx>=0.24.0  # For API testing
+responses>=0.23.0  # For mocking HTTP requests

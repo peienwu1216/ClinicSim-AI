@@ -1,86 +1,33 @@
-aiohappyeyeballs==2.6.1
-aiohttp==3.12.15
-aiosignal==1.4.0
-altair==5.5.0
-annotated-types==0.7.0
-anyio==4.10.0
-attrs==25.3.0
-blinker==1.9.0
-cachetools==6.2.0
-certifi==2025.8.3
-charset-normalizer==3.4.3
-click==8.2.1
-dataclasses-json==0.6.7
+# ClinicSim-AI Main Dependencies
+# 主要依賴文件 - 適用於所有環境
+
+# Base dependencies
+-r requirements-base.txt
+
+# AI/LLM Services (支援多種服務)
+ollama>=0.3.0
+openai>=1.0.0
+
+# RAG System
 faiss-cpu==1.12.0
-Flask==3.1.2
-frozenlist==1.7.0
-gitdb==4.0.12
-GitPython==3.1.45
-h11==0.16.0
-httpcore==1.0.9
-httpx==0.28.1
-httpx-sse==0.4.1
-idna==3.10
-itsdangerous==2.2.0
-Jinja2==3.1.6
-jsonpatch==1.33
-jsonpointer==3.0.0
-jsonschema==4.25.1
-jsonschema-specifications==2025.9.1
 langchain==0.3.27
 langchain-community==0.3.29
 langchain-core==0.3.76
 langchain-text-splitters==0.3.11
-langsmith==0.4.28
-MarkupSafe==3.0.2
-marshmallow==3.26.1
-multidict==6.6.4
-mypy_extensions==1.1.0
-narwhals==2.5.0
-numpy==2.3.3
-orjson==3.11.3
-packaging==25.0
-pandas==2.3.2
-pillow==11.3.2
-propcache==0.3.2
-protobuf==6.32.1
-pyarrow==21.0.0
-pydantic==2.11.9
-pydantic-settings==2.10.1
-pydantic_core==2.33.2
-pydeck==0.9.1
-pypdf==6.0.0
-python-dateutil==2.9.0.post0
-pytz==2025.2
-PyYAML==6.0.2
-referencing==0.36.2
-requests==2.32.5
-requests-toolbelt==1.0.0
-rpds-py==0.27.1
-six==1.17.0
-smmap==5.0.2
-sniffio==1.3.1
-SQLAlchemy==2.0.43
-streamlit==1.49.1
-tenacity==9.1.2
-toml==0.10.2
-tornado==6.5.2
-typing-inspect==0.9.0
-typing-inspection==0.4.1
-typing_extensions==4.15.0
-tzdata==2025.2
-urllib3==2.5.0
-Werkzeug==3.1.3
-yarl==1.20.1
-zstandard==0.25.0
+langchain-huggingface==0.1.1
 
-# --- 新增的依賴 (for Development Path) ---
-ollama
-python-dotenv
+# Embedding and ML
+sentence-transformers>=2.0.0
+transformers>=4.30.0
+torch>=1.11.0
+scikit-learn>=1.0.0
+scipy>=1.7.0
+huggingface-hub>=0.20.0
 
-# --- RAG 相關依賴 ---
-sentence-transformers
-pymupdf
-langchain-community
-langchain-text-splitters
-faiss-cpu
+# Production Server (可選)
+gunicorn>=20.0.0
+
+# Environment-specific notes:
+# - For Lemonade Server: Use this file as-is
+# - For local development: Add requirements-dev.txt
+# - For Windows: May need additional packages

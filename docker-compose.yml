@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # ClinicSim-AI 主應用
+  clinic-sim-ai:
+    build: .
+    ports:
+      - "8501:8501"  # Streamlit 前端
+      - "5001:5001"  # Flask 後端
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5001
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=llama3:8b
+      - DEBUG=false
+    depends_on:
+      - ollama
+    volumes:
+      - ./cases:/app/cases
+      - ./documents:/app/documents
+      - ./faiss_index:/app/faiss_index
+    networks:
+      - clinic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Ollama AI 服務
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - clinic-network
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx 反向代理 (可選)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - clinic-sim-ai
+    networks:
+      - clinic-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Redis 緩存 (可選)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - clinic-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  ollama_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  clinic-network:
+    driver: bridge
