@@ -26,7 +26,7 @@ ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透�
 <img width="1913" height="1199" alt="image" src="https://github.com/user-attachments/assets/6cb4f533-5f72-4321-adf1-9f57600cdba5" />
 
 ### DEMO 影片
-<iframe width="560" height="315" src="https://www.youtube.com/embed/87vappja-vc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![AMD 第一組 半夜四點開會吃啥宵](https://img.youtube.com/vi/87vappja-vc/hqdefault.jpg)](https://youtu.be/87vappja-vc?si=86wSaxGeM-jE49Cg)
 
 
 ## 🚀 快速開始
