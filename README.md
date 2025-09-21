@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CI/CD](https://github.com/your-username/ClinicSim-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/ClinicSim-AI/actions/workflows/ci.yml)
+[![CI](https://github.com/peienwu1216/ClinicSim-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/peienwu1216/ClinicSim-AI/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/your-username/ClinicSim-AI/branch/main/graph/badge.svg)](https://codecov.io/gh/your-username/ClinicSim-AI)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://github.com/your-username/ClinicSim-AI/pkgs/container/clinic-sim-ai)
 
