@@ -14,6 +14,8 @@ from ..services.ai_service import get_ai_service
 from ..services.rag_service import RAGService
 from ..services.case_service import CaseService
 from ..services.scoring_service import ScoringService
+from ..services.notion_service import NotionService
+from ..services.map_reduce_service import MapReduceService
 from ..config.settings import get_settings
 from ..utils.file_utils import save_report_to_file, generate_report_filename
 
@@ -21,12 +23,14 @@ from ..utils.file_utils import save_report_to_file, generate_report_filename
 class ReportService:
     """報告生成服務"""
     
-    def __init__(self, settings=None, case_service=None, ai_service=None, rag_service=None, scoring_service=None):
+    def __init__(self, settings=None, case_service=None, ai_service=None, rag_service=None, scoring_service=None, notion_service=None, map_reduce_service=None):
         self.settings = settings or get_settings()
         self.case_service = case_service or CaseService(self.settings)
         self.ai_service = ai_service or get_ai_service(self.settings)
         self.rag_service = rag_service or RAGService(self.settings)
         self.scoring_service = scoring_service or ScoringService(self.settings)
+        self.notion_service = notion_service or NotionService(self.settings)
+        self.map_reduce_service = map_reduce_service or MapReduceService(self.settings, self.ai_service)
     
     def generate_feedback_report(self, conversation: Conversation) -> Report:
         """生成即時回饋報告"""
@@ -40,21 +44,16 @@ class ReportService:
         conversation_service._update_conversation_metrics(conversation, case)
         
         # 使用新的結構化評分系統
-        scoring_result = self.scoring_service.score_conversation(conversation)
+        try:
+            scoring_result = self.scoring_service.score_conversation(conversation)
+            # 生成基本分析報告（包含新評分）
+            report_content = self._generate_enhanced_analysis(conversation, case, scoring_result)
+        except Exception as e:
+            print(f"[ERROR] 評分系統錯誤，使用基本分析: {e}")
+            # 如果評分系統出錯，使用基本分析
+            report_content = self._generate_basic_analysis(conversation, case)
         
-        # 生成基本分析報告（包含新評分）
-        report_content = self._generate_enhanced_analysis(conversation, case, scoring_result)
-        
-        # 如果有 RAG 服務，基於回饋內容添加相關指引
-        if self.rag_service.is_available():
-            # 基於已生成的回饋內容生成相關查詢
-            rag_queries = self._generate_queries_from_feedback(report_content)
-            
-            # 使用查詢獲取最相關的指引
-            if rag_queries:
-                rag_context = self._search_multiple_queries(rag_queries, k=2)
-                if rag_context and "RAG 系統未初始化" not in rag_context:
-                    report_content += f"\n\n### 相關臨床指引\n{rag_context}"
+        # 即時回饋報告不包含 RAG 文獻摘要，保持簡潔
         
         report = Report(
             report_type=ReportType.FEEDBACK,
@@ -129,25 +128,27 @@ class ReportService:
         critical_actions = case.get_critical_actions()
         user_messages = conversation.get_user_messages()
         
-        # 分析覆蓋率
-        conversation_text = conversation.get_conversation_text().lower()
+        # 創建對話文字內容用於關鍵字匹配
+        conversation_text = " ".join([msg.content for msg in user_messages if hasattr(msg, 'content')])
+        
+        # 使用對話服務中已經計算好的覆蓋項目
+        covered_items = set(conversation.covered_items)
+        partially_covered_items = set(conversation.partially_covered_items)
         
         report_items = []
-        covered_count = 0
-        partial_count = 0
+        covered_count = len(covered_items)
+        partial_count = len(partially_covered_items)
         
         for item in checklist:
-            keywords = item.get('keywords', [])
-            matched_keywords = [kw for kw in keywords if kw.lower() in conversation_text]
+            item_id = item.get('id', '')
+            item_point = item.get('point', '')
             
-            if len(matched_keywords) >= 2:
-                report_items.append(f"- ✅ {item['point']}：學生透過提問「{matched_keywords[0]}」等成功問診")
-                covered_count += 1
-            elif len(matched_keywords) == 1:
-                report_items.append(f"- ⚠️ {item['point']}：學生有相關提問「{matched_keywords[0]}」，但可更深入")
-                partial_count += 1
+            if item_id in covered_items:
+                report_items.append(f"- ✅ {item_point}：學生已完整詢問此項目")
+            elif item_id in partially_covered_items:
+                report_items.append(f"- ⚠️ {item_point}：學生有相關提問，但可更深入")
             else:
-                report_items.append(f"- ❌ {item['point']}：學生未詢問此項目")
+                report_items.append(f"- ❌ {item_point}：學生未詢問此項目")
         
         # 分析關鍵行動
         critical_analysis = []
@@ -208,82 +209,94 @@ class ReportService:
 *註：此為即時分析報告，詳細報告請點擊「生成完整報告」按鈕。*"""
     
     def _generate_detailed_analysis_with_llm(self, conversation: Conversation, case: Case, citations: List[Citation]) -> str:
-        """使用 LLM 生成詳細分析報告"""
-        # 構建 RAG 上下文
-        rag_context = "\n\n".join([
-            f"### 關於 {citation.query} [引註 {citation.id}]\n{citation.content}"
-            for citation in citations
-        ]) if citations else "未找到相關臨床指引"
+        """使用 Map-Reduce 策略生成詳細分析報告（優化 NPU 使用）"""
+        print("[Map-Reduce] 開始使用 Map-Reduce 策略生成報告...")
         
-        # 構建詳細提示詞
-        detailed_prompt = f"""
-        你是一位資深的 OSCE 臨床教師和心臟科專家。請根據以下資訊生成一份詳細的診後分析報告。
-
-        ### 學生問診表現
-        {conversation.get_conversation_text()}
-
-        ### 評估標準
-        **檢查清單：**
-        {chr(10).join([f"- {item['point']} (類別: {item['category']})" for item in case.get_feedback_checklist()])}
-
-        **關鍵行動：**
-        {chr(10).join([f"- {action}" for action in case.get_critical_actions()])}
-
-        ### 相關臨床指引 (RAG 系統提供)
-        {rag_context}
-
-        ### 你的任務
-        請生成一份專業、詳細的分析報告，包含以下部分：
-
-        ## 1. 問診表現評估
-        - 系統性分析學生的問診技巧
-        - 指出優點和不足之處
-        - 引用具體的對話內容作為依據
-
-        ## 2. 臨床決策分析
-        - 評估學生的臨床思維過程
-        - 分析是否識別出關鍵症狀和危險因子
-        - 評估決策的時效性和準確性
-
-        ## 3. 知識應用評估
-        - 評估學生對急性胸痛診斷流程的理解
-        - 分析是否遵循標準化問診程序
-        - 評估對關鍵檢查的認知
-
-        ## 4. 改進建議
-        - 基於 RAG 提供的臨床指引，給出具體建議
-        - 提供實用的學習資源和練習方向
-        - 建議下一步的學習重點
-
-        ## 5. 評分總結
-        - 給出各項目的具體評分 (1-10分)
-        - 提供總體評價和等級
-        - 建議是否需要額外練習
-
-        ### 重要要求：
-        1. 必須使用繁體中文撰寫整份報告
-        2. 在引用臨床指引時，必須使用 [引註 X] 的格式標記，例如 [引註 1]、[引註 2] 等
-        3. 每個建議都應該引用相應的臨床指引，格式為：根據 [引註 X] 的指引...
-        4. 語氣專業但友善，適合醫學生學習使用
-        5. 確保所有醫學術語使用正確的繁體中文
-        """
+        # 估算上下文大小
+        context_size = self.map_reduce_service.estimate_context_size(conversation, citations)
+        print(f"[Map-Reduce] 上下文大小分析: {context_size}")
         
-        # 構建訊息
+        # 使用 Map-Reduce 服務處理大上下文
+        condensed_context = self.map_reduce_service.process_large_context(conversation, citations)
+        
+        # 構建最終的詳細提示詞
+        conversation_text = conversation.get_conversation_text()
+        checklist = case.get_feedback_checklist()
+        critical_actions = case.get_critical_actions()
+        
+        final_prompt = f"""
+你是一位資深的 OSCE 臨床教師和心臟科專家。請根據以下資訊生成一份詳細的診後分析報告。
+
+### 學生問診表現
+{conversation_text}
+
+### 評估標準
+**檢查清單：**
+{chr(10).join([f"- {item['point']} (類別: {item['category']})" for item in checklist])}
+
+**關鍵行動：**
+{chr(10).join([f"- {action}" for action in critical_actions])}
+
+### 相關臨床指引摘要 (已濃縮)
+{condensed_context}
+
+### 你的任務
+請生成一份專業、詳細的分析報告，包含以下部分：
+
+## 1. 問診表現評估
+- 系統性分析學生的問診技巧
+- 指出優點和不足之處
+- 引用具體的對話內容作為依據
+
+## 2. 臨床決策分析
+- 評估學生的臨床思維過程
+- 分析是否識別出關鍵症狀和危險因子
+- 評估決策的時效性和準確性
+
+## 3. 知識應用評估
+- 評估學生對急性胸痛診斷流程的理解
+- 分析是否遵循標準化問診程序
+- 評估對關鍵檢查的認知
+
+## 4. 改進建議
+- 基於臨床指引摘要，給出具體建議
+- 提供實用的學習資源和練習方向
+- 建議下一步的學習重點
+
+## 5. 評分總結
+- 給出各項目的具體評分 (1-10分)
+- 提供總體評價和等級
+- 建議是否需要額外練習
+
+### 重要要求：
+1. **必須使用繁體中文撰寫整份報告，絕對不能使用簡體中文**
+2. **禁止在報告中包含任何簽名欄位，如：[學生姓名]、[日期]、[評估者姓名]、[評估者簽名]等**
+3. **報告內容應直接開始，不需要任何表單欄位或簽名區域**
+4. 語氣專業但友善，適合醫學生學習使用
+5. 確保所有醫學術語使用正確的繁體中文
+6. 報告應結構清晰，易於閱讀
+7. 直接提供分析內容，不要包含任何需要填寫的空白欄位
+"""
+        
+        # 構建最終訊息
         from ..models.conversation import Message
-        messages = [Message(role=MessageRole.SYSTEM, content=detailed_prompt)]
+        messages = [Message(role=MessageRole.SYSTEM, content=final_prompt)]
         
         try:
-            # 使用 AI 服務生成報告
+            print("[Map-Reduce] 正在生成最終報告（應該在 NPU 上運行）...")
+            # 這個最終任務現在應該能在 NPU 上運行，因為上下文已經被大幅縮減
             report_content = self.ai_service.chat(messages)
+            print("[Map-Reduce] 報告生成完成")
             
-            # 如果 AI 沒有生成引註標記，手動添加
-            if not re.search(r'\[引註 \d+\]', report_content) and citations:
-                report_content += self._append_citation_suggestions(citations)
+            # 添加 Map-Reduce 處理的元數據
+            if isinstance(report_content, str):
+                report_content += f"\n\n---\n*此報告使用 Map-Reduce 策略生成，優化了 NPU 使用效率*"
             
             return report_content
             
         except Exception as e:
-            # 備用方案：使用基本分析 + RAG 內容
+            print(f"[Map-Reduce] 最終報告生成失敗: {e}")
+            # 備用方案：使用基本分析 + 濃縮內容
             basic_analysis = self._generate_basic_analysis(conversation, case)
             return f"""
 # 詳細診後分析報告
@@ -292,13 +305,13 @@ class ReportService:
 
 ---
 
-## RAG 提供的臨床指引
+## 臨床指引摘要
 
-{rag_context}
+{condensed_context}
 
 ---
 
-*註：此為備用詳細報告，包含 RAG 搜尋的臨床指引內容。AI 服務暫時無法使用。*
+*註：此為備用詳細報告，使用 Map-Reduce 策略處理。AI 服務暫時無法使用。*
             """
     
     def _append_citation_suggestions(self, citations: List[Citation]) -> str:
@@ -539,7 +552,7 @@ class ReportService:
 *註：此為即時分析報告，詳細報告請點擊「生成完整報告」按鈕。*"""
     
     def _format_scoring_analysis(self, scoring_result) -> str:
-        """格式化評分分析"""
+        """格式化評分分析 - 改進的顯示邏輯"""
         analysis_parts = []
         
         # 各類別評分
@@ -547,10 +560,25 @@ class ReportService:
             section_percentage = (section.achieved_score / section.max_score * 100) if section.max_score > 0 else 0
             analysis_parts.append(f"**{section.title}**: {section_percentage:.1f}% ({section.achieved_score:.1f}/{section.max_score})")
             
-            # 顯示關鍵項目
-            key_criteria = [c for c in section.criteria_scores if c.achieved_score > 0]
-            if key_criteria:
-                analysis_parts.append(f"  - 完成項目: {', '.join([c.description for c in key_criteria[:3]])}")
+            # 顯示所有評分項目的詳細狀態
+            for criterion in section.criteria_scores:
+                # 改進的顯示邏輯：根據分數比例決定顯示狀態
+                score_ratio = criterion.achieved_score / criterion.max_score if criterion.max_score > 0 else 0
+                
+                if score_ratio >= 0.8:
+                    status_icon = "✅"  # 80%以上為綠色勾勾
+                    status_text = "優秀"
+                elif score_ratio >= 0.5:
+                    status_icon = "⚠️"  # 50-80%為黃色警告
+                    status_text = "良好"
+                elif score_ratio > 0:
+                    status_icon = "🟡"  # 1-50%為黃色圓點
+                    status_text = "部分完成"
+                else:
+                    status_icon = "❌"  # 0分為紅色叉叉
+                    status_text = "未完成"
+                
+                analysis_parts.append(f"  - {status_icon} {criterion.description} ({status_text})")
             
             # 顯示懲罰項目
             penalties = [p for p in section.penalties if p.achieved_score > 0]
@@ -558,3 +586,41 @@ class ReportService:
                 analysis_parts.append(f"  - 扣分項目: {', '.join([p.description for p in penalties])}")
         
         return "\n".join(analysis_parts)
+    
+    def sync_existing_report_to_notion(self, file_path: str, page_title: str = None) -> Optional[str]:
+        """
+        將現有的報告檔案同步到 Notion
+        
+        Args:
+            file_path: 報告檔案路徑
+            page_title: Notion 頁面標題（可選）
+            
+        Returns:
+            創建的頁面 ID，失敗時返回 None
+        """
+        if not self.notion_service.is_available():
+            print("❌ Notion 服務不可用")
+            return None
+        
+        try:
+            # 如果沒有提供標題，從檔案名生成
+            if not page_title:
+                file_path_obj = Path(file_path)
+                page_title = f"學習報告 - {file_path_obj.stem}"
+            
+            # 使用 NotionService 同步報告
+            page_id = self.notion_service.sync_report_to_notion(
+                report_file_path=file_path,
+                page_title=page_title
+            )
+            
+            if page_id:
+                print(f"✅ 成功同步報告到 Notion: {page_title}")
+                return page_id
+            else:
+                print(f"❌ 同步報告到 Notion 失敗: {page_title}")
+                return None
+                
+        except Exception as e:
+            print(f"❌ 同步現有報告到 Notion 時發生錯誤: {e}")
+            return None

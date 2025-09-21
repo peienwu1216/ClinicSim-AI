@@ -41,6 +41,13 @@ class ConversationService:
             return None
         
         conversation.add_message(role, content)
+        
+        # 如果是用戶訊息，更新覆蓋率
+        if role == MessageRole.USER:
+            case = self.case_service.get_case(conversation.case_id)
+            if case:
+                self._update_conversation_metrics(conversation, case)
+        
         return conversation
     
     def generate_ai_response(self, conversation_id: str) -> Optional[str]:
@@ -107,6 +114,10 @@ class ConversationService:
                 continue
             
             keywords = item.get('keywords', [])
+            # 如果沒有關鍵字，生成默認關鍵字
+            if not keywords:
+                keywords = self._generate_default_keywords(item_id, item.get('point', ''))
+            
             matched_keywords = [kw for kw in keywords if kw.lower() in latest_message]
             
             # 完全覆蓋：匹配2個或以上關鍵字
@@ -121,13 +132,63 @@ class ConversationService:
         conversation.partially_covered_items.extend(new_partially_covered_items)
         
         # 計算總覆蓋率：完全覆蓋項目 + 部分覆蓋項目
-        total_covered = len(conversation.covered_items) + (len(conversation.partially_covered_items) * 0.5)
+        # 使用 set 來避免重複計算
+        unique_covered = len(set(conversation.covered_items))
+        unique_partial = len(set(conversation.partially_covered_items))
+        
+        # 確保部分覆蓋的項目不會與完全覆蓋的項目重複
+        partial_only = set(conversation.partially_covered_items) - set(conversation.covered_items)
+        unique_partial = len(partial_only)
+        
+        total_covered = unique_covered + (unique_partial * 0.5)
         coverage_percentage = int((total_covered / len(checklist)) * 100) if checklist else 0
         
         # 更新對話的覆蓋率
+        old_coverage = conversation.coverage
         conversation.coverage = min(coverage_percentage, 100)
         
+        # 調試信息
+        if new_covered_items or new_partially_covered_items or old_coverage != conversation.coverage:
+            print(f"[DEBUG] 覆蓋率更新: {old_coverage}% -> {conversation.coverage}%")
+            print(f"[DEBUG] 新增完全覆蓋項目: {new_covered_items}")
+            print(f"[DEBUG] 新增部分覆蓋項目: {new_partially_covered_items}")
+            print(f"[DEBUG] 計算詳情:")
+            print(f"  - 總檢查清單項目: {len(checklist)}")
+            print(f"  - 完全覆蓋項目數: {unique_covered}")
+            print(f"  - 部分覆蓋項目數: {unique_partial}")
+            print(f"  - 總覆蓋分數: {total_covered}")
+            print(f"  - 覆蓋率計算: ({total_covered} / {len(checklist)}) * 100 = {coverage_percentage}%")
+        
         return conversation.coverage
+    
+    def _generate_default_keywords(self, item_id: str, point: str) -> List[str]:
+        """為檢查清單項目生成默認關鍵字"""
+        keyword_mapping = {
+            "intro": ["你好", "我是", "醫生", "同意", "可以嗎", "確認"],
+            "site": ["哪裡", "位置", "部位", "痛"],
+            "onset": ["什麼時候", "開始", "發作", "突然"],
+            "provocation": ["誘發", "緩解", "什麼會", "活動", "休息"],
+            "quality": ["什麼樣", "性質", "壓", "悶", "刺痛"],
+            "radiation": ["放射", "延伸", "擴散", "肩膀", "手臂"],
+            "severity": ["多痛", "幾分", "嚴重", "程度"],
+            "timing": ["多久", "持續", "間歇", "頻率"],
+            "associated_symptoms": ["伴隨", "其他", "症狀", "呼吸", "噁心"],
+            "risk_factors": ["抽菸", "高血壓", "糖尿病", "家族史", "危險因子"],
+            "past_history_meds_allergy": ["病史", "用藥", "過敏", "以前"],
+            "differential_diagnosis": ["診斷", "可能", "懷疑", "考慮"],
+            "ideas_concerns": ["擔心", "想法", "害怕", "期待"],
+            "critical_action_ecg": ["心電圖", "ECG", "12導程", "立即", "馬上"],
+            "summary_and_plan": ["總結", "計畫", "檢查", "安全"]
+        }
+        
+        # 優先使用預定義的關鍵字
+        if item_id in keyword_mapping:
+            return keyword_mapping[item_id]
+        
+        # 如果沒有預定義的，從描述中提取關鍵字
+        import re
+        chinese_words = re.findall(r'[\u4e00-\u9fff]+', point)
+        return chinese_words[:3]  # 最多返回3個關鍵字
     
     def _should_update_vital_signs(self, conversation: Conversation) -> bool:
         """檢查是否需要更新生命體徵"""

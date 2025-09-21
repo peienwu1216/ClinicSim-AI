@@ -7,7 +7,6 @@
 - **問診覆蓋率**: 0%
 - **對話長度**: 4 條訊息
 
-
 ## 報告內容
 
 ### 診後分析報告
@@ -78,7 +77,6 @@
 📚 **Research ECG IschemiaEarlyDetectionHHT 2023**
 
 producing ischemic changes. However, resting ECG cannot be adopted in diagnosing myocardial ischemia till ST-segment depressions. Therefore, this study aimed to detect myocardial energy defects in resting ECG using the Hilbert–Huang transformation (HHT) in patients with angina pectoris. Methods: Electrocardiographic recordings of positive exercise ECG by performing cor‑
-
 
 ---
 *此報告由 ClinicSim-AI 系統自動生成於 2025-09-21 00:11:07*

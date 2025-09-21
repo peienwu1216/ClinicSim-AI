@@ -58,8 +58,14 @@ class Case(BaseModel):
     
     def get_feedback_checklist(self) -> List[Dict[str, Any]]:
         """取得回饋檢查清單"""
-        if self.data.feedback_system:
+        # 優先使用 feedback_system 中的檢查清單
+        if self.data.feedback_system and self.data.feedback_system.checklist:
             return self.data.feedback_system.checklist
+        
+        # 如果沒有，嘗試從 patient_story_data 中獲取
+        if "checklist" in self.data.patient_story_data:
+            return self.data.patient_story_data["checklist"]
+        
         return []
     
     def get_critical_actions(self) -> List[str]:

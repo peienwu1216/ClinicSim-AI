@@ -7,7 +7,6 @@
 - **問診覆蓋率**: 26%
 - **對話長度**: 5 條訊息
 
-
 ## 報告內容
 
 ### 診後分析報告
@@ -65,7 +64,6 @@
 ---
 來源: documents/Review/Review_ACS_DiagnosisAndTreatment_TW_2022.pdf
 內容: 急性冠心症的診斷和治療 蔡泉財 /盧澤民 2022/8/2 修訂 冠狀動脈心臟病 (或稱冠心症)是由於冠狀動脈血管內膜因膽固醇斑塊 (Plaque)的堆積，造成血管內膜局部狹窄，影響血流，進一步引發心肌缺氧的 症狀。臨床表徵可從無症狀性缺氧(silent ischemia)，穩定型心絞痛 (stable angina)，不穩定型心絞痛 (unstable angina) ， 到急性心肌梗塞 (acute myocardial infarction)，心臟衰竭和猝死 (sudden death)等
-
 
 ---
 *此報告由 ClinicSim-AI 系統自動生成於 2025-09-20 16:36:33*

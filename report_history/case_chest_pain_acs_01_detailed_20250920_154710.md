@@ -7,11 +7,9 @@
 - **問診覆蓋率**: 75%
 - **對話長度**: 4 條訊息
 
-
 ## 引註資訊
 - **引註數量**: 4
 - **RAG 查詢**: 急性胸痛診斷流程和檢查順序, ECG 心電圖在胸痛評估中的重要性, STEMI 和不穩定型心絞痛的診斷標準, 胸痛問診的 OPQRST 技巧和重點
-
 
 ## 報告內容
 
@@ -83,9 +81,6 @@ The student demonstrated good clinical judgment and attention to detail in their
 - ECG 心電圖檢查應在 10 分鐘內完成，這是急性胸痛評估的第一優先檢查
 - 疑似 STEMI 時應立即啟動心導管團隊，時間就是心肌
 - 問診應遵循 OPQRST 結構：發作時間、誘發因子、疼痛性質、放射位置、嚴重程度、持續時間
-
-
-
 
 ## 詳細引註
 
@@ -519,7 +514,6 @@ myocardial  infarction)，心臟衰竭和猝死 (sudden death)等。
 ```
 
 ---
-
 
 ---
 *此報告由 ClinicSim-AI 系統自動生成於 2025-09-20 15:47:10*

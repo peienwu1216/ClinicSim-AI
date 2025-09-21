@@ -7,11 +7,9 @@
 - **問診覆蓋率**: 0%
 - **對話長度**: 4 條訊息
 
-
 ## 引註資訊
 - **引註數量**: 3
 - **RAG 查詢**: OSCE 問診技巧和病史詢問指南, ECG 心電圖在胸痛評估中的重要性, STEMI 和不穩定型心絞痛的診斷標準
-
 
 ## 報告內容
 
@@ -70,9 +68,6 @@ In conclusion, this student has demonstrated a good understanding of the diagnos
 
 **根據 [引註 3] 的指引：**
 
-
-
-
 ## 詳細引註
 
 ### 引註 1
@@ -108,7 +103,6 @@ In conclusion, this student has demonstrated a good understanding of the diagnos
 ```
 
 ---
-
 
 ---
 *此報告由 ClinicSim-AI 系統自動生成於 2025-09-20 20:15:25*

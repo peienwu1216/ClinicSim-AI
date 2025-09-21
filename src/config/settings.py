@@ -26,13 +26,24 @@ class Settings(BaseSettings):
     backend_port: int = Field(default=5001, env="BACKEND_PORT")
     
     # AI 模型設定
-    ai_provider: str = Field(default="lemonade", env="AI_PROVIDER")  # ollama, lemonade, openai
+    ai_provider: str = Field(default="lemonade", env="AI_PROVIDER")  # ollama, lemonade, openai, mock
     ollama_host: str = Field(default="http://127.0.0.1:11434", env="OLLAMA_HOST")
     ollama_model: str = Field(default="llama3:8b", env="OLLAMA_MODEL")
     
-    # Lemonade Server 設定
-    lemonade_base_url: str = Field(default="http://localhost:8000/api/v1", env="LEMONADE_BASE_URL")
-    lemonade_model: str = Field(default="Qwen2.5-0.5B-Instruct-CPU", env="LEMONADE_MODEL")
+    # Lemonade 統一設定 (支援 SDK 和 Server 模式)
+    lemonade_model_checkpoint: str = Field(
+        default="amd/Qwen2.5-7B-Instruct-awq-uint4-asym-g128-lmhead-g32-fp16-onnx-hybrid",
+        env="LEMONADE_MODEL_CHECKPOINT"
+    )
+    lemonade_recipe: str = Field(default="oga-hybrid", env="LEMONADE_RECIPE")  # oga-npu, oga-hybrid, hf-cpu, oga-cpu
+    
+    # Lemonade Server 模式設定 (OpenAI 兼容)
+    lemonade_base_url: str = Field(default="", env="LEMONADE_BASE_URL")
+    lemonade_api_key: str = Field(default="lemonade", env="LEMONADE_API_KEY")
+    
+    # 向後兼容設定 (已棄用)
+    lemonade_model: str = Field(default="", env="LEMONADE_MODEL")
+    lemonade_npu_model: str = Field(default="", env="LEMONADE_NPU_MODEL")
     
     # 路徑設定
     project_root: Path = Field(default_factory=lambda: Path(__file__).parent.parent.parent)
@@ -48,11 +59,13 @@ class Settings(BaseSettings):
     rag_search_k: int = Field(default=3, env="RAG_SEARCH_K")
     
     # 案例設定
-    default_case_id: str = Field(default="case_chest_pain_acs_01", env="DEFAULT_CASE_ID")
+    default_case_id: str = Field(default="case_1", env="DEFAULT_CASE_ID")
     
     # Notion API 設定
+    notion_enabled: bool = Field(default=False, env="NOTION_ENABLED")
     notion_api_key: Optional[str] = Field(default=None, env="NOTION_API_KEY")
     notion_database_id: Optional[str] = Field(default=None, env="NOTION_DATABASE_ID")
+    notion_parent_page_id: Optional[str] = Field(default=None, env="NOTION_PARENT_PAGE_ID")
     
     model_config = {
         "env_file": ".env",
@@ -93,6 +106,36 @@ class Settings(BaseSettings):
             if file_path.is_file() and file_path.suffix.lower() in ['.pdf', '.txt', '.md', '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif']:
                 document_paths.append(file_path)
         return document_paths
+    
+    def __post_init__(self):
+        """初始化後處理，檢查向後兼容性"""
+        # 檢查已棄用的環境變數
+        if self.lemonade_model or self.lemonade_npu_model:
+            print("⚠️ 警告: LEMONADE_MODEL 和 LEMONADE_NPU_MODEL 已棄用")
+            print("請使用新的環境變數:")
+            print("  LEMONADE_MODEL_CHECKPOINT - 模型檢查點")
+            print("  LEMONADE_RECIPE - 設備選擇 (oga-npu, oga-hybrid, hf-cpu)")
+            print("  LEMONADE_BASE_URL - Server 模式 URL (可選)")
+    
+    def is_lemonade_server_mode(self) -> bool:
+        """檢查是否使用 Lemonade Server 模式"""
+        return bool(self.lemonade_base_url)
+    
+    def get_effective_model_name(self) -> str:
+        """取得有效的模型名稱（用於 Server 模式）"""
+        if self.is_lemonade_server_mode():
+            # Server 模式：從 checkpoint 提取模型名稱
+            checkpoint = self.lemonade_model_checkpoint
+            if "Qwen2.5-7B" in checkpoint:
+                return "Qwen-2.5-7B-Instruct-Hybrid"
+            elif "Llama-3.2-1B" in checkpoint:
+                return "Llama-3.2-1B-Instruct-Hybrid"
+            elif "Phi-3.5" in checkpoint:
+                return "Phi-3.5-Mini-Instruct-Hybrid"
+            else:
+                # 回退到 checkpoint 的最後一部分
+                return checkpoint.split("/")[-1]
+        return self.lemonade_model_checkpoint
 
 
 # 全域設定實例

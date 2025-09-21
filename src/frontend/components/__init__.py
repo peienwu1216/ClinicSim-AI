@@ -9,6 +9,7 @@ from .vital_signs import VitalSignsComponent
 from .coverage_meter import CoverageMeterComponent
 from .clinical_orders import ClinicalOrdersComponent
 from .clinical_orders_compact import ClinicalOrdersCompactComponent
+from .clinical_orders_simplified import ClinicalOrdersSimplifiedComponent
 
 __all__ = [
     "SidebarComponent",
@@ -17,5 +18,6 @@ __all__ = [
     "VitalSignsComponent",
     "CoverageMeterComponent",
     "ClinicalOrdersComponent",
-    "ClinicalOrdersCompactComponent"
+    "ClinicalOrdersCompactComponent",
+    "ClinicalOrdersSimplifiedComponent"
 ]

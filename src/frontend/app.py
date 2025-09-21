@@ -16,6 +16,7 @@ load_dotenv()
 
 # 添加項目根目錄到路徑
 project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "src"))
 
 from src.config import get_settings
@@ -23,9 +24,15 @@ from src.frontend.components import (
     SidebarComponent, 
     ChatInterfaceComponent, 
     ReportDisplayComponent,
-    ClinicalOrdersCompactComponent
+    ClinicalOrdersCompactComponent,
+    ClinicalOrdersSimplifiedComponent
+)
+from src.frontend.components.enhanced_chat_interface import (
+    EnhancedChatInterfaceComponent,
+    FixedHeaderComponent
 )
 from src.frontend.components.progress_display import ReportGenerationManager
+from src.frontend.components.ai_thinking import AIThinkingComponent, AIThinkingManager
 from src.frontend.components.styles import apply_custom_css
 
 
@@ -37,15 +44,19 @@ class StreamlitApp:
         self.api_base_url = f"http://{self.settings.backend_host}:{self.settings.backend_port}"
         self.case_id = self.settings.default_case_id
         
-        # 輸出當前案例到終端機
-        print(f"🎯 當前案例: {self.case_id}")
+        # 案例ID已設定
         
         # 初始化組件
         self.sidebar = SidebarComponent("sidebar")
         self.chat_interface = ChatInterfaceComponent("chat")
+        self.enhanced_chat_interface = EnhancedChatInterfaceComponent("enhanced_chat")
+        self.fixed_header = FixedHeaderComponent("fixed_header")
         self.report_display = ReportDisplayComponent("report")
         self.clinical_orders_compact = ClinicalOrdersCompactComponent("clinical_orders")
+        self.clinical_orders_simplified = ClinicalOrdersSimplifiedComponent("clinical_orders_simplified")
         self.report_generation_manager = ReportGenerationManager()
+        self.ai_thinking = AIThinkingComponent("ai_thinking")
+        self.ai_thinking_manager = AIThinkingManager()
         
         # 初始化 session state
         self._init_session_state()
@@ -70,14 +81,23 @@ class StreamlitApp:
             st.session_state.vital_signs = None
         if "has_started" not in st.session_state:
             st.session_state.has_started = False
+        if "case_id" not in st.session_state:
+            st.session_state.case_id = self.case_id
+        if "ai_thinking" not in st.session_state:
+            st.session_state.ai_thinking = False
+        if "ai_thinking_message" not in st.session_state:
+            st.session_state.ai_thinking_message = "AI 病人正在思考..."
+        if "ai_thinking_details" not in st.session_state:
+            st.session_state.ai_thinking_details = "正在分析您的問題並準備回應"
     
     def run(self):
         """運行應用程式"""
         # 頁面設定
         st.set_page_config(
-            page_title="ClinicSim AI - 臨床技能教練", 
+            page_title="ClinicSim AI - 臨床診斷考試訓練系統", 
             page_icon="🧑‍⚕️", 
-            layout="wide"
+            layout="wide",
+            initial_sidebar_state="expanded"
         )
         
         # 應用自定義CSS樣式
@@ -108,28 +128,40 @@ class StreamlitApp:
     
     def _render_main_content(self):
         """渲染主內容區域"""
+        # 渲染固定頭部
+        self.fixed_header.render(
+            case_title="急性胸痛",
+            session_ended=st.session_state.session_ended,
+            on_end_session=self._handle_end_session,
+            on_generate_report=self._handle_generate_detailed_report
+        )
+        
         # 創建主佈局：左側聊天，右側臨床Orders
         col1, col2 = st.columns([3, 1])
         
         with col1:
-            # 統一顯示主訴，不透露具體診斷
-            st.title("模擬診間：急性胸痛")
-            st.write("您現在正在與一位模擬病人進行問診。請開始您的提問。")
-            
-            # 渲染聊天介面
-            self.chat_interface.render(
+            # 渲染增強的聊天介面
+            self.enhanced_chat_interface.render(
                 messages=st.session_state.messages,
                 session_ended=st.session_state.session_ended,
                 on_send_message=self._handle_send_message,
                 on_quick_action=self._handle_quick_action
             )
             
-            # 在聊天介面下方顯示報告生成進度
-            self._render_progress_ui()
+            # 渲染AI思考狀態
+            if st.session_state.ai_thinking:
+                self.ai_thinking.render(
+                    is_thinking=True,
+                    thinking_message=st.session_state.ai_thinking_message,
+                    thinking_details=st.session_state.ai_thinking_details
+                )
         
         with col2:
-            # 渲染緊湊版臨床Orders面板
-            self.clinical_orders_compact.render(on_order_action=self._handle_order_action)
+            # 渲染簡化版臨床Orders面板
+            self.clinical_orders_simplified.render(on_order_action=self._handle_order_action)
+        
+        # 在聊天介面下方顯示報告生成進度（移到佈局外部）
+        self._render_progress_ui()
     
     def _render_progress_ui(self):
         """渲染進度 UI（在聊天介面下方）"""
@@ -173,39 +205,49 @@ class StreamlitApp:
         # 添加使用者訊息
         st.session_state.messages.append({"role": "user", "content": message})
         
-        # 顯示使用者訊息
-        with st.chat_message("user"):
-            st.markdown(message)
+        # 設置AI思考狀態
+        st.session_state.ai_thinking = True
+        st.session_state.ai_thinking_message = "AI 病人正在思考..."
+        st.session_state.ai_thinking_details = "正在分析您的問題並準備回應"
+        
+        # 立即重新整理頁面以顯示用戶訊息和思考狀態
+        st.rerun()
+        
+        # 添加延遲以確保用戶能看到思考動畫
+        time.sleep(0.5)
         
         # 生成 AI 回應
-        with st.chat_message("assistant"):
-            with st.spinner("AI 病人正在思考..."):
-                try:
-                    response_data = self._call_api("/ask_patient", {
-                        "history": st.session_state.messages,
-                        "case_id": self.case_id
-                    })
-                    
-                    ai_reply = response_data.get("reply", "無法生成回應")
-                    
-                    # 更新覆蓋率和生命體徵（累加式）
-                    new_coverage = response_data.get("coverage", st.session_state.coverage)
-                    # 只會增加，不會減少
-                    if new_coverage > st.session_state.coverage:
-                        st.session_state.coverage = new_coverage
-                    
-                    if "vital_signs" in response_data:
-                        st.session_state.vital_signs = response_data["vital_signs"]
-                    
-                    # 添加 AI 回應
-                    st.session_state.messages.append({"role": "assistant", "content": ai_reply})
-                    st.markdown(ai_reply)
-                    
-                    # 重新整理頁面以更新側邊欄
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"無法連接到後端服務，請確認伺服器正在運行。\n\n錯誤訊息：{e}")
+        try:
+            response_data = self._call_api("/ask_patient", {
+                "history": st.session_state.messages,
+                "case_id": self.case_id
+            })
+            
+            ai_reply = response_data.get("reply", "無法生成回應")
+            
+            # 更新覆蓋率和生命體徵
+            new_coverage = response_data.get("coverage", st.session_state.coverage)
+            # 確保覆蓋率正確更新
+            if new_coverage != st.session_state.coverage:
+                print(f"[DEBUG] 覆蓋率更新: {st.session_state.coverage}% -> {new_coverage}%")
+                st.session_state.coverage = new_coverage
+            
+            if "vital_signs" in response_data:
+                st.session_state.vital_signs = response_data["vital_signs"]
+            
+            # 添加 AI 回應
+            st.session_state.messages.append({"role": "assistant", "content": ai_reply})
+            
+            # 停止思考狀態
+            st.session_state.ai_thinking = False
+            
+            # 重新整理頁面以更新側邊欄
+            st.rerun()
+            
+        except Exception as e:
+            # 停止思考狀態
+            st.session_state.ai_thinking = False
+            st.error(f"無法連接到後端服務，請確認伺服器正在運行。\n\n錯誤訊息：{e}")
     
     def _handle_quick_action(self, action: str):
         """處理快速操作"""
@@ -222,52 +264,54 @@ class StreamlitApp:
         # 添加使用者訊息
         st.session_state.messages.append({"role": "user", "content": action})
         
-        # 顯示使用者訊息
-        with st.chat_message("user"):
-            st.markdown(action)
-        
-        # 如果有圖片，顯示圖片
-        if image_path:
-            image_full_path = self._get_image_path(image_path)
-            if image_full_path and os.path.exists(image_full_path):
-                st.image(image_full_path, caption=f"{self._get_order_name_from_action(action)} 檢查結果", use_column_width=True)
+        # 立即重新整理頁面以顯示用戶訊息
+        st.rerun()
         
         # 生成 AI 回應
-        with st.chat_message("assistant"):
-            with st.spinner("AI 病人正在處理您的臨床指令..."):
-                try:
-                    response_data = self._call_api("/ask_patient", {
-                        "history": st.session_state.messages,
-                        "case_id": self.case_id
-                    })
-                    
-                    ai_reply = response_data.get("reply", "無法生成回應")
-                    
-                    # 更新覆蓋率和生命體徵（累加式）
-                    new_coverage = response_data.get("coverage", st.session_state.coverage)
-                    # 只會增加，不會減少
-                    if new_coverage > st.session_state.coverage:
-                        st.session_state.coverage = new_coverage
-                    
-                    if "vital_signs" in response_data:
-                        st.session_state.vital_signs = response_data["vital_signs"]
-                    
-                    # 添加 AI 回應
-                    st.session_state.messages.append({"role": "assistant", "content": ai_reply})
-                    st.markdown(ai_reply)
-                    
-                    # 重新整理頁面以更新側邊欄
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"無法連接到後端服務，請確認伺服器正在運行。\n\n錯誤訊息：{e}")
+        with st.spinner("AI 病人正在處理您的臨床指令..."):
+            try:
+                response_data = self._call_api("/ask_patient", {
+                    "history": st.session_state.messages,
+                    "case_id": self.case_id
+                })
+                
+                ai_reply = response_data.get("reply", "無法生成回應")
+                
+                # 更新覆蓋率和生命體徵
+                new_coverage = response_data.get("coverage", st.session_state.coverage)
+                # 確保覆蓋率正確更新
+                if new_coverage != st.session_state.coverage:
+                    print(f"[DEBUG] 覆蓋率更新: {st.session_state.coverage}% -> {new_coverage}%")
+                    st.session_state.coverage = new_coverage
+                
+                if "vital_signs" in response_data:
+                    st.session_state.vital_signs = response_data["vital_signs"]
+                
+                # 添加 AI 回應
+                st.session_state.messages.append({"role": "assistant", "content": ai_reply})
+                
+                # 重新整理頁面以更新側邊欄
+                st.rerun()
+                
+            except Exception as e:
+                st.error(f"無法連接到後端服務，請確認伺服器正在運行。\n\n錯誤訊息：{e}")
     
     def _get_image_path(self, image_filename: str) -> Optional[str]:
         """獲取圖片完整路徑"""
         if not image_filename:
             return None
         
-        # 檢查static/samples目錄
+        # 首先檢查assets/images目錄
+        assets_path = Path(__file__).parent.parent.parent.parent / "assets" / "images" / image_filename
+        if assets_path.exists():
+            return str(assets_path)
+        
+        # 然後檢查根目錄（向下兼容）
+        root_path = Path(__file__).parent.parent.parent.parent / image_filename
+        if root_path.exists():
+            return str(root_path)
+        
+        # 然後檢查static/samples目錄
         static_path = Path(__file__).parent.parent.parent.parent / "static" / "samples" / image_filename
         if static_path.exists():
             return str(static_path)
@@ -345,13 +389,28 @@ class StreamlitApp:
                 status="分析對話內容",
                 details="正在分析您的問診表現和對話內容..."
             )
-            time.sleep(0.5)  # 模擬處理時間
+            time.sleep(1.0)  # 增加處理時間以展示進度效果
+            
+            # 子步驟更新
+            self.report_generation_manager.update_progress(
+                step=1,
+                status="分析對話內容",
+                details="已識別 {len(st.session_state.messages)} 條對話記錄"
+            )
+            time.sleep(0.5)
             
             # 步驟 2: 生成 RAG 查詢
             self.report_generation_manager.update_progress(
                 step=2,
                 status="生成 RAG 查詢",
                 details="正在生成相關的臨床指引查詢..."
+            )
+            time.sleep(1.0)
+            
+            self.report_generation_manager.update_progress(
+                step=2,
+                status="生成 RAG 查詢",
+                details="已生成 3-5 個相關查詢"
             )
             time.sleep(0.5)
             
@@ -361,6 +420,13 @@ class StreamlitApp:
                 status="搜尋臨床指引",
                 details="正在從知識庫中搜尋相關的臨床指引..."
             )
+            time.sleep(1.2)
+            
+            self.report_generation_manager.update_progress(
+                step=3,
+                status="搜尋臨床指引",
+                details="已找到相關臨床指引和最佳實踐"
+            )
             time.sleep(0.5)
             
             # 步驟 4: 整合 AI 分析
@@ -369,7 +435,14 @@ class StreamlitApp:
                 status="整合 AI 分析",
                 details="正在整合 AI 分析和臨床指引..."
             )
-            time.sleep(0.5)
+            time.sleep(1.0)
+            
+            self.report_generation_manager.update_progress(
+                step=4,
+                status="整合 AI 分析",
+                details="正在生成綜合評估和改進建議"
+            )
+            time.sleep(0.8)
             
             # 步驟 5: 生成最終報告
             self.report_generation_manager.update_progress(
@@ -439,26 +512,34 @@ class StreamlitApp:
                 self.case_id = new_case_id
                 
                 # 重置 session state
-                st.session_state.messages = []
-                st.session_state.report = None
-                st.session_state.detailed_report = None
-                st.session_state.citations = []
-                st.session_state.rag_queries = []
-                st.session_state.session_ended = False
-                st.session_state.coverage = 0
-                st.session_state.vital_signs = None
-                st.session_state.has_started = False
+                self._reset_session_state()
                 
                 # 顯示成功訊息（不透露具體診斷）
-                st.success("已切換到新病例，請開始問診")
+                st.success(f"✅ 已切換到新病例，請開始問診")
+                
+                # 短暫延遲後重新整理頁面
+                import time
+                time.sleep(0.5)
                 st.rerun()
             else:
-                st.error("無法取得隨機病例")
+                st.error("❌ 無法取得隨機病例")
                 
         except requests.exceptions.RequestException as e:
-            st.error(f"無法連接到後端服務：{e}")
+            st.error(f"❌ 無法連接到後端服務：{e}")
         except Exception as e:
-            st.error(f"選擇隨機病例時發生錯誤：{e}")
+            st.error(f"❌ 選擇隨機病例時發生錯誤：{e}")
+    
+    def _reset_session_state(self):
+        """重置 session state"""
+        st.session_state.messages = []
+        st.session_state.report = None
+        st.session_state.detailed_report = None
+        st.session_state.citations = []
+        st.session_state.rag_queries = []
+        st.session_state.session_ended = False
+        st.session_state.coverage = 0
+        st.session_state.vital_signs = None
+        st.session_state.has_started = False
     
 
 
@@ -470,7 +551,8 @@ def create_streamlit_app():
 
 def main():
     """主函式"""
-    app = create_streamlit_app()
+    # 直接運行應用，避免類別初始化問題
+    app = StreamlitApp()
     app.run()
 
 

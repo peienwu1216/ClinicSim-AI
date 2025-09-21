@@ -4,12 +4,12 @@
 
 ## 🎯 文檔概覽
 
-歡迎來到 ClinicSim-AI 文檔中心！這裡包含了使用和開發 ClinicSim-AI 所需的所有資訊。
+歡迎來到 ClinicSim-AI 文檔中心！這裡包含了使用和開發 AI-powered Clinical Skills Training Platform for Medical Students OSCE MOCK EXAM 所需的所有資訊。
 
 ## 📖 使用者文檔
 
 ### 🚀 [快速開始指南](quick-start.md)
-**5 分鐘快速體驗 ClinicSim-AI**
+**5 分鐘快速體驗 ClinicSim-AI OSCE MOCK EXAM**
 - 系統要求
 - 快速安裝
 - 第一次使用

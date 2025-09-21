@@ -148,3 +148,19 @@ def list_report_files(directory_path: Path, case_id: str = None) -> List[Path]:
         print(f"列出報告檔案失敗 {directory_path}: {e}")
     
     return sorted(files, key=lambda x: x.stat().st_mtime, reverse=True)
+
+
+def read_file_content(file_path: Path) -> Optional[str]:
+    """讀取檔案內容"""
+    try:
+        if not file_path.exists() or not file_path.is_file():
+            print(f"檔案不存在或不是檔案: {file_path}")
+            return None
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return content
+    except Exception as e:
+        print(f"讀取檔案內容失敗 {file_path}: {e}")
+        return None

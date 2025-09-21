@@ -43,7 +43,7 @@ NOTION_PARENT_PAGE_ID=your_parent_page_id_here
 
 #### 選項 A：使用資料庫
 1. 在 Notion 中創建一個資料庫
-2. 確保資料庫有 "title" 屬性
+2. 確保資料庫有 "Name" 屬性
 3. 將整合添加到資料庫（在資料庫頁面右上角點擊 "..." → "Add connections"）
 4. 複製資料庫 ID 作為 `NOTION_DATABASE_ID`
 

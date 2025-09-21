@@ -11,6 +11,7 @@ from ..services.case_service import CaseService
 from ..services.conversation_service import ConversationService
 from ..services.rag_service import RAGService
 from ..services.report_service import ReportService
+from ..services.map_reduce_service import MapReduceService
 
 
 @lru_cache(maxsize=None)
@@ -31,8 +32,9 @@ def get_dependencies() -> Dict[str, Any]:
     # 初始化其他服務
     case_service = CaseService(settings)
     rag_service = RAGService(settings)
+    map_reduce_service = MapReduceService(settings, ai_service)
     conversation_service = ConversationService(settings, case_service, ai_service)
-    report_service = ReportService(settings, case_service, ai_service, rag_service)
+    report_service = ReportService(settings, case_service, ai_service, rag_service, None, None, map_reduce_service)
     
     print(f"✅ 所有服務初始化完成")
     
@@ -42,6 +44,7 @@ def get_dependencies() -> Dict[str, Any]:
         "case_service": case_service,
         "conversation_service": conversation_service,
         "rag_service": rag_service,
+        "map_reduce_service": map_reduce_service,
         "report_service": report_service
     }
 

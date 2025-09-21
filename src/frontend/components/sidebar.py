@@ -6,6 +6,7 @@ import streamlit as st
 from typing import Optional, Callable
 
 from .base import BaseComponent
+from .custom_toggle import create_custom_expander
 
 
 class SidebarComponent(BaseComponent):
@@ -23,10 +24,30 @@ class SidebarComponent(BaseComponent):
                has_started: bool = False) -> None:
         """渲染側邊欄"""
         
+        # 添加最簡單的 JavaScript 來確保佈局正確
+        st.markdown("""
+        <script>
+        function fixLayout() {
+            // 確保主內容區域有正確的邊距
+            const mainContainer = document.querySelector('.main .block-container');
+            if (mainContainer) {
+                mainContainer.style.marginLeft = '350px';
+                mainContainer.style.maxWidth = 'calc(100vw - 350px)';
+            }
+        }
+        
+        // 立即執行
+        fixLayout();
+        
+        // 定期檢查
+        setInterval(fixLayout, 500);
+        </script>
+        """, unsafe_allow_html=True)
+
         with st.sidebar:
             # 標題
-            st.title("🧑‍⚕️ ClinicSim AI")
-            st.info("一個為醫學生設計的 AI 臨床技能教練。")
+            st.title("🧑‍⚕️ ClinicSim AI - 臨床診斷考試訓練系統")
+            st.info("AI-powered Clinical Skills Training Platform for Medical Students OSCE MOCK EXAM")
             
             # 病例選擇
             self._render_case_selection(on_select_random_case, current_case_id, session_ended, has_started)
@@ -54,7 +75,9 @@ class SidebarComponent(BaseComponent):
     def _render_coverage_meter(self, coverage: int) -> None:
         """渲染覆蓋率儀表板"""
         st.subheader("📊 問診覆蓋率")
-        st.progress(coverage, text=f"{coverage}%")
+        # 確保覆蓋率在 0-100 範圍內，並轉換為 0-1 的小數
+        normalized_coverage = max(0, min(100, coverage)) / 100
+        st.progress(normalized_coverage, text=f"{coverage}%")
         st.caption("根據提問即時更新")
     
     def _render_vital_signs_monitor(self, vital_signs: Optional[dict]) -> None:
@@ -101,26 +124,88 @@ class SidebarComponent(BaseComponent):
         """渲染病例選擇區域"""
         st.subheader("📋 病例")
         
-        st.info("**主訴**: 急性胸痛")
+        # 顯示當前病例信息
+        if current_case_id:
+            case_display_name = current_case_id.replace("_", " ").title()
+            st.info(f"**當前病例**: {case_display_name}")
         
-        # 只有在未開始問診且未結束時才能選擇病例
-        can_select_case = on_select_random_case and not has_started and not session_ended
+        # 隨機選擇病例按鈕
+        self._render_random_case_button(
+            on_select_random_case, 
+            session_ended, 
+            has_started
+        )
+    
+    def _render_random_case_button(self, 
+                                  on_select_random_case: Optional[Callable],
+                                  session_ended: bool = False,
+                                  has_started: bool = False) -> None:
+        """渲染隨機選擇病例按鈕"""
         
-        if can_select_case:
-            if st.button("🎲 隨機選擇", use_container_width=True):
-                on_select_random_case()
-            st.caption("選擇病例進行練習")
-        elif has_started and not session_ended:
-            st.button("🎲 隨機選擇", use_container_width=True, disabled=True)
-            st.caption("⚠️ 問診進行中")
-        elif session_ended:
-            if st.button("🎲 新病例", use_container_width=True):
-                on_select_random_case()
-            st.caption("開始新一輪練習")
+        # 根據狀態決定按鈕文字和可用性
+        if session_ended:
+            button_text = "🎲 隨機選擇新病例"
+            button_help = "選擇一個新的隨機病例開始練習"
+            disabled = False
+            caption = "開始新一輪練習"
+        elif has_started:
+            button_text = "🎲 隨機選擇病例"
+            button_help = "問診進行中，無法切換病例"
+            disabled = True
+            caption = "⚠️ 問診進行中，無法切換"
+        else:
+            button_text = "🎲 隨機選擇病例"
+            button_help = "隨機選擇一個病例進行練習"
+            disabled = False
+            caption = "選擇病例進行練習"
+        
+        # 創建按鈕容器，用於顯示載入狀態
+        button_container = st.container()
+        
+        with button_container:
+            if on_select_random_case and st.button(
+                button_text, 
+                use_container_width=True, 
+                disabled=disabled,
+                help=button_help
+            ):
+                # 顯示載入狀態
+                with st.spinner("🎲 正在隨機選擇病例..."):
+                    # 顯示過渡動畫
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+                    
+                    # 模擬載入步驟
+                    steps = [
+                        "正在獲取可用病例列表...",
+                        "正在隨機選擇病例...",
+                        "正在載入病例資料...",
+                        "正在初始化問診環境...",
+                        "完成！"
+                    ]
+                    
+                    for i, step in enumerate(steps):
+                        progress_bar.progress((i + 1) / len(steps))
+                        status_text.text(step)
+                        st.session_state._case_loading_step = step
+                        # 短暫延遲以顯示載入效果
+                        import time
+                        time.sleep(0.3)
+                    
+                    # 調用實際的隨機選擇函數
+                    on_select_random_case()
+                    
+                    # 清除載入狀態
+                    progress_bar.empty()
+                    status_text.empty()
+                    st.success("✅ 病例切換成功！")
+        
+        # 顯示說明文字
+        st.caption(caption)
     
     def _render_osce_tips(self) -> None:
         """渲染 OSCE 技巧小抄"""
-        with st.expander("💡 OSCE 技巧小抄"):
+        def render_osce_content():
             st.markdown("""
             **開場建議：**
             > 「您好，在您同意下，為您快速了解胸痛細節，目標是盡快找到原因並幫您舒服一些。」
@@ -131,3 +216,12 @@ class SidebarComponent(BaseComponent):
             **結尾總結建議：**
             > 「總結一下，目前高度懷疑是心臟的問題。我們會先做檢查，如果症狀加重，請立刻告訴我們。」
             """)
+        
+        create_custom_expander(
+            title="OSCE 技巧小抄",
+            content_func=render_osce_content,
+            key="osce_tips_toggle",
+            style="emoji",
+            emoji="💡",
+            default_expanded=False
+        )

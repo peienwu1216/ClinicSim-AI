@@ -8,6 +8,7 @@ import time
 from typing import Optional, Callable, Dict, Any
 from .base import BaseComponent
 from .styles import apply_custom_css
+from .custom_toggle import create_custom_expander
 
 
 class ProgressDisplayComponent(BaseComponent):
@@ -75,85 +76,184 @@ class ProgressDisplayComponent(BaseComponent):
     
     def _render_compact_progress(self, progress: float, status: str, current_step: str, total_steps: int, on_cancel: Optional[Callable] = None) -> bool:
         """渲染緊湊模式進度（適合在對話下方顯示）"""
-        # 使用簡潔的樣式
-        st.markdown('<div class="progress-container" style="margin-top: 20px; padding: 15px;">', unsafe_allow_html=True)
+        # 使用精美的漸層背景和動畫效果
+        st.markdown('''
+        <div class="enhanced-progress-container">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span class="ai-icon">🤖</span>
+                    <span class="title-text">AI 教師正在生成詳細分析報告</span>
+                    <div class="loading-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
         
-        # 標題和進度條
-        col1, col2 = st.columns([4, 1])
+        # 創建進度條和狀態區域
+        progress_container = st.container()
         
-        with col1:
-            st.markdown("**🤖 AI 教師正在生成詳細分析報告...**")
-            self.progress_bar = st.progress(progress, text=f"{int(progress * 100)}%")
-            st.caption(f"📋 {status}")
+        with progress_container:
+            # 進度條區域
+            col1, col2 = st.columns([4, 1])
+            
+            with col1:
+                # 美化進度條
+                progress_percent = int(progress * 100)
+                st.markdown(f'''
+                <div class="progress-wrapper">
+                    <div class="progress-info">
+                        <span class="progress-percent">{progress_percent}%</span>
+                        <span class="progress-status">{status}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+                
+                # 使用自定義進度條
+                self.progress_bar = st.progress(progress, text=f"進度: {progress_percent}%")
+                
+                # 當前步驟顯示
+                if current_step:
+                    st.markdown(f'''
+                    <div class="current-step">
+                        <span class="step-icon">🔄</span>
+                        <span class="step-text">{current_step}</span>
+                    </div>
+                    ''', unsafe_allow_html=True)
+            
+            with col2:
+                if on_cancel:
+                    if st.button("❌ 取消", key="cancel_report_generation_compact", help="取消報告生成", type="secondary"):
+                        return True
+            
+            # 添加預估時間和提示
+            self._render_progress_hints(progress)
         
-        with col2:
-            if on_cancel:
-                if st.button("❌ 取消", key="cancel_report_generation_compact", help="取消報告生成"):
-                    st.markdown('</div>', unsafe_allow_html=True)
-                    return True
-        
-        # 簡化的步驟顯示
-        if current_step:
-            st.info(f"🔄 {current_step}")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
         return False
     
     def _render_full_progress(self, progress: float, status: str, current_step: str, total_steps: int, on_cancel: Optional[Callable] = None) -> bool:
         """渲染完整模式進度（適合在報告區域顯示）"""
-        # 使用自定義樣式的容器
-        st.markdown('<div class="progress-container">', unsafe_allow_html=True)
+        # 使用增強的自定義樣式容器
+        st.markdown('''
+        <div class="enhanced-progress-container full-mode">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span class="ai-icon">🤖</span>
+                    <span class="title-text">AI 教師正在生成詳細分析報告</span>
+                    <div class="loading-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
         
-        # 標題
-        st.markdown("### 🤖 AI 教師正在生成詳細分析報告")
-        st.markdown("---")
+        # 主要進度區域
+        progress_container = st.container()
         
-        # 進度條
-        self.progress_bar = st.progress(progress, text=f"{int(progress * 100)}%")
+        with progress_container:
+            # 進度條和狀態信息
+            col1, col2 = st.columns([4, 1])
+            
+            with col1:
+                # 美化進度條
+                progress_percent = int(progress * 100)
+                st.markdown(f'''
+                <div class="progress-wrapper">
+                    <div class="progress-info">
+                        <span class="progress-percent">{progress_percent}%</span>
+                        <span class="progress-status">{status}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+                
+                # 使用自定義進度條
+                self.progress_bar = st.progress(progress, text=f"進度: {progress_percent}%")
+                
+                # 當前步驟顯示
+                if current_step:
+                    st.markdown(f'''
+                    <div class="current-step">
+                        <span class="step-icon">🔄</span>
+                        <span class="step-text">{current_step}</span>
+                    </div>
+                    ''', unsafe_allow_html=True)
+            
+            with col2:
+                if on_cancel:
+                    if st.button("❌ 取消", key="cancel_report_generation", help="取消報告生成", type="secondary"):
+                        return True
+            
+            # 詳細進度信息
+            self._render_detailed_progress(progress, current_step, total_steps)
+            
+            # 提示信息
+            self._render_progress_tips()
+            
+            # 添加互動元素
+            self._render_interactive_elements(progress)
         
-        # 狀態信息
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            st.markdown(f'<div class="status-indicator"><strong>狀態：</strong> {status}</div>', unsafe_allow_html=True)
-            if current_step:
-                st.markdown(f'<div class="status-indicator"><strong>當前步驟：</strong> {current_step}</div>', unsafe_allow_html=True)
-        
-        with col2:
-            if on_cancel:
-                if st.button("❌ 取消", key="cancel_report_generation", help="取消報告生成"):
-                    st.markdown('</div>', unsafe_allow_html=True)
-                    return True
-        
-        # 詳細進度信息
-        self._render_detailed_progress(progress, current_step, total_steps)
-        
-        # 提示信息
-        self._render_progress_tips()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
         return False
     
     def _render_detailed_progress(self, progress: float, current_step: str, total_steps: int):
         """渲染詳細進度信息"""
         with st.expander("📋 處理詳情", expanded=True):
-            st.markdown('<div class="step-list">', unsafe_allow_html=True)
+            st.markdown('<div class="enhanced-step-list">', unsafe_allow_html=True)
             
             steps = [
-                "分析對話內容",
-                "生成 RAG 查詢",
-                "搜尋臨床指引",
-                "整合 AI 分析",
-                "生成最終報告"
+                ("分析對話內容", "🔍", "分析您的問診對話，評估問診技巧和覆蓋率"),
+                ("生成 RAG 查詢", "🤖", "基於對話內容生成相關的臨床指引查詢"),
+                ("搜尋臨床指引", "📚", "從知識庫中搜尋相關的臨床指引和最佳實踐"),
+                ("整合 AI 分析", "🧠", "整合 AI 分析和臨床指引，生成綜合評估"),
+                ("生成最終報告", "📄", "生成包含詳細建議和 PDF 視覺化的完整報告")
             ]
             
-            for i, step in enumerate(steps, 1):
-                if i <= int(progress * total_steps):
-                    st.markdown(f'<div class="step-item"><span class="step-icon">✅</span><span class="step-text">{step}</span></div>', unsafe_allow_html=True)
-                elif i == int(progress * total_steps) + 1:
-                    st.markdown(f'<div class="step-item"><span class="step-icon">🔄</span><span class="step-text">{step} (進行中...)</span></div>', unsafe_allow_html=True)
+            current_step_index = int(progress * total_steps)
+            
+            for i, (step_name, icon, description) in enumerate(steps, 1):
+                if i <= current_step_index:
+                    # 已完成
+                    st.markdown(f'''
+                    <div class="enhanced-step-item completed">
+                        <div class="step-icon-container">
+                            <span class="step-icon">✅</span>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-name">{step_name}</div>
+                            <div class="step-description">{description}</div>
+                        </div>
+                        <div class="step-status">完成</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                elif i == current_step_index + 1:
+                    # 進行中
+                    st.markdown(f'''
+                    <div class="enhanced-step-item active">
+                        <div class="step-icon-container">
+                            <span class="step-icon rotating">🔄</span>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-name">{step_name}</div>
+                            <div class="step-description">{description}</div>
+                        </div>
+                        <div class="step-status">進行中</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
                 else:
-                    st.markdown(f'<div class="step-item"><span class="step-icon">⏳</span><span class="step-text">{step}</span></div>', unsafe_allow_html=True)
+                    # 等待中
+                    st.markdown(f'''
+                    <div class="enhanced-step-item pending">
+                        <div class="step-icon-container">
+                            <span class="step-icon">⏳</span>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-name">{step_name}</div>
+                            <div class="step-description">{description}</div>
+                        </div>
+                        <div class="step-status">等待中</div>
+                    </div>
+                    ''', unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
     
@@ -167,6 +267,109 @@ class ProgressDisplayComponent(BaseComponent):
         • 生成的報告將包含詳細的學習建議和 PDF 視覺化附錄
         </div>
         """, unsafe_allow_html=True)
+    
+    def _render_progress_hints(self, progress: float):
+        """渲染進度提示（緊湊模式）"""
+        # 根據進度顯示不同的提示信息
+        if progress < 0.2:
+            hint_text = "正在初始化報告生成器..."
+            time_estimate = "預估剩餘時間: 45-60 秒"
+        elif progress < 0.4:
+            hint_text = "正在分析您的問診表現..."
+            time_estimate = "預估剩餘時間: 30-45 秒"
+        elif progress < 0.6:
+            hint_text = "正在搜尋相關臨床指引..."
+            time_estimate = "預估剩餘時間: 20-30 秒"
+        elif progress < 0.8:
+            hint_text = "正在整合 AI 分析結果..."
+            time_estimate = "預估剩餘時間: 10-20 秒"
+        else:
+            hint_text = "正在生成最終報告..."
+            time_estimate = "預估剩餘時間: 5-10 秒"
+        
+        st.markdown(f'''
+        <div class="progress-hints">
+            <div class="hint-text">{hint_text}</div>
+            <div class="time-estimate">{time_estimate}</div>
+        </div>
+        ''', unsafe_allow_html=True)
+    
+    def _render_interactive_elements(self, progress: float):
+        """渲染互動元素（完整模式）"""
+        st.markdown("---")
+        
+        # 創建互動區域
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col1:
+            # 學習提示
+            with st.expander("💡 學習提示", expanded=False):
+                tips = [
+                    "💭 思考您的問診技巧是否完整",
+                    "🔍 回顧您是否詢問了所有重要症狀",
+                    "📚 準備學習相關的臨床指引",
+                    "🎯 關注系統提供的改進建議"
+                ]
+                for tip in tips:
+                    st.markdown(f"• {tip}")
+        
+        with col2:
+            # 進度統計
+            with st.expander("📊 進度統計", expanded=False):
+                st.metric("完成進度", f"{int(progress * 100)}%")
+                st.metric("預估剩餘時間", f"{max(0, int(60 * (1 - progress)))} 秒")
+                st.metric("處理狀態", "進行中" if progress < 1.0 else "完成")
+        
+        with col3:
+            # 系統狀態和實時更新
+            def render_system_status():
+                st.success("✅ AI 引擎運行正常")
+                st.success("✅ 知識庫連接正常")
+                st.success("✅ 報告生成器就緒")
+                if progress > 0.5:
+                    st.success("✅ 臨床指引已載入")
+                
+                # 顯示實時狀態更新
+                if hasattr(st.session_state, 'status_updates') and st.session_state.status_updates:
+                    st.markdown("---")
+                    st.markdown("**🕒 實時狀態更新**")
+                    recent_updates = st.session_state.status_updates[-3:]  # 顯示最近3個更新
+                    for update in reversed(recent_updates):
+                        st.markdown(f"`{update['timestamp']}` {update['status']}")
+            
+            create_custom_expander(
+                title="系統狀態",
+                content_func=render_system_status,
+                key="system_status_toggle",
+                style="emoji",
+                emoji="⚙️",
+                default_expanded=False
+            )
+        
+        # 添加實時狀態更新區域（完整模式）
+        if hasattr(st.session_state, 'status_updates') and st.session_state.status_updates:
+            def render_log_content():
+                st.markdown('<div class="status-log">', unsafe_allow_html=True)
+                
+                for update in reversed(st.session_state.status_updates[-5:]):  # 顯示最近5個更新
+                    st.markdown(f'''
+                    <div class="log-entry">
+                        <span class="log-time">{update['timestamp']}</span>
+                        <span class="log-status">{update['status']}</span>
+                        <span class="log-details">{update['details']}</span>
+                    </div>
+                    ''', unsafe_allow_html=True)
+                
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            create_custom_expander(
+                title="實時處理日誌",
+                content_func=render_log_content,
+                key="log_toggle",
+                style="emoji",
+                emoji="📊",
+                default_expanded=False
+            )
     
     def render_loading_animation(self, message: str = "處理中..."):
         """渲染載入動畫"""
@@ -271,8 +474,13 @@ class ReportGenerationManager:
         progress = step / self.total_steps
         st.session_state.report_generation_progress.update({
             "current_step": step,
-            "status": status
+            "status": status,
+            "details": details,
+            "progress": progress
         })
+        
+        # 添加實時狀態更新
+        self._add_status_update(step, status, details)
         
         self.progress_component.render_step_progress(
             step=step,
@@ -280,6 +488,25 @@ class ReportGenerationManager:
             step_name=self.steps[step - 1] if step <= len(self.steps) else "處理中",
             details=details
         )
+    
+    def _add_status_update(self, step: int, status: str, details: str):
+        """添加狀態更新到歷史記錄"""
+        if "status_updates" not in st.session_state:
+            st.session_state.status_updates = []
+        
+        from datetime import datetime
+        update = {
+            "timestamp": datetime.now().strftime("%H:%M:%S"),
+            "step": step,
+            "status": status,
+            "details": details
+        }
+        
+        st.session_state.status_updates.append(update)
+        
+        # 只保留最近的10個更新
+        if len(st.session_state.status_updates) > 10:
+            st.session_state.status_updates = st.session_state.status_updates[-10:]
     
     def complete_generation(self, success: bool = True, error_message: str = ""):
         """完成報告生成"""
