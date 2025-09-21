@@ -22,8 +22,11 @@ ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透�
 - 💊 **臨床決策支援**：整合診斷工具和處置建議
 - 📱 **響應式設計**：支援多種裝置使用
 
-## 專案架構流程圖
+### 專案架構流程圖
 <img width="1913" height="1199" alt="image" src="https://github.com/user-attachments/assets/6cb4f533-5f72-4321-adf1-9f57600cdba5" />
+### DEMO 影片
+https://youtu.be/87vappja-vc?si=86wSaxGeM-jE49Cg
+
 
 ## 🚀 快速開始
 
