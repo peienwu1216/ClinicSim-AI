@@ -13,6 +13,7 @@
 
 ClinicSim-AI 是一個創新的醫療教育平台，專為醫學生設計。透過 AI 技術模擬真實的臨床問診情境，結合 RAG (Retrieval-Augmented Generation) 技術，提供基於臨床指引的智慧回饋，幫助學生提升臨床診斷能力。
 
+[決賽報告影片 Final Pitch Video](https://youtu.be/hsUoXOXspEw)
 ### ✨ 主要特色
 
 - 🎯 **智慧問診模擬**：AI 病人提供真實的臨床互動體驗
